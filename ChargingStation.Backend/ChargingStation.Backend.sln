@@ -6,30 +6,43 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{721F32B6-1C39-41E3-8F0E-83D1EC92B4DE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{9FDB02E9-D1A7-4632-A2D9-A4A91EE4D4A5}"
-	ProjectSection(SolutionItems) = preProject
-		Infrastructure\InfrastructureServicesRegistration.cs = Infrastructure\InfrastructureServicesRegistration.cs
-	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Domain", "Domain\ChargingStation.Domain\ChargingStation.Domain.csproj", "{81DED813-F39D-4BD7-8554-1E4F83F17889}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Domain", "Domain\ChargingStation.Domain\ChargingStation.Domain.csproj", "{81DED813-F39D-4BD7-8554-1E4F83F17889}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Infrastructure", "Infrastructure\ChargingStation.Infrastructure\ChargingStation.Infrastructure.csproj", "{3FD24E3E-A56C-4724-B1A8-1CDBBE69CF7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Infrastructure", "Infrastructure\ChargingStation.Infrastructure\ChargingStation.Infrastructure.csproj", "{3FD24E3E-A56C-4724-B1A8-1CDBBE69CF7E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{6545E985-58B5-4590-B765-B7CD27628D0B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Depots", "ChargingStation.Depots\ChargingStation.Depots.csproj", "{11CA7364-7C5A-479B-9B33-07FCFA6830A2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Depots", "API\ChargingStation.Depots\ChargingStation.Depots.csproj", "{343A614A-F598-4262-A85C-D0FBF2DBF8CF}"
 EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{81DED813-F39D-4BD7-8554-1E4F83F17889}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81DED813-F39D-4BD7-8554-1E4F83F17889}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81DED813-F39D-4BD7-8554-1E4F83F17889}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81DED813-F39D-4BD7-8554-1E4F83F17889}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3FD24E3E-A56C-4724-B1A8-1CDBBE69CF7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3FD24E3E-A56C-4724-B1A8-1CDBBE69CF7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3FD24E3E-A56C-4724-B1A8-1CDBBE69CF7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3FD24E3E-A56C-4724-B1A8-1CDBBE69CF7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{343A614A-F598-4262-A85C-D0FBF2DBF8CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{343A614A-F598-4262-A85C-D0FBF2DBF8CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{343A614A-F598-4262-A85C-D0FBF2DBF8CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{343A614A-F598-4262-A85C-D0FBF2DBF8CF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {A063F0C5-38BF-495E-8B72-2E7F00C1C4DE}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{81DED813-F39D-4BD7-8554-1E4F83F17889} = {721F32B6-1C39-41E3-8F0E-83D1EC92B4DE}
 		{3FD24E3E-A56C-4724-B1A8-1CDBBE69CF7E} = {9FDB02E9-D1A7-4632-A2D9-A4A91EE4D4A5}
-		{11CA7364-7C5A-479B-9B33-07FCFA6830A2} = {6545E985-58B5-4590-B765-B7CD27628D0B}
+		{343A614A-F598-4262-A85C-D0FBF2DBF8CF} = {6545E985-58B5-4590-B765-B7CD27628D0B}
 	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A063F0C5-38BF-495E-8B72-2E7F00C1C4DE}
 	EndGlobalSection
 EndGlobal
