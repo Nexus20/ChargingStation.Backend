@@ -1,4 +1,6 @@
-﻿namespace ChargingStation.Depots.Middlewares;
+﻿using ChargingStation.Common.Exceptions;
+
+namespace ChargingStation.Depots.Middlewares;
 
 public class ExceptionHandlingMiddleware
 {
@@ -14,6 +16,11 @@ public class ExceptionHandlingMiddleware
         try
         {
             await _next(context);
+        }
+        catch (NotFoundException exception)
+        {
+            logger.LogInformation(exception, "Resource not found");
+            context.Response.StatusCode = StatusCodes.Status404NotFound;
         }
         catch (Exception exception)
         {
