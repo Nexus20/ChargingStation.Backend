@@ -1,9 +1,9 @@
 ﻿using ChargingStation.Domain.Abstract;
 using ChargingStation.Domain.Enums;
 
-namespace ChargingStation.Domain.Entities;
+namespace ChargingStation.Depots.Models.Responses;
 
-public class Depot : Entity, ITimeMarkable
+public class DepotResponse : BaseResponse, ITimeMarkable
 {
     public required string Name { get; set; }
     public required string Country { get; set; }

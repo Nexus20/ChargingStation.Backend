@@ -39,15 +39,15 @@ public class ApplicationDbContext : DbContext {
     private void PreSaveChanges()
     {
         var entries = ChangeTracker.Entries()
-            .Where(x => x.Entity is ITimeMarkedEntity && x.State is EntityState.Added or EntityState.Modified);
+            .Where(x => x.Entity is ITimeMarkable && x.State is EntityState.Added or EntityState.Modified);
         
         foreach (var entry in entries)
         {
             if (entry.State == EntityState.Added)
             {
-                ((ITimeMarkedEntity)entry.Entity).CreatedAt = DateTime.UtcNow;
+                ((ITimeMarkable)entry.Entity).CreatedAt = DateTime.UtcNow;
             }
-            ((ITimeMarkedEntity)entry.Entity).UpdatedAt = DateTime.UtcNow;
+            ((ITimeMarkable)entry.Entity).UpdatedAt = DateTime.UtcNow;
         }
     }
 
