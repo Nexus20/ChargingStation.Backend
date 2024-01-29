@@ -39,18 +39,44 @@ public class DepotService : IDepotService
         return result;
     }
 
-    public Task<DepotResponse> CreateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
+    public async Task<DepotResponse> CreateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var existing = await _depotRepository.GetAllAsync(x => x.Name == depot.Name, cancellationToken: cancellationToken);
+
+        if (existing != null)
+            throw new BadRequestException(nameof(Depot), depot);
+
+        var createdDepot = _mapper.Map<Depot>(depot);
+        await _depotRepository.AddAsync(createdDepot, cancellationToken);
+
+        var result = _mapper.Map<DepotResponse>(createdDepot);
+        return result;
     }
 
-    public Task<DepotResponse> UpdateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
+    public async Task<DepotResponse> UpdateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if (depot is null)
+            throw new BadRequestException(nameof(Depot));
+
+        var updateDepot = await _depotRepository.GetByIdAsync(depot.Id, cancellationToken);
+
+        if (updateDepot is null)
+            throw new NotFoundException(nameof(Depot), depot.Id);
+
+        _mapper.Map(depot, updateDepot);
+        _depotRepository.Update(updateDepot);
+
+        var result = _mapper.Map<DepotResponse>(updateDepot);
+        return result;
     }
 
-    public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var removeDepot= await _depotRepository.GetByIdAsync(id, cancellationToken);
+
+        if (removeDepot == null)
+            throw new NotFoundException(nameof(Depot), id);
+
+        _depotRepository.Remove(removeDepot);
     }
 }

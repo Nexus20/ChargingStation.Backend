@@ -1,4 +1,7 @@
-﻿using ChargingStation.Domain.Abstract;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
+using ChargingStation.Domain.Abstract;
 using ChargingStation.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -28,6 +31,33 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
 
         return entities;
     }
+
+    public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>, 
+            IOrderedQueryable<TEntity>>? orderBy = null, string? includeProperties = null, bool isTracking = true, 
+            CancellationToken cancellationToken = default)
+    {
+        IQueryable<TEntity> query = _dbSet;
+
+        if (filter != null)
+            query = query.Where(filter);
+
+        if (includeProperties != null)
+        {
+            foreach (var includeProp in includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProp);
+            }
+        }
+
+        if (orderBy != null)
+            query = orderBy(query);
+
+        if (!isTracking)
+            query = query.AsNoTracking();
+
+        return await query.ToListAsync(cancellationToken);
+    }
+
 
     public Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
