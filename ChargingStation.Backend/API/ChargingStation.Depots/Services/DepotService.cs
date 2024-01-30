@@ -56,7 +56,7 @@ public class DepotService : IDepotService
     public async Task<DepotResponse> UpdateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
     {
         if (depot is null)
-            throw new BadRequestException(nameof(Depot));
+            throw new ArgumentNullException(nameof(depot), "The 'depot' parameter cannot be null.");
 
         var updateDepot = await _depotRepository.GetByIdAsync(depot.Id, cancellationToken);
 
@@ -72,11 +72,11 @@ public class DepotService : IDepotService
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var removeDepot= await _depotRepository.GetByIdAsync(id, cancellationToken);
+        var depotToRemove = await _depotRepository.GetByIdAsync(id, cancellationToken);
 
-        if (removeDepot == null)
+        if (depotToRemove == null)
             throw new NotFoundException(nameof(Depot), id);
 
-        _depotRepository.Remove(removeDepot);
+        _depotRepository.Remove(depotToRemove);
     }
 }
