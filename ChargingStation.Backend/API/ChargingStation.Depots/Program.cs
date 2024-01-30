@@ -1,3 +1,4 @@
+using ChargingStation.Depots.Extensions;
 using ChargingStation.Depots.Middlewares;
 using ChargingStation.Depots.Repositories;
 using ChargingStation.Infrastructure;
@@ -12,6 +13,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDepotServices();
 
 var app = builder.Build();
 
