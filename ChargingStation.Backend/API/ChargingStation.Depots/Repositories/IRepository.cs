@@ -1,4 +1,5 @@
-﻿using ChargingStation.Domain.Abstract;
+﻿using System.Linq.Expressions;
+using ChargingStation.Domain.Abstract;
 
 namespace ChargingStation.Depots.Repositories;
 
@@ -6,7 +7,10 @@ public interface IRepository<TEntity> where TEntity : Entity
 {
     Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken = default);
-    
+    Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>>? filter = null, Func<IQueryable<TEntity>,
+            IOrderedQueryable<TEntity>>? orderBy = null, string? includeProperties = null, bool isTracking = true,
+            CancellationToken cancellationToken = default);
+
     Task AddAsync(TEntity entity, CancellationToken cancellationToken = default);
     Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default);
     

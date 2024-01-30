@@ -39,18 +39,41 @@ public class DepotService : IDepotService
         return result;
     }
 
-    public Task<DepotResponse> CreateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
+    public async Task<DepotResponse> CreateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var existing = await _depotRepository.GetAllAsync(x => x.Name == depot.Name, cancellationToken: cancellationToken);
+
+        if (existing != null)
+            throw new BadRequestException(nameof(Depot), depot);
+
+        var createdDepot = _mapper.Map<Depot>(depot);
+        await _depotRepository.AddAsync(createdDepot, cancellationToken);
+
+        var result = _mapper.Map<DepotResponse>(createdDepot);
+        return result;
     }
 
-    public Task<DepotResponse> UpdateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
+    public async Task<DepotResponse> UpdateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var depotToUpdate = await _depotRepository.GetByIdAsync(depot.Id, cancellationToken);
+
+        if (depotToUpdate is null)
+            throw new NotFoundException(nameof(Depot), depot.Id);
+
+        _mapper.Map(depot, depotToUpdate);
+        _depotRepository.Update(depotToUpdate);
+
+        var result = _mapper.Map<DepotResponse>(depotToUpdate);
+        return result;
     }
 
-    public Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        var depotToRemove = await _depotRepository.GetByIdAsync(id, cancellationToken);
+
+        if (depotToRemove == null)
+            throw new NotFoundException(nameof(Depot), id);
+
+        _depotRepository.Remove(depotToRemove);
     }
 }
