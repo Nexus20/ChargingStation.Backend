@@ -22,6 +22,11 @@ public class ExceptionHandlingMiddleware
             logger.LogInformation(exception, "Resource not found");
             context.Response.StatusCode = StatusCodes.Status404NotFound;
         }
+        catch (BadRequestException exception)
+        {
+            logger.LogInformation(exception, "Bad request occurred: {Message}", exception.Message);
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+        }
         catch (Exception exception)
         {
             HandleStatus500Exception(context, exception, logger);
