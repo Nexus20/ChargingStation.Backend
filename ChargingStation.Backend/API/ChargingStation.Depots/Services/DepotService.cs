@@ -55,28 +55,25 @@ public class DepotService : IDepotService
 
     public async Task<DepotResponse> UpdateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
     {
-        if (depot is null)
-            throw new BadRequestException(nameof(Depot));
+        var depotToUpdate = await _depotRepository.GetByIdAsync(depot.Id, cancellationToken);
 
-        var updateDepot = await _depotRepository.GetByIdAsync(depot.Id, cancellationToken);
-
-        if (updateDepot is null)
+        if (depotToUpdate is null)
             throw new NotFoundException(nameof(Depot), depot.Id);
 
-        _mapper.Map(depot, updateDepot);
-        _depotRepository.Update(updateDepot);
+        _mapper.Map(depot, depotToUpdate);
+        _depotRepository.Update(depotToUpdate);
 
-        var result = _mapper.Map<DepotResponse>(updateDepot);
+        var result = _mapper.Map<DepotResponse>(depotToUpdate);
         return result;
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var removeDepot= await _depotRepository.GetByIdAsync(id, cancellationToken);
+        var depotToRemove = await _depotRepository.GetByIdAsync(id, cancellationToken);
 
-        if (removeDepot == null)
+        if (depotToRemove == null)
             throw new NotFoundException(nameof(Depot), id);
 
-        _depotRepository.Remove(removeDepot);
+        _depotRepository.Remove(depotToRemove);
     }
 }
