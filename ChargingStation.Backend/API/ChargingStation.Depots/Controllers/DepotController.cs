@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using ChargingStation.Depots.Models.Responses;
+﻿using ChargingStation.Depots.Models.Responses;
 using ChargingStation.Depots.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,12 +9,10 @@ namespace ChargingStation.Depots.Controllers
     public class DepotController : ControllerBase
     {
         private readonly IDepotService _depotService;
-        private readonly IMapper _mapper;
 
-        public DepotController(IDepotService depotService, IMapper mapper)
+        public DepotController(IDepotService depotService)
         {
             _depotService = depotService;
-            _mapper = mapper;
         }
 
         [HttpGet]
@@ -30,9 +27,9 @@ namespace ChargingStation.Depots.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(typeof(DepotResponse), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetById(string id, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken = default)
         {
-            var depot = await _depotService.GetByIdAsync(Guid.Parse(id), cancellationToken);
+            var depot = await _depotService.GetByIdAsync(id, cancellationToken);
 
             return Ok(depot);
         }
@@ -61,9 +58,9 @@ namespace ChargingStation.Depots.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken = default)
+        public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
         {
-            await _depotService.DeleteAsync(Guid.Parse(id), cancellationToken);
+            await _depotService.DeleteAsync(id, cancellationToken);
 
             return NoContent();
         }
