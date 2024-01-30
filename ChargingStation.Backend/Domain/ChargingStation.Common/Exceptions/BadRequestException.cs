@@ -9,10 +9,6 @@ namespace ChargingStation.Common.Exceptions
         public BadRequestException()
         { }
 
-        public BadRequestException(string entityTypeName)
-            : base($"The received entity of {entityTypeName} is null")
-        { }
-
         public BadRequestException(string entityTypeName, object entity)
             : base($"{entityTypeName} with such parameters already exists. Fields: {GetFields(entity)}")
         { }
