@@ -55,9 +55,6 @@ public class DepotService : IDepotService
 
     public async Task<DepotResponse> UpdateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
     {
-        if (depot is null)
-            throw new ArgumentNullException(nameof(depot), "The 'depot' parameter cannot be null.");
-
         var updateDepot = await _depotRepository.GetByIdAsync(depot.Id, cancellationToken);
 
         if (updateDepot is null)
