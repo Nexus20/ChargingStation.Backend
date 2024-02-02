@@ -1,33 +1,22 @@
-﻿namespace ChargingStation.Common.Models;
+﻿using Newtonsoft.Json;
 
-/// <summary>
-/// Interface for paged collection used on the Data Access Layer.
-/// </summary>
-/// <typeparam name="TEntity">Type of the entity on which paged collection will be created.</typeparam>
-public interface IPagedCollection<TEntity> : IEnumerable<TEntity>
+namespace ChargingStation.Common.Models;
+
+[JsonObject]
+public interface IPagedCollection<T> : IEnumerable<T>
 {
-    /// <summary>
-    /// Entity collection.
-    /// </summary>
-    IEnumerable<TEntity> Collection { get; set; }
+    [JsonProperty]
+    IEnumerable<T> Collection { get; set; }
 
-    /// <summary>
-    /// Pages count.
-    /// </summary>
+    [JsonProperty]
     int PagesCount { get; set; }
 
-    /// <summary>
-    /// Current page.
-    /// </summary>
+    [JsonProperty]
     int CurrentPage { get; set; }
 
-    /// <summary>
-    /// Page size.
-    /// </summary>
+    [JsonProperty]
     int PageSize { get; set; }
 
-    /// <summary>
-    /// Elements total count.
-    /// </summary>
+    [JsonProperty]
     int ElementsTotalCount { get; set; }
 }
