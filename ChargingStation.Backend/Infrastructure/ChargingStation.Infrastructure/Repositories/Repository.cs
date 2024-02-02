@@ -71,7 +71,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         return query.ApplySpecifications(specification).FirstOrDefaultAsync(cancellationToken);
     }
 
-    public async Task<IPagedCollection<TEntity>> GetPagedCollectionAsync(Specification<TEntity> specification, int? pageNumber = 1, int? pageSize = null,
+    public async Task<IPagedCollection<TEntity>> GetPagedCollectionAsync(Specification<TEntity> specification, int? pageNumber = 1, int? pageSize = null, bool applyTracking = false,
         CancellationToken cancellationToken = default)
     {
         IQueryable<TEntity> query = _dbSet;
@@ -80,10 +80,14 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         var page = pageNumber ?? 1;
         var size = pageSize ?? totalCollectionCount;
         
-        var data = await query.ApplySpecifications(specification)
+        query = query.ApplySpecifications(specification)
             .Skip((page - 1) * size)
-            .Take(size)
-            .ToListAsync(cancellationToken: cancellationToken);
+            .Take(size);
+        
+        if(!applyTracking)
+            query = query.AsNoTracking();
+            
+        var data = await query.ToListAsync(cancellationToken: cancellationToken);
         
         return new PagedCollection<TEntity>(data, totalCollectionCount, size, page);
     }

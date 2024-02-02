@@ -24,7 +24,7 @@ public class DepotService : IDepotService
     {
         var specification = new GetDepotsSpecification(request);
         
-        var depots = await _depotRepository.GetPagedCollectionAsync(specification, request.PagePredicate?.Page, request.PagePredicate?.PageSize, cancellationToken);
+        var depots = await _depotRepository.GetPagedCollectionAsync(specification, request.PagePredicate?.Page, request.PagePredicate?.PageSize, cancellationToken: cancellationToken);
         
         if(!depots.Collection.Any())
             return PagedCollection<DepotResponse>.Empty;

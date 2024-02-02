@@ -17,8 +17,16 @@ public abstract class Specification<TEntity> where TEntity : Entity
     public bool? IsDescendingOrderBy { get; private set; }
     public bool? IsDescendingThenBy { get;  private set;}
     
-    protected void AddFilter(Expression<Func<TEntity, bool>> filterExpression) => Filter = filterExpression;
-    
+    protected void AddFilter(Expression<Func<TEntity, bool>> filterExpression)
+    {
+        if(Filter is not null)
+            Filter = ExpressionBuilder<TEntity>.AndAlso(Filter, filterExpression);
+        else
+            Filter = filterExpression;
+        
+        Filter = filterExpression;
+    }
+
     protected void AddInclude(string includeString) => Includes.Add(includeString);
     
     private void AddOrderBy(Expression<Func<TEntity, object>> orderByExpression, bool isDescending = false)
