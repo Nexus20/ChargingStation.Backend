@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using ChargingStation.Common.Exceptions;
+using ChargingStation.Common.Models;
+using ChargingStation.Depots.Models.Requests;
 using ChargingStation.Depots.Models.Responses;
-using ChargingStation.Depots.Repositories;
+using ChargingStation.Depots.Specifications;
 using ChargingStation.Domain.Entities;
+using ChargingStation.Infrastructure.Repositories;
 
 namespace ChargingStation.Depots.Services;
 
@@ -17,14 +20,16 @@ public class DepotService : IDepotService
         _mapper = mapper;
     }
 
-    public async Task<List<DepotResponse>> GetAsync(CancellationToken cancellationToken = default)
+    public async Task<IPagedCollection<DepotResponse>> GetAsync(GetDepotsRequest request, CancellationToken cancellationToken = default)
     {
-        var depots = await _depotRepository.GetAllAsync(cancellationToken);
+        var specification = new GetDepotsSpecification(request);
         
-        if(depots.Count == 0)
-            return Enumerable.Empty<DepotResponse>().ToList();
+        var depots = await _depotRepository.GetPagedCollectionAsync(specification, request.PagePredicate?.Page, request.PagePredicate?.PageSize, cancellationToken: cancellationToken);
         
-        var result = _mapper.Map<List<DepotResponse>>(depots);
+        if(!depots.Collection.Any())
+            return PagedCollection<DepotResponse>.Empty;
+        
+        var result = _mapper.Map<IPagedCollection<DepotResponse>>(depots);
         return result;
     }
 
@@ -41,9 +46,14 @@ public class DepotService : IDepotService
 
     public async Task<DepotResponse> CreateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
     {
-        var existing = await _depotRepository.GetAllAsync(x => x.Name == depot.Name, cancellationToken: cancellationToken);
+        var specification = new GetDepotsSpecification(new GetDepotsRequest()
+        {
+            Name = depot.Name 
+        });
+        
+        var existing = await _depotRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
 
-        if (existing != null)
+        if (existing is not null)
             throw new BadRequestException(nameof(Depot), depot);
 
         var createdDepot = _mapper.Map<Depot>(depot);

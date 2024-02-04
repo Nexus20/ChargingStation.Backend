@@ -1,4 +1,5 @@
 ﻿using ChargingStation.Infrastructure.Persistence;
+using ChargingStation.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,8 +15,7 @@ public static class InfrastructureServicesRegistration
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
         
-        // services.AddTransient<IUnitOfWork, UnitOfWork>();
-        // services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         
         return services;
     }

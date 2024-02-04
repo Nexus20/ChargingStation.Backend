@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
+using ChargingStation.Common.Models;
 using ChargingStation.Domain.Abstract;
+using ChargingStation.Infrastructure.Extensions;
 using ChargingStation.Infrastructure.Persistence;
+using ChargingStation.Infrastructure.Specifications;
 using Microsoft.EntityFrameworkCore;
 
-namespace ChargingStation.Depots.Repositories;
+namespace ChargingStation.Infrastructure.Repositories;
 
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
 {
@@ -56,6 +57,39 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
             query = query.AsNoTracking();
 
         return await query.ToListAsync(cancellationToken);
+    }
+
+    public Task<List<TEntity>> GetAsync(Specification<TEntity> specification, CancellationToken cancellationToken = default)
+    {
+        IQueryable<TEntity> query = _dbSet;
+        return query.ApplySpecifications(specification).ToListAsync(cancellationToken);
+    }
+
+    public Task<TEntity?> GetFirstOrDefaultAsync(Specification<TEntity> specification, CancellationToken cancellationToken = default)
+    {
+        IQueryable<TEntity> query = _dbSet;
+        return query.ApplySpecifications(specification).FirstOrDefaultAsync(cancellationToken);
+    }
+
+    public async Task<IPagedCollection<TEntity>> GetPagedCollectionAsync(Specification<TEntity> specification, int? pageNumber = 1, int? pageSize = null, bool applyTracking = false,
+        CancellationToken cancellationToken = default)
+    {
+        IQueryable<TEntity> query = _dbSet;
+        var totalCollectionCount = await query.ApplySpecifications(specification).CountAsync(cancellationToken: cancellationToken);
+        
+        var page = pageNumber ?? 1;
+        var size = pageSize ?? totalCollectionCount;
+        
+        query = query.ApplySpecifications(specification)
+            .Skip((page - 1) * size)
+            .Take(size);
+        
+        if(!applyTracking)
+            query = query.AsNoTracking();
+            
+        var data = await query.ToListAsync(cancellationToken: cancellationToken);
+        
+        return new PagedCollection<TEntity>(data, totalCollectionCount, size, page);
     }
 
 
