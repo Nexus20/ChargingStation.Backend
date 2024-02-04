@@ -46,9 +46,14 @@ public class DepotService : IDepotService
 
     public async Task<DepotResponse> CreateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
     {
-        var existing = await _depotRepository.GetAllAsync(x => x.Name == depot.Name, cancellationToken: cancellationToken);
+        var specification = new GetDepotsSpecification(new GetDepotsRequest()
+        {
+            Name = depot.Name 
+        });
+        
+        var existing = await _depotRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
 
-        if (existing != null)
+        if (existing is not null)
             throw new BadRequestException(nameof(Depot), depot);
 
         var createdDepot = _mapper.Map<Depot>(depot);

@@ -23,8 +23,6 @@ public abstract class Specification<TEntity> where TEntity : Entity
             Filter = ExpressionBuilder<TEntity>.AndAlso(Filter, filterExpression);
         else
             Filter = filterExpression;
-        
-        Filter = filterExpression;
     }
 
     protected void AddInclude(string includeString) => Includes.Add(includeString);
