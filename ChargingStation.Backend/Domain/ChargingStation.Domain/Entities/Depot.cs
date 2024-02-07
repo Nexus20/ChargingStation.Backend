@@ -18,6 +18,8 @@ public class Depot : Entity, ITimeMarkable
     
     public double? EnergyLimit { get; set; }
     
+    public List<ChargePoint> ChargePoints { get; set; }
+    
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }
