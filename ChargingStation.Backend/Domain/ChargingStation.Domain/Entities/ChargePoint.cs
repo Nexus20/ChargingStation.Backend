@@ -10,6 +10,7 @@ public class ChargePoint : Entity, ITimeMarkable
     public ChargePointRegistrationStatus RegistrationStatus { get; set; }
     public string? ChargePointVendor { get; set; }
     public string? ChargePointModel { get; set; }
+    public string? ChargePointSerialNumber { get; set; }
     public string? ChargeBoxSerialNumber { get; set; }
     public string? FirmwareVersion { get; set; }
     public DateTime? FirmwareUpdateTimestamp { get; set; }
