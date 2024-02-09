@@ -2,7 +2,7 @@
 
 namespace ChargingStation.ChargePoints.Models.Requests;
 
-public class CreateChargePoint
+public class CreateChargePointRequest
 {
     public required Guid DepotId { get; set; }
     public required string OcppProtocol { get; set; }

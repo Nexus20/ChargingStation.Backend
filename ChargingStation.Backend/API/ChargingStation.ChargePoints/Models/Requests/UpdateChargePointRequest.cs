@@ -2,7 +2,7 @@ using ChargingStation.Domain.Entities;
 
 namespace ChargingStation.ChargePoints.Models.Requests;
 
-public class UpdateChargePoint
+public class UpdateChargePointRequest
 {
     public required Guid DepotId { get; set; }
     public required string OcppProtocol { get; set; }
