@@ -8,6 +8,7 @@ using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 
 namespace ChargingStation.ChargePoints.Services;
+
 public class ChargePointService : IChargePointService
 {
     private readonly IRepository<ChargePoint> _chargePointRepository;
@@ -19,8 +20,7 @@ public class ChargePointService : IChargePointService
         _mapper = mapper;
     }
 
-
-    public async Task<IPagedCollection<ChargePointResponse>> GetAsync(GetChargePoint request, CancellationToken cancellationToken = default)
+    public async Task<IPagedCollection<ChargePointResponse>> GetAsync(GetChargePointRequest request, CancellationToken cancellationToken = default)
     {
         var specification = new GetChargePointsSpecification(request);
 
@@ -44,7 +44,7 @@ public class ChargePointService : IChargePointService
         return result;
     }
 
-    public async Task<ChargePointResponse> CreateAsync(CreateChargePoint chargePoint, CancellationToken cancellationToken = default)
+    public async Task<ChargePointResponse> CreateAsync(CreateChargePointRequest chargePoint, CancellationToken cancellationToken = default)
     {
         var createdChargePoint = _mapper.Map<ChargePoint>(chargePoint);
         await _chargePointRepository.AddAsync(createdChargePoint, cancellationToken);
@@ -53,7 +53,7 @@ public class ChargePointService : IChargePointService
         return result;
     }
 
-    public async Task<ChargePointResponse> UpdateAsync(UpdateChargePoint chargePoint, CancellationToken cancellationToken = default)
+    public async Task<ChargePointResponse> UpdateAsync(UpdateChargePointRequest chargePoint, CancellationToken cancellationToken = default)
     {
         var chargePointToUpdate = await _chargePointRepository.GetByIdAsync(chargePoint.Id, cancellationToken);
 
