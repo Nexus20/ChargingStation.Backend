@@ -3,7 +3,7 @@ using ChargingStation.Domain.Entities;
 
 namespace ChargingStation.ChargePoints.Models.Requests
 {
-    public class GetChargePoint : BaseCollectionRequest
+    public class GetChargePointRequest : BaseCollectionRequest
     {
         public Guid DepotId { get; set; }
         public string OcppProtocol { get; set; } = null!;

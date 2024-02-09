@@ -2,7 +2,7 @@ using ChargingStation.Domain.Entities;
 
 namespace ChargingStation.ChargePoints.Models.Requests;
 
-public class UpdateChargePoint
+public class UpdateChargePointRequest
 {
     public Guid Id { get; set; }
     public required Guid DepotId { get; set; }
