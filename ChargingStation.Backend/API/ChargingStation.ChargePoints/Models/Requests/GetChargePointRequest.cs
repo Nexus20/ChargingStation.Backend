@@ -7,7 +7,7 @@ namespace ChargingStation.ChargePoints.Models.Requests
     {
         public Guid DepotId { get; set; }
         public string OcppProtocol { get; set; } = null!;
-        public ChargePointRegistrationStatus RegistrationStatus { get; set; }
+        public ChargePointRegistrationStatus? RegistrationStatus { get; set; }
         public string? ChargePointVendor { get; set; }
         public string? ChargePointModel { get; set; }
         public string? ChargePointSerialNumber { get; set; }
