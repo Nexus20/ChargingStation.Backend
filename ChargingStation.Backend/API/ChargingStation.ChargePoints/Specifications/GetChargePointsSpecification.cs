@@ -6,7 +6,7 @@ namespace ChargingStation.ChargePoints.Specifications;
 
 public class GetChargePointsSpecification : Specification<ChargePoint>
 {
-    public GetChargePointsSpecification(GetChargePoint request)
+    public GetChargePointsSpecification(GetChargePointRequest request)
     {
         AddFilters(request);
 
@@ -14,7 +14,7 @@ public class GetChargePointsSpecification : Specification<ChargePoint>
             AddSorting(request.OrderPredicates);
     }
 
-    private void AddFilters(GetChargePoint request)
+    private void AddFilters(GetChargePointRequest request)
     {
         if (!string.IsNullOrEmpty(request.OcppProtocol))
             AddFilter(с => с.OcppProtocol.Contains(request.OcppProtocol));
