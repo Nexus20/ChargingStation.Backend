@@ -11,8 +11,8 @@ public class ChargePointProfile : Profile
     public ChargePointProfile()
     {
         CreateMap<ChargePoint, ChargePointResponse>();
-        CreateMap<CreateChargePoint, ChargePoint>();
-        CreateMap<UpdateChargePoint, ChargePoint>();
+        CreateMap<CreateChargePointRequest, ChargePoint>();
+        CreateMap<UpdateChargePointRequest, ChargePoint>();
         CreateMap(typeof(IPagedCollection<>), typeof(PagedCollection<>));
         CreateMap(typeof(IPagedCollection<>), typeof(IPagedCollection<>))
             .As(typeof(PagedCollection<>));
