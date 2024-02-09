@@ -20,7 +20,7 @@ public class ChargePointService : IChargePointService
         _mapper = mapper;
     }
 
-    public async Task<IPagedCollection<ChargePointResponse>> GetAsync(GetChargePoint request, CancellationToken cancellationToken = default)
+    public async Task<IPagedCollection<ChargePointResponse>> GetAsync(GetChargePointRequest request, CancellationToken cancellationToken = default)
     {
         var chargePoints = await _chargePointRepository.GetPagedCollectionAsync(new GetChargePointsSpecification(), request.PagePredicate?.Page, request.PagePredicate?.PageSize, cancellationToken: cancellationToken);
 
@@ -42,7 +42,7 @@ public class ChargePointService : IChargePointService
         return result;
     }
 
-    public async Task<ChargePointResponse> CreateAsync(CreateChargePoint chargePoint, CancellationToken cancellationToken = default)
+    public async Task<ChargePointResponse> CreateAsync(CreateChargePointRequest chargePoint, CancellationToken cancellationToken = default)
     {
         var createdChargePoint = _mapper.Map<ChargePoint>(chargePoint);
         await _chargePointRepository.AddAsync(createdChargePoint, cancellationToken);
@@ -51,7 +51,7 @@ public class ChargePointService : IChargePointService
         return result;
     }
 
-    public async Task<ChargePointResponse> UpdateAsync(UpdateChargePoint chargePoint, CancellationToken cancellationToken = default)
+    public async Task<ChargePointResponse> UpdateAsync(UpdateChargePointRequest chargePoint, CancellationToken cancellationToken = default)
     {
         var chargePointToUpdate = await _chargePointRepository.GetByIdAsync(chargePoint.Id, cancellationToken);
 
