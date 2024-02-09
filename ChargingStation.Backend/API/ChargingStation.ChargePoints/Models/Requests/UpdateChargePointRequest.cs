@@ -1,11 +1,10 @@
-﻿using ChargingStation.Domain.Abstract;
+using ChargingStation.Domain.Entities;
 
-namespace ChargingStation.Domain.Entities;
+namespace ChargingStation.ChargePoints.Models.Requests;
 
-public class ChargePoint : Entity, ITimeMarkable
+public class UpdateChargePointRequest
 {
     public required Guid DepotId { get; set; }
-    public required Depot Depot { get; set; }
     public required string OcppProtocol { get; set; }
     public ChargePointRegistrationStatus RegistrationStatus { get; set; }
     public string? ChargePointVendor { get; set; }
@@ -18,12 +17,9 @@ public class ChargePoint : Entity, ITimeMarkable
     public string? Imsi { get; set; }
     public string? MeterType { get; set; }
     public string? MeterSerialNumber { get; set; }
-    
+
     public DateTime? DiagnosticsTimestamp { get; set; }
     public DateTime? LastHeartbeat { get; set; }
-    
+
     public string? Description { get; set; }
-    
-    public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
 }
