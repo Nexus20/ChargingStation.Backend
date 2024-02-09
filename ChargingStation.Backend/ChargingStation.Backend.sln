@@ -21,7 +21,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{9F19
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Gateway", "ChargingStation.Gateway\ChargingStation.Gateway.csproj", "{B4F30AA3-6790-4D46-936E-E957D7F8B2BE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.ChargePoints", "API\ChargingStation.ChargePoints\ChargingStation.ChargePoints.csproj", "{EDD433C2-1E80-46DC-AFF7-7C63D67AC23B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.ChargePoints", "API\ChargingStation.ChargePoints\ChargingStation.ChargePoints.csproj", "{EDD433C2-1E80-46DC-AFF7-7C63D67AC23B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
