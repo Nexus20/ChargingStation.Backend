@@ -9,6 +9,7 @@ public static class ServicesExtensions
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddScoped<IDepotService, DepotService>();
+
         return services;
     }
 }
