@@ -22,7 +22,9 @@ public class ChargePointService : IChargePointService
 
     public async Task<IPagedCollection<ChargePointResponse>> GetAsync(GetChargePoint request, CancellationToken cancellationToken = default)
     {
-        var chargePoints = await _chargePointRepository.GetPagedCollectionAsync(new GetChargePointsSpecification(), request.PagePredicate?.Page, request.PagePredicate?.PageSize, cancellationToken: cancellationToken);
+        var specification = new GetChargePointsSpecification(request);
+
+        var chargePoints = await _chargePointRepository.GetPagedCollectionAsync(specification, request.PagePredicate?.Page, request.PagePredicate?.PageSize, cancellationToken: cancellationToken);
 
         if (!chargePoints.Collection.Any())
             return PagedCollection<ChargePointResponse>.Empty;
