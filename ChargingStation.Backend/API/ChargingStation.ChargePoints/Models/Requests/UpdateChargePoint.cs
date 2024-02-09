@@ -4,6 +4,7 @@ namespace ChargingStation.ChargePoints.Models.Requests;
 
 public class UpdateChargePoint
 {
+    public Guid Id { get; set; }
     public required Guid DepotId { get; set; }
     public required string OcppProtocol { get; set; }
     public ChargePointRegistrationStatus RegistrationStatus { get; set; }

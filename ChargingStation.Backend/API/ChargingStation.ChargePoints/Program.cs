@@ -1,3 +1,4 @@
+using ChargingStation.ChargePoints.Extensions;
 using ChargingStation.ChargePoints.Middlewares;
 using ChargingStation.Infrastructure;
 
@@ -5,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddChargePointServices();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
