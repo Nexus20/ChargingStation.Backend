@@ -3,6 +3,7 @@ using ChargingStation.ChargePoints.Models.Responses;
 using ChargingStation.Common.Models;
 
 namespace ChargingStation.ChargePoints.Services;
+
 public interface IChargePointService
 {
     Task<IPagedCollection<ChargePointResponse>> GetAsync(GetChargePoint request, CancellationToken cancellationToken = default);

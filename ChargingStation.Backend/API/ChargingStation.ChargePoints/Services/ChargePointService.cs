@@ -8,6 +8,7 @@ using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 
 namespace ChargingStation.ChargePoints.Services;
+
 public class ChargePointService : IChargePointService
 {
     private readonly IRepository<ChargePoint> _chargePointRepository;
@@ -18,7 +19,6 @@ public class ChargePointService : IChargePointService
         _chargePointRepository = chargePointRepository;
         _mapper = mapper;
     }
-
 
     public async Task<IPagedCollection<ChargePointResponse>> GetAsync(GetChargePoint request, CancellationToken cancellationToken = default)
     {
