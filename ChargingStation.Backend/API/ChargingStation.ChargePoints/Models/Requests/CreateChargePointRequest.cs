@@ -1,6 +1,4 @@
-﻿using ChargingStation.Common.Messages_OCPP20;
-
-namespace ChargingStation.ChargePoints.Models.Requests;
+﻿namespace ChargingStation.ChargePoints.Models.Requests;
 
 public class CreateChargePointRequest
 {
