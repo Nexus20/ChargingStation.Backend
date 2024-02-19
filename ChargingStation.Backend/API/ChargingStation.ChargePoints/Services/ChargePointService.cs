@@ -48,6 +48,7 @@ public class ChargePointService : IChargePointService
     {
         var createdChargePoint = _mapper.Map<ChargePoint>(chargePoint);
         await _chargePointRepository.AddAsync(createdChargePoint, cancellationToken);
+        await _chargePointRepository.SaveChangesAsync(cancellationToken);
 
         var result = _mapper.Map<ChargePointResponse>(createdChargePoint);
         return result;
@@ -62,7 +63,9 @@ public class ChargePointService : IChargePointService
 
         _mapper.Map(chargePoint, chargePointToUpdate);
         _chargePointRepository.Update(chargePointToUpdate);
-
+        
+        await _chargePointRepository.SaveChangesAsync(cancellationToken);
+        
         var result = _mapper.Map<ChargePointResponse>(chargePointToUpdate);
         return result;
     }
@@ -75,5 +78,7 @@ public class ChargePointService : IChargePointService
             throw new NotFoundException(nameof(ChargePoint), id);
 
         _chargePointRepository.Remove(chargePointToRemove);
+        
+        await _chargePointRepository.SaveChangesAsync(cancellationToken);
     }
 }
