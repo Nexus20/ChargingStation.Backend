@@ -58,7 +58,6 @@ public class DepotService : IDepotService
 
         var createdDepot = _mapper.Map<Depot>(depot);
         await _depotRepository.AddAsync(createdDepot, cancellationToken);
-        await _depotRepository.SaveChangesAsync(cancellationToken);
 
         var result = _mapper.Map<DepotResponse>(createdDepot);
         return result;
@@ -73,7 +72,6 @@ public class DepotService : IDepotService
 
         _mapper.Map(depot, depotToUpdate);
         _depotRepository.Update(depotToUpdate);
-        await _depotRepository.SaveChangesAsync(cancellationToken);
 
         var result = _mapper.Map<DepotResponse>(depotToUpdate);
         return result;
@@ -87,6 +85,5 @@ public class DepotService : IDepotService
             throw new NotFoundException(nameof(Depot), id);
 
         _depotRepository.Remove(depotToRemove);
-        await _depotRepository.SaveChangesAsync(cancellationToken);
     }
 }

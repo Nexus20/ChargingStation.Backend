@@ -1,5 +1,5 @@
-﻿using ChargingStation.Common.Messages_OCPP20;
-using ChargingStation.Common.Models.Requests;
+﻿using ChargingStation.Common.Models.Requests;
+using ChargingStation.Domain.Entities;
 
 namespace ChargingStation.ChargePoints.Models.Requests
 {
@@ -7,7 +7,7 @@ namespace ChargingStation.ChargePoints.Models.Requests
     {
         public Guid DepotId { get; set; }
         public string OcppProtocol { get; set; } = null!;
-        public RegistrationStatus? RegistrationStatus { get; set; }
+        public ChargePointRegistrationStatus? RegistrationStatus { get; set; }
         public string? ChargePointVendor { get; set; }
         public string? ChargePointModel { get; set; }
         public string? ChargePointSerialNumber { get; set; }

@@ -23,10 +23,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Gateway", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.ChargePoints", "API\ChargingStation.ChargePoints\ChargingStation.ChargePoints.csproj", "{EDD433C2-1E80-46DC-AFF7-7C63D67AC23B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.WebSockets", "API\ChargingStation.WebSockets\ChargingStation.WebSockets.csproj", "{76BB47F8-38A9-4F41-94F8-715287899BD0}"
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{C5E7EBF7-2016-4030-8368-42B90E16AF6A}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,14 +53,6 @@ Global
 		{EDD433C2-1E80-46DC-AFF7-7C63D67AC23B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EDD433C2-1E80-46DC-AFF7-7C63D67AC23B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EDD433C2-1E80-46DC-AFF7-7C63D67AC23B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{76BB47F8-38A9-4F41-94F8-715287899BD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{76BB47F8-38A9-4F41-94F8-715287899BD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{76BB47F8-38A9-4F41-94F8-715287899BD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{76BB47F8-38A9-4F41-94F8-715287899BD0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C5E7EBF7-2016-4030-8368-42B90E16AF6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C5E7EBF7-2016-4030-8368-42B90E16AF6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C5E7EBF7-2016-4030-8368-42B90E16AF6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C5E7EBF7-2016-4030-8368-42B90E16AF6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -76,7 +64,6 @@ Global
 		{3A10EEEC-99BA-4AD7-ABE5-AA062725BCF3} = {721F32B6-1C39-41E3-8F0E-83D1EC92B4DE}
 		{B4F30AA3-6790-4D46-936E-E957D7F8B2BE} = {9F195BD9-461A-4E26-8EC9-F32C7B9AE4C7}
 		{EDD433C2-1E80-46DC-AFF7-7C63D67AC23B} = {6545E985-58B5-4590-B765-B7CD27628D0B}
-		{76BB47F8-38A9-4F41-94F8-715287899BD0} = {6545E985-58B5-4590-B765-B7CD27628D0B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A063F0C5-38BF-495E-8B72-2E7F00C1C4DE}

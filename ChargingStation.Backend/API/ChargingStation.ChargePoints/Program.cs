@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddChargePointServices(builder.Configuration);
+builder.Services.AddChargePointServices();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -28,5 +28,4 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.SeedDatabase();
 app.Run();
