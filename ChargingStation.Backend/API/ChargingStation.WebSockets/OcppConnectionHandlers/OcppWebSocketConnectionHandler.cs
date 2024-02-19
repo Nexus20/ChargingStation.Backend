@@ -26,8 +26,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
     private readonly ILogger<OcppWebSocketConnectionHandler> _logger;
     private readonly IChargePointCommunicationService _chargePointCommunicationService;
     private static ConcurrentDictionary<Guid, ChargePointInfo> _activeChargePoint = new ();
-    private Dictionary<string, OcppMessage> _requestQueue = new();
-    
+
     private readonly IOcppMessageHandlerProvider _ocppMessageHandlerProvider;
     private string _subProtocol;
 
