@@ -1,7 +1,6 @@
-﻿namespace ChargingStation.ChargePoints.Models.Responses
+﻿namespace ChargingStation.ChargePoints.Models.Responses;
+
+public abstract class BaseResponse
 {
-    public abstract class BaseResponse
-    {
-        public Guid Id { get; set; }
-    }
+    public Guid Id { get; set; }
 }
