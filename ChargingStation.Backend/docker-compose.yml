@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+  
+#  chargingstation.depots:
+#    image: ${DOCKER_REGISTRY-}chargingstationdepots
+#    build:
+#      context: .
+#      dockerfile: API/ChargingStation.Depots/Dockerfile
