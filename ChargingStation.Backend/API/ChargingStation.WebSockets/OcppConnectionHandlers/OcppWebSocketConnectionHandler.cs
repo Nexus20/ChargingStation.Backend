@@ -44,7 +44,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
         var chargePointId = Guid.Parse(requestParts[^1]);
         
         await _chargePointCommunicationService.CheckChargePointPresenceAsync(chargePointId);
-        var protocolValidationResult = CheckProtocolAsync(context);
+        var protocolValidationResult = CheckProtocol(context);
         
         if (protocolValidationResult != null)
         {
@@ -303,7 +303,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
         await socket.CloseOutputAsync(WebSocketCloseStatus.ProtocolError, protocolValidationResult, CancellationToken.None);
     }
 
-    private string? CheckProtocolAsync(HttpContext httpContext)
+    private string? CheckProtocol(HttpContext httpContext)
     {
         var ocppProtocols = httpContext.WebSockets.WebSocketRequestedProtocols;
         if (ocppProtocols.Count == 0)
