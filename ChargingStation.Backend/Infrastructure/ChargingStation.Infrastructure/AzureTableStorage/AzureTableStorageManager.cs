@@ -37,7 +37,7 @@ namespace ChargingStation.Infrastructure.AzureTableStorage
             return await tableClient.QueryAsync<T>().ToListAsync();
         }
 
-        public async Task UpdateEntityAsync(T entity)
+        public async Task UpsertEntityAsync(T entity)
         {
             var tableClient = GetTableClient();
             await tableClient.UpsertEntityAsync(entity);

@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Azure.Data.Tables;
+using System;
 
 namespace ChargingStation.Infrastructure.AzureTableStorage
 {
@@ -10,12 +11,28 @@ namespace ChargingStation.Infrastructure.AzureTableStorage
         public DateTimeOffset? Timestamp { get; set; }
         public ETag ETag { get; set; }
 
-        BaseTableStorageEntity(string partitionKey, string rowKey, DateTimeOffset? timestamp, ETag eTag)
+        public BaseTableStorageEntity(string partitionKey, ETag eTag)
         {
             PartitionKey = partitionKey;
-            RowKey = rowKey;
-            Timestamp = timestamp;
+            Timestamp = DateTimeOffset.UtcNow;
+            RowKey = GenerateRowKey(Timestamp.Value);
             ETag = eTag;
+        }
+
+        public BaseTableStorageEntity(string partitionKey)
+        {
+            PartitionKey = partitionKey;
+            Timestamp = DateTimeOffset.UtcNow;
+            RowKey = GenerateRowKey(Timestamp.Value);
+        }
+
+        private string GenerateRowKey(DateTimeOffset timestamp)
+        {
+            long ticksDifference = DateTime.MaxValue.Ticks - timestamp.Ticks;
+
+            string rowKey = ticksDifference.ToString("d19");
+
+            return rowKey;
         }
     }
 }
