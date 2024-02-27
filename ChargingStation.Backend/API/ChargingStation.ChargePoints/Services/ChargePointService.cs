@@ -44,24 +44,24 @@ public class ChargePointService : IChargePointService
         return result;
     }
 
-    public async Task<ChargePointResponse> CreateAsync(CreateChargePointRequest chargePoint, CancellationToken cancellationToken = default)
+    public async Task<ChargePointResponse> CreateAsync(CreateChargePointRequest createChargePointRequest, CancellationToken cancellationToken = default)
     {
-        var createdChargePoint = _mapper.Map<ChargePoint>(chargePoint);
-        await _chargePointRepository.AddAsync(createdChargePoint, cancellationToken);
+        var chargePointToCreate = _mapper.Map<ChargePoint>(createChargePointRequest);
+        await _chargePointRepository.AddAsync(chargePointToCreate, cancellationToken);
         await _chargePointRepository.SaveChangesAsync(cancellationToken);
 
-        var result = _mapper.Map<ChargePointResponse>(createdChargePoint);
+        var result = _mapper.Map<ChargePointResponse>(chargePointToCreate);
         return result;
     }
 
-    public async Task<ChargePointResponse> UpdateAsync(UpdateChargePointRequest chargePoint, CancellationToken cancellationToken = default)
+    public async Task<ChargePointResponse> UpdateAsync(UpdateChargePointRequest updateChargePointRequest, CancellationToken cancellationToken = default)
     {
-        var chargePointToUpdate = await _chargePointRepository.GetByIdAsync(chargePoint.Id, cancellationToken);
+        var chargePointToUpdate = await _chargePointRepository.GetByIdAsync(updateChargePointRequest.Id, cancellationToken);
 
         if (chargePointToUpdate is null)
-            throw new NotFoundException(nameof(ChargePoint), chargePoint.Id);
+            throw new NotFoundException(nameof(ChargePoint), updateChargePointRequest.Id);
 
-        _mapper.Map(chargePoint, chargePointToUpdate);
+        _mapper.Map(updateChargePointRequest, chargePointToUpdate);
         _chargePointRepository.Update(chargePointToUpdate);
         
         await _chargePointRepository.SaveChangesAsync(cancellationToken);

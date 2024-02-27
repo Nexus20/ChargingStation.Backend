@@ -1,3 +1,4 @@
+using System.Text;
 using Newtonsoft.Json;
 
 namespace ChargingStation.Common.Models;
@@ -25,5 +26,11 @@ public sealed class ResponseIntegrationOcppMessage : IntegrationOcppMessage<stri
     public ResponseIntegrationOcppMessage(Guid chargePointId, string payload, string ocppMessageId, string ocppProtocol) 
         : base(chargePointId, JsonConvert.SerializeObject(payload), ocppMessageId, ocppProtocol)
     {
+    }
+    
+    public static ResponseIntegrationOcppMessage Create<TMessage>(Guid chargePointId, TMessage payload, string ocppMessageId, string ocppProtocol) where TMessage : class
+    {
+        var payloadBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload)));
+        return new ResponseIntegrationOcppMessage(chargePointId, payloadBase64, ocppMessageId, ocppProtocol);
     }
 }
