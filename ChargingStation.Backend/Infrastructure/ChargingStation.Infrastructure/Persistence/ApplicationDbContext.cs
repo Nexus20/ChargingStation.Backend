@@ -10,6 +10,7 @@ public class ApplicationDbContext : DbContext {
 
     public required DbSet<Depot> Depots { get; set; } 
     public required DbSet<ChargePoint> ChargePoints { get; set; }
+    public required DbSet<OcppTag> OcppTags { get; set; }
     
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {

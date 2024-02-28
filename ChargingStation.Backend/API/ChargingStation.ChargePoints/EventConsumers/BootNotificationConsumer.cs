@@ -56,11 +56,7 @@ public class BootNotificationConsumer : IConsumer<IntegrationOcppMessage<BootNot
             Status = BootNotificationResponseStatus.Accepted
         };
         
-        var payload = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(response)));
-        
-        var integrationMessage = new ResponseIntegrationOcppMessage(chargePointId, 
-            payload,
-            context.Message.OcppMessageId, ocppProtocol);
+        var integrationMessage = ResponseIntegrationOcppMessage.Create(chargePointId, response, context.Message.OcppMessageId, ocppProtocol);
         
         await _publishEndpoint.Publish(integrationMessage, context.CancellationToken);
         

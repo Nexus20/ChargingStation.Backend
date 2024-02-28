@@ -35,6 +35,7 @@ public static class ServicesExtensions
         });
 
         services.AddScoped<IOcppMessageHandler, BootNotificationMessageHandler>();
+        services.AddScoped<IOcppMessageHandler, AuthorizeMessageHandler>();
         services.AddScoped<IOcppMessageHandlerProvider, OcppMessageHandlerProvider>();
         services.AddScoped<IOcppWebSocketConnectionHandler, OcppWebSocketConnectionHandler>();
 

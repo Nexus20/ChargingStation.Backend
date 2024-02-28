@@ -22,4 +22,5 @@ public static class Ocpp20MessageTypes
 public static class Ocpp16MessageTypes
 {
     public const string BootNotification = nameof(BootNotification);
+    public const string Authorize = nameof(Authorize);
 }
