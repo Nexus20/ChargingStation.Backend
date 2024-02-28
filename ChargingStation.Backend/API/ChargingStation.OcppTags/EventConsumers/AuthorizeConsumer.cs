@@ -9,13 +9,13 @@ namespace ChargingStation.OcppTags.EventConsumers;
 public class AuthorizeConsumer : IConsumer<IntegrationOcppMessage<AuthorizeRequest>>
 {
     private readonly ILogger<AuthorizeConsumer> _logger;
-    private readonly IOcppTagService _chargePointService;
+    private readonly IOcppTagService _ocppTagService;
     private readonly IPublishEndpoint _publishEndpoint;
 
-    public AuthorizeConsumer(ILogger<AuthorizeConsumer> logger, IOcppTagService chargePointService, IPublishEndpoint publishEndpoint)
+    public AuthorizeConsumer(ILogger<AuthorizeConsumer> logger, IOcppTagService ocppTagService, IPublishEndpoint publishEndpoint)
     {
         _logger = logger;
-        _chargePointService = chargePointService;
+        _ocppTagService = ocppTagService;
         _publishEndpoint = publishEndpoint;
     }
 
@@ -31,7 +31,7 @@ public class AuthorizeConsumer : IConsumer<IntegrationOcppMessage<AuthorizeReque
         var idTag = OcppTagHelper.CleanChargeTagId(incomingRequest.IdTag, _logger);
         response.IdTagInfo.ExpiryDate = DateTimeOffset.UtcNow.AddMinutes(5);   // default: 5 minutes
         
-        var ocppTag = await _chargePointService.GetByOcppTagIdAsync(idTag);
+        var ocppTag = await _ocppTagService.GetByOcppTagIdAsync(idTag);
         
         if (ocppTag != null)
         {
