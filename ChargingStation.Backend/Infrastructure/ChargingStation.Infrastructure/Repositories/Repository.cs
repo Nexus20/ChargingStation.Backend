@@ -11,24 +11,24 @@ namespace ChargingStation.Infrastructure.Repositories;
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
 {
     private readonly ApplicationDbContext _dbContext;
-    private readonly DbSet<TEntity> _dbSet;
+    protected readonly DbSet<TEntity> DbSet;
 
     public Repository(ApplicationDbContext dbContext)
     {
         _dbContext = dbContext;
-        _dbSet = dbContext.Set<TEntity>();
+        DbSet = dbContext.Set<TEntity>();
     }
 
     public async Task<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var entity = await _dbSet.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
+        var entity = await DbSet.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         return entity;
     }
 
     public async Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken = default)
     {
-        var entities = await _dbSet.ToListAsync(cancellationToken);
+        var entities = await DbSet.ToListAsync(cancellationToken);
 
         return entities;
     }
@@ -37,7 +37,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
             IOrderedQueryable<TEntity>>? orderBy = null, string? includeProperties = null, bool isTracking = true, 
             CancellationToken cancellationToken = default)
     {
-        IQueryable<TEntity> query = _dbSet;
+        IQueryable<TEntity> query = DbSet;
 
         if (filter != null)
             query = query.Where(filter);
@@ -61,20 +61,20 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
 
     public Task<List<TEntity>> GetAsync(Specification<TEntity> specification, CancellationToken cancellationToken = default)
     {
-        IQueryable<TEntity> query = _dbSet;
+        IQueryable<TEntity> query = DbSet;
         return query.ApplySpecifications(specification).ToListAsync(cancellationToken);
     }
 
     public Task<TEntity?> GetFirstOrDefaultAsync(Specification<TEntity> specification, CancellationToken cancellationToken = default)
     {
-        IQueryable<TEntity> query = _dbSet;
+        IQueryable<TEntity> query = DbSet;
         return query.ApplySpecifications(specification).FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<IPagedCollection<TEntity>> GetPagedCollectionAsync(Specification<TEntity> specification, int? pageNumber = 1, int? pageSize = null, bool applyTracking = false,
         CancellationToken cancellationToken = default)
     {
-        IQueryable<TEntity> query = _dbSet;
+        IQueryable<TEntity> query = DbSet;
         var totalCollectionCount = await query.ApplySpecifications(specification).CountAsync(cancellationToken: cancellationToken);
         
         var page = pageNumber ?? 1;
@@ -95,32 +95,32 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
 
     public Task AddAsync(TEntity entity, CancellationToken cancellationToken = default)
     {
-        return _dbSet.AddAsync(entity, cancellationToken).AsTask();
+        return DbSet.AddAsync(entity, cancellationToken).AsTask();
     }
 
     public Task AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken = default)
     {
-        return _dbSet.AddRangeAsync(entities, cancellationToken);
+        return DbSet.AddRangeAsync(entities, cancellationToken);
     }
 
     public void Update(TEntity entity)
     {
-        _dbSet.Update(entity);
+        DbSet.Update(entity);
     }
 
     public void UpdateRange(IEnumerable<TEntity> entities)
     {
-        _dbSet.UpdateRange(entities);
+        DbSet.UpdateRange(entities);
     }
 
     public void Remove(TEntity entity)
     {
-        _dbSet.Remove(entity);
+        DbSet.Remove(entity);
     }
 
     public void RemoveRange(IEnumerable<TEntity> entities)
     {
-        _dbSet.RemoveRange(entities);
+        DbSet.RemoveRange(entities);
     }
     
     public Task SaveChangesAsync(CancellationToken cancellationToken = default)

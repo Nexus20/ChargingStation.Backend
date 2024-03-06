@@ -2,7 +2,7 @@
 #pragma warning disable // Disable all warnings
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.1.0 (Newtonsoft.Json v9.0.0.0)")]
-public partial class StatusNotificationRequest
+public class StatusNotificationRequest
 {
     [Newtonsoft.Json.JsonProperty("connectorId", Required = Newtonsoft.Json.Required.Always)]
     public int ConnectorId { get; set; }
@@ -22,7 +22,7 @@ public partial class StatusNotificationRequest
     public StatusNotificationRequestStatus Status { get; set; }
 
     [Newtonsoft.Json.JsonProperty("timestamp", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-    public System.DateTimeOffset? Timestamp { get; set; }
+    public DateTimeOffset? Timestamp { get; set; }
 
     [Newtonsoft.Json.JsonProperty("vendorId", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(255)]
@@ -31,8 +31,6 @@ public partial class StatusNotificationRequest
     [Newtonsoft.Json.JsonProperty("vendorErrorCode", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(50)]
     public string VendorErrorCode { get; set; }
-
-
 }
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.1.0 (Newtonsoft.Json v9.0.0.0)")]

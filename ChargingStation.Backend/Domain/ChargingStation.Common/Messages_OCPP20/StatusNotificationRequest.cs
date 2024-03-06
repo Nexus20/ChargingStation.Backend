@@ -20,7 +20,6 @@ public enum ConnectorStatusEnumType
 
     [System.Runtime.Serialization.EnumMember(Value = @"Faulted")]
     Faulted = 4,
-
 }
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.1.0 (Newtonsoft.Json v9.0.0.0)")]

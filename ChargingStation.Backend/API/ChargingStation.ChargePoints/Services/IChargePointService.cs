@@ -11,5 +11,6 @@ public interface IChargePointService
     Task<ChargePointResponse> CreateAsync(CreateChargePointRequest createChargePointRequest, CancellationToken cancellationToken = default);
     Task<ChargePointResponse> UpdateAsync(UpdateChargePointRequest updateChargePointRequest, CancellationToken cancellationToken = default);
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    Task ResetAsync(ResetChargePointRequest request, CancellationToken cancellationToken);
 }
 

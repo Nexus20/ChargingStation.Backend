@@ -89,6 +89,124 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.ToTable("ChargePoints");
                 });
 
+            modelBuilder.Entity("ChargingStation.Domain.Entities.Connector", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChargePointId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ConnectorId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ConnectorId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChargePointId", "ConnectorId")
+                        .IsUnique();
+
+                    b.ToTable("Connectors");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ConnectorMeterValue", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ConnectorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Format")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Location")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Measurand")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("MeterValueTimestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Phase")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TransactionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Unit")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConnectorId");
+
+                    b.HasIndex("TransactionId");
+
+                    b.ToTable("ConnectorMeterValue");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ConnectorStatus", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ConnectorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CurrentStatus")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ErrorCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Info")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("StatusUpdatedTimestamp")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("VendorErrorCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("VendorId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConnectorId");
+
+                    b.ToTable("ConnectorStatus");
+                });
+
             modelBuilder.Entity("ChargingStation.Domain.Entities.Depot", b =>
                 {
                     b.Property<Guid>("Id")
@@ -154,11 +272,13 @@ namespace ChargingStation.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ParentTagId")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("TagId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -169,6 +289,75 @@ namespace ChargingStation.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("OcppTags");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.OcppTransaction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ChargePointId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ConnectorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("MeterStart")
+                        .HasColumnType("float");
+
+                    b.Property<double?>("MeterStop")
+                        .HasColumnType("float");
+
+                    b.Property<string>("StartResult")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("StartTagId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("StopReason")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("StopTagId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("StopTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("TransactionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
+
+                    b.Property<string>("Uid")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChargePointId");
+
+                    b.HasIndex("ConnectorId");
+
+                    b.ToTable("Transactions");
                 });
 
             modelBuilder.Entity("ChargingStation.Domain.Entities.ChargePoint", b =>
@@ -182,9 +371,84 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.Navigation("Depot");
                 });
 
+            modelBuilder.Entity("ChargingStation.Domain.Entities.Connector", b =>
+                {
+                    b.HasOne("ChargingStation.Domain.Entities.ChargePoint", "ChargePoint")
+                        .WithMany("Connectors")
+                        .HasForeignKey("ChargePointId")
+                        .IsRequired()
+                        .HasConstraintName("FK_Connectors_ChargePoint");
+
+                    b.Navigation("ChargePoint");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ConnectorMeterValue", b =>
+                {
+                    b.HasOne("ChargingStation.Domain.Entities.Connector", "Connector")
+                        .WithMany("ConnectorMeterValues")
+                        .HasForeignKey("ConnectorId")
+                        .IsRequired()
+                        .HasConstraintName("FK_ConnectorMeterValues_Connector");
+
+                    b.HasOne("ChargingStation.Domain.Entities.OcppTransaction", "Transaction")
+                        .WithMany("ConnectorMeterValues")
+                        .HasForeignKey("TransactionId")
+                        .IsRequired()
+                        .HasConstraintName("FK_ConnectorMeterValues_Transaction");
+
+                    b.Navigation("Connector");
+
+                    b.Navigation("Transaction");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ConnectorStatus", b =>
+                {
+                    b.HasOne("ChargingStation.Domain.Entities.Connector", "Connector")
+                        .WithMany("ConnectorStatuses")
+                        .HasForeignKey("ConnectorId")
+                        .IsRequired()
+                        .HasConstraintName("FK_ConnectorStatuses_Connector");
+
+                    b.Navigation("Connector");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.OcppTransaction", b =>
+                {
+                    b.HasOne("ChargingStation.Domain.Entities.ChargePoint", null)
+                        .WithMany("Transactions")
+                        .HasForeignKey("ChargePointId");
+
+                    b.HasOne("ChargingStation.Domain.Entities.Connector", "Connector")
+                        .WithMany()
+                        .HasForeignKey("ConnectorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Connector");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ChargePoint", b =>
+                {
+                    b.Navigation("Connectors");
+
+                    b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.Connector", b =>
+                {
+                    b.Navigation("ConnectorMeterValues");
+
+                    b.Navigation("ConnectorStatuses");
+                });
+
             modelBuilder.Entity("ChargingStation.Domain.Entities.Depot", b =>
                 {
                     b.Navigation("ChargePoints");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.OcppTransaction", b =>
+                {
+                    b.Navigation("ConnectorMeterValues");
                 });
 #pragma warning restore 612, 618
         }

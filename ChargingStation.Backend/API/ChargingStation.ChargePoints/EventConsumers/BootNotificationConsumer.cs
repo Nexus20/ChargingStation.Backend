@@ -1,10 +1,8 @@
-﻿using System.Text;
-using ChargingStation.ChargePoints.Models.Requests;
+﻿using ChargingStation.ChargePoints.Models.Requests;
 using ChargingStation.ChargePoints.Services;
 using ChargingStation.Common.Messages_OCPP16;
 using ChargingStation.Common.Models;
 using MassTransit;
-using Newtonsoft.Json;
 
 namespace ChargingStation.ChargePoints.EventConsumers;
 

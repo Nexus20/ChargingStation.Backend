@@ -11,7 +11,7 @@ namespace ChargingStation.WebSockets.Extensions;
 
 public static class ServicesExtensions
 {
-    public static IServiceCollection AddChargePointServices(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddOcppCommunicationServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddHttpClient<IChargePointCommunicationService, ChargePointCommunicationService>(c =>
         {
@@ -36,6 +36,12 @@ public static class ServicesExtensions
 
         services.AddScoped<IOcppMessageHandler, BootNotificationMessageHandler>();
         services.AddScoped<IOcppMessageHandler, AuthorizeMessageHandler>();
+        services.AddScoped<IOcppMessageHandler, DataTransferMessageHandler>();
+        services.AddScoped<IOcppMessageHandler, MeterValuesMessageHandler>();
+        services.AddScoped<IOcppMessageHandler, StartTransactionMessageHandler>();
+        services.AddScoped<IOcppMessageHandler, StatusNotificationMessageHandler>();
+        services.AddScoped<IOcppMessageHandler, StopTransactionMessageHandler>();
+        
         services.AddScoped<IOcppMessageHandlerProvider, OcppMessageHandlerProvider>();
         services.AddScoped<IOcppWebSocketConnectionHandler, OcppWebSocketConnectionHandler>();
 

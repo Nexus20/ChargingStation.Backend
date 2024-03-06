@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Schema;
 
-namespace ChargingStation.WebSockets.Middlewares;
+namespace ChargingStation.WebSockets.Models;
 
 public class JsonValidationResponse
 {

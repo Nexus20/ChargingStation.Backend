@@ -27,4 +27,6 @@ public class ChargePoint : Entity, ITimeMarkable
     
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    public List<OcppTransaction>? Transactions { get; set; }
+    public List<Connector>? Connectors { get; set; }
 }
