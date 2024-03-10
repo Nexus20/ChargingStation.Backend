@@ -10,7 +10,7 @@ public interface IOcpp16Response : IOcppResponse
 }
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.1.0 (Newtonsoft.Json v9.0.0.0)")]
-public partial class BootNotificationResponse : IOcpp16Response
+public class BootNotificationResponse : IOcpp16Response
 {
     [Newtonsoft.Json.JsonProperty("status", Required = Newtonsoft.Json.Required.Always)]
     [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
@@ -19,7 +19,7 @@ public partial class BootNotificationResponse : IOcpp16Response
 
     [Newtonsoft.Json.JsonProperty("currentTime", Required = Newtonsoft.Json.Required.Always)]
     [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-    public System.DateTimeOffset CurrentTime { get; set; }
+    public DateTimeOffset CurrentTime { get; set; }
 
     /// <summary>
     /// Heartbeat interval in seconds

@@ -2,10 +2,13 @@
 using ChargingStation.ChargePoints.Models.Requests;
 using ChargingStation.ChargePoints.Models.Responses;
 using ChargingStation.ChargePoints.Specifications;
+using ChargingStation.Common.Constants;
 using ChargingStation.Common.Exceptions;
+using ChargingStation.Common.Messages_OCPP16;
 using ChargingStation.Common.Models;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
+using MassTransit;
 
 namespace ChargingStation.ChargePoints.Services;
 
@@ -13,11 +16,15 @@ public class ChargePointService : IChargePointService
 {
     private readonly IRepository<ChargePoint> _chargePointRepository;
     private readonly IMapper _mapper;
+    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly ILogger<ChargePointService> _logger;
 
-    public ChargePointService(IRepository<ChargePoint> chargePointRepository, IMapper mapper)
+    public ChargePointService(IRepository<ChargePoint> chargePointRepository, IMapper mapper, IPublishEndpoint publishEndpoint, ILogger<ChargePointService> logger)
     {
         _chargePointRepository = chargePointRepository;
         _mapper = mapper;
+        _publishEndpoint = publishEndpoint;
+        _logger = logger;
     }
 
     public async Task<IPagedCollection<ChargePointResponse>> GetAsync(GetChargePointRequest request, CancellationToken cancellationToken = default)
@@ -80,5 +87,24 @@ public class ChargePointService : IChargePointService
         _chargePointRepository.Remove(chargePointToRemove);
         
         await _chargePointRepository.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task ResetAsync(ResetChargePointRequest request, CancellationToken cancellationToken)
+    {
+        _logger.LogInformation("Reset request received for charge point with id {ChargePointId}", request.ChargePointId);
+        var chargePoint = await _chargePointRepository.GetByIdAsync(request.ChargePointId, cancellationToken);
+
+        if (chargePoint is null)
+            throw new NotFoundException(nameof(ChargePoint), request.ChargePointId);   
+        
+        var resetRequest = new ResetRequest()
+        {
+            Type = request.ResetType
+        };
+
+        var integrationOcppMessage = new IntegrationOcppMessage<ResetRequest>(request.ChargePointId, resetRequest, Guid.NewGuid().ToString("N"), OcppProtocolVersions.Ocpp16);
+        
+        await _publishEndpoint.Publish(integrationOcppMessage, cancellationToken);
+        _logger.LogInformation("Reset request sent to charge point with id {ChargePointId}", request.ChargePointId);
     }
 }

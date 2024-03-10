@@ -2,7 +2,7 @@
 #pragma warning disable // Disable all warnings
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.1.0 (Newtonsoft.Json v9.0.0.0)")]
-public partial class StopTransactionRequest
+public class StopTransactionRequest
 {
     [Newtonsoft.Json.JsonProperty("idTag", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(20)]
@@ -13,7 +13,7 @@ public partial class StopTransactionRequest
 
     [Newtonsoft.Json.JsonProperty("timestamp", Required = Newtonsoft.Json.Required.Always)]
     [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-    public System.DateTimeOffset Timestamp { get; set; }
+    public DateTimeOffset Timestamp { get; set; }
 
     [Newtonsoft.Json.JsonProperty("transactionId", Required = Newtonsoft.Json.Required.Always)]
     public int TransactionId { get; set; }
@@ -23,7 +23,7 @@ public partial class StopTransactionRequest
     public StopTransactionRequestReason Reason { get; set; }
 
     [Newtonsoft.Json.JsonProperty("transactionData", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-    public System.Collections.Generic.ICollection<TransactionData> TransactionData { get; set; }
+    public ICollection<TransactionData> TransactionData { get; set; }
 
 
 }
@@ -67,21 +67,21 @@ public enum StopTransactionRequestReason
 }
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.1.0 (Newtonsoft.Json v9.0.0.0)")]
-public partial class TransactionData
+public class TransactionData
 {
     [Newtonsoft.Json.JsonProperty("timestamp", Required = Newtonsoft.Json.Required.Always)]
     [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
-    public System.DateTimeOffset Timestamp { get; set; }
+    public DateTimeOffset Timestamp { get; set; }
 
     [Newtonsoft.Json.JsonProperty("sampledValue", Required = Newtonsoft.Json.Required.Always)]
     [System.ComponentModel.DataAnnotations.Required]
-    public System.Collections.Generic.ICollection<SampledValue> SampledValue { get; set; } = new System.Collections.ObjectModel.Collection<SampledValue>();
+    public ICollection<SampledValue> SampledValue { get; set; } = new System.Collections.ObjectModel.Collection<SampledValue>();
 
 
 }
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.1.0 (Newtonsoft.Json v9.0.0.0)")]
-public partial class SampledValue
+public class SampledValue
 {
     [Newtonsoft.Json.JsonProperty("value", Required = Newtonsoft.Json.Required.Always)]
     [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]

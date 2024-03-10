@@ -3,8 +3,10 @@ using System.Net.WebSockets;
 using System.Text;
 using System.Text.RegularExpressions;
 using ChargingStation.Common.Constants;
+using ChargingStation.Common.Messages_OCPP16;
 using ChargingStation.Common.Models;
 using ChargingStation.WebSockets.Middlewares;
+using ChargingStation.WebSockets.Models;
 using ChargingStation.WebSockets.OcppMessageHandlers.Providers;
 using ChargingStation.WebSockets.Services;
 using Newtonsoft.Json;
@@ -112,7 +114,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
                 if (string.IsNullOrEmpty(messageOut.ErrorCode))
                 {
 
-                    if (messageOut.MessageType == "2")
+                    if (messageOut.MessageType == OcppMessageTypes.Call)
                     {
                         // OCPP-Request
                         ocppTextResponse = string.Format("[{0},\"{1}\",\"{2}\",{3}]", messageOut.MessageType,
@@ -135,6 +137,22 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
                 var responseBytes = Encoding.UTF8.GetBytes(ocppTextResponse);
                 var responseSegment = new ArraySegment<byte>(responseBytes, 0, responseBytes.Length);
                 await socket.SendAsync(responseSegment, WebSocketMessageType.Text, true, CancellationToken.None);
+            }
+        }
+    }
+
+    public async Task SendResetAsync(Guid chargePointId, ResetRequest incomingRequest)
+    {
+        if (_activeChargePoint.TryGetValue(chargePointId, out var chargePointInfo))
+        {
+            var socket = chargePointInfo.WebSocket;
+            
+            if (socket.State == WebSocketState.Open)
+            {
+                var resetRequest = new OcppMessage(OcppMessageTypes.Call, Guid.NewGuid().ToString(), Ocpp16MessageTypes.Reset, JsonConvert.SerializeObject(incomingRequest));
+                await SendResponseAsync(chargePointId, resetRequest);
+                
+                chargePointInfo.RequestDictionary.TryAdd(resetRequest.UniqueId, resetRequest);
             }
         }
     }
@@ -193,15 +211,31 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
 
             switch (incomingMessage.MessageType)
             {
-                case "2":
+                case OcppMessageTypes.Call:
                     // Process Request
                     var messageHandler = _ocppMessageHandlerProvider.GetHandler(action, _subProtocol);
                     await messageHandler.HandleAsync(incomingMessage, chargePointId);
                     break;
-                case "3":
-                    // Process Answer
+                case OcppMessageTypes.CallResult:
+                    
+                    if (_activeChargePoint.TryGetValue(chargePointId, out var chargePointInfo))
+                    {
+                        if (chargePointInfo.RequestDictionary.Remove(uniqueId, out var request))
+                        {
+                            // TODO: Handle charging station response
+                        }
+                        else
+                        {
+                            _logger.LogWarning("No active request with id {RequestId} found for charge point {ChargePointId}", uniqueId, chargePointId);
+                        }
+                    }
+                    else
+                    {
+                        _logger.LogWarning("No active charge point found for {ChargePointId}", chargePointId);
+                    }
+                    
                     break;
-                case "4":
+                case OcppMessageTypes.CallError:
                     // Process Error
                     break;
                 default:

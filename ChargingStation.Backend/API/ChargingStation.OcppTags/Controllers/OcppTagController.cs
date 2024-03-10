@@ -37,6 +37,20 @@ public class OcppTagController : ControllerBase
 
         return Ok(chargePoint);
     }
+    
+    [HttpGet("GetByTagId/{ocppTagId}")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(OcppTagResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> GetByOcppTagId(string ocppTagId, CancellationToken cancellationToken = default)
+    {
+        var chargePoint = await _ocppTagService.GetByOcppTagIdAsync(ocppTagId, cancellationToken);
+        
+        if (chargePoint is null)
+            return NoContent();
+
+        return Ok(chargePoint);
+    }
 
     [HttpPost]
     [Produces("application/json")]

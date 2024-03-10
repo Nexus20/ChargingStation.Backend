@@ -2,7 +2,7 @@
 #pragma warning disable // Disable all warnings
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.1.0 (Newtonsoft.Json v9.0.0.0)")]
-public partial class AuthorizeResponse
+public class AuthorizeResponse
 {
     [Newtonsoft.Json.JsonProperty("idTagInfo", Required = Newtonsoft.Json.Required.Always)]
     [System.ComponentModel.DataAnnotations.Required]
@@ -12,10 +12,10 @@ public partial class AuthorizeResponse
 }
 
 [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "10.3.1.0 (Newtonsoft.Json v9.0.0.0)")]
-public partial class IdTagInfo
+public class IdTagInfo
 {
     [Newtonsoft.Json.JsonProperty("expiryDate", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-    public System.DateTimeOffset ExpiryDate { get; set; }
+    public DateTimeOffset ExpiryDate { get; set; }
 
     [Newtonsoft.Json.JsonProperty("parentIdTag", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
     [System.ComponentModel.DataAnnotations.StringLength(20)]

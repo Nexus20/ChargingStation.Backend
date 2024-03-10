@@ -1,12 +1,13 @@
 ﻿using System.Net.WebSockets;
+using ChargingStation.Common.Models;
 
-namespace ChargingStation.WebSockets.Middlewares;
+namespace ChargingStation.WebSockets.Models;
 
 public class ChargePointInfo
 {
     public Guid ChargePointId { get; set; }
 
-    public Dictionary<string, string> RequestDictionary { get; set; } //Used for Central system initiated commands
+    public Dictionary<string, OcppMessage> RequestDictionary { get; set; } //Used for Central system initiated commands
 
     public Dictionary<string,object> ChargerResponse { get; set; } //Used for Central system initiated commands
 
@@ -22,7 +23,7 @@ public class ChargePointInfo
     {
         ChargePointId = chargePointId;
         WebSocket = webSocket;
-        RequestDictionary = new Dictionary<string, string>();
+        RequestDictionary = new Dictionary<string, OcppMessage>();
         ChargerResponse = new Dictionary<string, object>();
         WebsocketBusy = false;
         Authorized=false;
