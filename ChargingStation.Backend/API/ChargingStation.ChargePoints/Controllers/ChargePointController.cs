@@ -49,7 +49,7 @@ public class ChargePointController : ControllerBase
         return StatusCode(StatusCodes.Status201Created, createdChargePoint);
     }
     
-    [HttpPost]
+    [HttpPost("reset")]
     [Produces("application/json")]
     public async Task<IActionResult> ResetAsync([FromBody] ResetChargePointRequest request, CancellationToken cancellationToken = default)
     {
