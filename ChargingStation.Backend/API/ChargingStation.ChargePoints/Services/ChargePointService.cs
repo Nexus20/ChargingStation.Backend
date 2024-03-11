@@ -4,7 +4,7 @@ using ChargingStation.ChargePoints.Models.Responses;
 using ChargingStation.ChargePoints.Specifications;
 using ChargingStation.Common.Constants;
 using ChargingStation.Common.Exceptions;
-using ChargingStation.Common.Messages_OCPP16;
+using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Models;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
@@ -95,12 +95,9 @@ public class ChargePointService : IChargePointService
         var chargePoint = await _chargePointRepository.GetByIdAsync(request.ChargePointId, cancellationToken);
 
         if (chargePoint is null)
-            throw new NotFoundException(nameof(ChargePoint), request.ChargePointId);   
-        
-        var resetRequest = new ResetRequest()
-        {
-            Type = request.ResetType
-        };
+            throw new NotFoundException(nameof(ChargePoint), request.ChargePointId);
+
+        var resetRequest = new ResetRequest(request.ResetType);
 
         var integrationOcppMessage = new IntegrationOcppMessage<ResetRequest>(request.ChargePointId, resetRequest, Guid.NewGuid().ToString("N"), OcppProtocolVersions.Ocpp16);
         

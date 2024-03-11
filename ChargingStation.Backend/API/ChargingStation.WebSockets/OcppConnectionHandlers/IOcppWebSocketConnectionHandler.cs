@@ -1,4 +1,4 @@
-﻿using ChargingStation.Common.Messages_OCPP16;
+﻿using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Models;
 
 namespace ChargingStation.WebSockets.OcppConnectionHandlers;

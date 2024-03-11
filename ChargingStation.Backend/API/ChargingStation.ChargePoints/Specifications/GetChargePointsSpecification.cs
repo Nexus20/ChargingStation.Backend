@@ -49,7 +49,7 @@ public class GetChargePointsSpecification : Specification<ChargePoint>
         if (!string.IsNullOrEmpty(request.Description))
             AddFilter(с => с.Description != null && с.Description.Contains(request.Description));
 
-        if (request.RegistrationStatus.HasValue)
+        if (!string.IsNullOrEmpty(request.RegistrationStatus))
             AddFilter(с => с.RegistrationStatus == request.RegistrationStatus);
 
         if (request.FirmwareUpdateTimestamp.HasValue)

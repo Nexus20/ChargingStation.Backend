@@ -1,4 +1,5 @@
-﻿using ChargingStation.Common.Messages_OCPP16;
+﻿using ChargingStation.Common.Messages_OCPP16.Requests;
+using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Models;
 using ChargingStation.Transactions.Models.Requests;
 using ChargingStation.Transactions.Models.Responses;

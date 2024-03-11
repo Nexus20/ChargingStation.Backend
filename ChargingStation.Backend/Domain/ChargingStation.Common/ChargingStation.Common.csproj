@@ -10,4 +10,16 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Remove="Messages_OCPP20\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Messages_OCPP20\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Messages_OCPP20\**" />
+    </ItemGroup>
+
 </Project>

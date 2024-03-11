@@ -1,6 +1,5 @@
 ﻿using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Specifications;
-using ChargingStation.OcppTags.Models.Requests;
 using ChargingStation.Transactions.Models.Requests;
 
 namespace ChargingStation.Transactions.Specifications;

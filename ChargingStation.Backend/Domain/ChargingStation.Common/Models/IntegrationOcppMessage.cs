@@ -28,7 +28,7 @@ public sealed class ResponseIntegrationOcppMessage : IntegrationOcppMessage<stri
     {
     }
     
-    public static ResponseIntegrationOcppMessage Create<TMessage>(Guid chargePointId, TMessage payload, string ocppMessageId, string ocppProtocol) where TMessage : class
+    public static ResponseIntegrationOcppMessage Create<TMessage>(Guid chargePointId, TMessage payload, string ocppMessageId, string ocppProtocol)
     {
         var payloadBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload)));
         return new ResponseIntegrationOcppMessage(chargePointId, payloadBase64, ocppMessageId, ocppProtocol);

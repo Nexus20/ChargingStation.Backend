@@ -1,6 +1,5 @@
 ﻿using Azure;
 using Azure.Data.Tables;
-using System;
 
 namespace ChargingStation.Infrastructure.AzureTableStorage
 {

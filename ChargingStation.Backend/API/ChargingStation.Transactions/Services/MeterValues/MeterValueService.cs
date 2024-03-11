@@ -1,5 +1,7 @@
 ﻿using System.Globalization;
-using ChargingStation.Common.Messages_OCPP16;
+using ChargingStation.Common.Messages_OCPP16.Enums;
+using ChargingStation.Common.Messages_OCPP16.Requests;
+using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Connectors.Models.Requests;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;

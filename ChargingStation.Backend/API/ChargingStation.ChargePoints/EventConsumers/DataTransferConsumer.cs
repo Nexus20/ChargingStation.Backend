@@ -1,5 +1,7 @@
 ﻿using ChargingStation.ChargePoints.Services;
-using ChargingStation.Common.Messages_OCPP16;
+using ChargingStation.Common.Messages_OCPP16.Requests;
+using ChargingStation.Common.Messages_OCPP16.Responses;
+using ChargingStation.Common.Messages_OCPP16.Responses.Enums;
 using ChargingStation.Common.Models;
 using MassTransit;
 
@@ -33,9 +35,8 @@ public class DataTransferConsumer : IConsumer<IntegrationOcppMessage<DataTransfe
 
             var chargePoint = await _chargePointService.GetByIdAsync(chargePointId);
 
-            var response = new DataTransferResponse
+            var response = new DataTransferResponse(DataTransferResponseStatus.Accepted)
             {
-                Status = DataTransferResponseStatus.Accepted,
                 Data = "Data transfer accepted"
             };
 

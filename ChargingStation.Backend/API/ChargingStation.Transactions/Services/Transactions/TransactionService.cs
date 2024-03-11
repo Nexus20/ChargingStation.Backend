@@ -1,6 +1,9 @@
 using AutoMapper;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Messages_OCPP16;
+using ChargingStation.Common.Messages_OCPP16.Enums;
+using ChargingStation.Common.Messages_OCPP16.Requests;
+using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Models;
 using ChargingStation.Connectors.Models.Requests;
 using ChargingStation.Domain.Entities;
@@ -173,7 +176,7 @@ public class TransactionService : ITransactionService
             {
                 ChargePointId = chargePointId,
                 ConnectorId = connectorId,
-                Status = ConnectorStatusEnumType.Occupied.ToString(),
+                Status = "Occupied",
                 StatusTimestamp = request.Timestamp.UtcDateTime,
             };
             
@@ -296,7 +299,7 @@ public class TransactionService : ITransactionService
                         {
                             ChargePointId = chargePointId,
                             ConnectorId = connector.ConnectorId,
-                            Status = ConnectorStatusEnumType.Available.ToString(),
+                            Status = "Occupied",
                             StatusTimestamp = request.Timestamp.UtcDateTime,
                         };
                         await _connectorHttpService.UpdateConnectorStatusAsync(updateStatusRequest, cancellationToken);

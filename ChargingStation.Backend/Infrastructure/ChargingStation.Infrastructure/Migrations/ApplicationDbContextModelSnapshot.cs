@@ -76,8 +76,9 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.Property<string>("OcppProtocol")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("RegistrationStatus")
-                        .HasColumnType("int");
+                    b.Property<string>("RegistrationStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
