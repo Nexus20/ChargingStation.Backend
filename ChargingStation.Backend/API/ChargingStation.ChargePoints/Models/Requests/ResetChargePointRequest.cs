@@ -1,4 +1,4 @@
-using ChargingStation.Common.Messages_OCPP16;
+using ChargingStation.Common.Messages_OCPP16.Enums;
 
 namespace ChargingStation.ChargePoints.Models.Requests;
 

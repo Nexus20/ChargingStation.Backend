@@ -1,6 +1,8 @@
 ﻿using ChargingStation.ChargePoints.Models.Requests;
 using ChargingStation.ChargePoints.Services;
-using ChargingStation.Common.Messages_OCPP16;
+using ChargingStation.Common.Messages_OCPP16.Requests;
+using ChargingStation.Common.Messages_OCPP16.Responses;
+using ChargingStation.Common.Messages_OCPP16.Responses.Enums;
 using ChargingStation.Common.Models;
 using MassTransit;
 
@@ -47,12 +49,7 @@ public class BootNotificationConsumer : IConsumer<IntegrationOcppMessage<BootNot
         
         await _chargePointService.UpdateAsync(updateRequest);
 
-        var response = new BootNotificationResponse
-        {
-            CurrentTime = DateTime.UtcNow,
-            Interval = 60,
-            Status = BootNotificationResponseStatus.Accepted
-        };
+        var response = new BootNotificationResponse(BootNotificationResponseStatus.Accepted, DateTimeOffset.UtcNow, 60);
         
         var integrationMessage = ResponseIntegrationOcppMessage.Create(chargePointId, response, context.Message.OcppMessageId, ocppProtocol);
         

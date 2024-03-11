@@ -1,5 +1,4 @@
 ﻿using ChargingStation.WebSockets.EventConsumers;
-using ChargingStation.WebSockets.Middlewares;
 using ChargingStation.WebSockets.OcppConnectionHandlers;
 using ChargingStation.WebSockets.OcppMessageHandlers;
 using ChargingStation.WebSockets.OcppMessageHandlers.Abstract;
@@ -23,6 +22,7 @@ public static class ServicesExtensions
             busConfigurator.SetKebabCaseEndpointNameFormatter();
             
             busConfigurator.AddConsumer<OcppResponseConsumer>();
+            busConfigurator.AddConsumer<ResetConsumer>();
             
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
@@ -30,6 +30,10 @@ public static class ServicesExtensions
                 
                 cfg.ReceiveEndpoint("ocpp-response-queue", c => {
                     c.ConfigureConsumer<OcppResponseConsumer>(ctx);
+                });
+                
+                cfg.ReceiveEndpoint("reset-queue", c => {
+                    c.ConfigureConsumer<ResetConsumer>(ctx);
                 });
             });
         });

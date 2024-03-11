@@ -1,5 +1,3 @@
-using ChargingStation.Common.Messages_OCPP20;
-
 namespace ChargingStation.ChargePoints.Models.Requests;
 
 public class UpdateChargePointRequest
@@ -7,7 +5,7 @@ public class UpdateChargePointRequest
     public Guid Id { get; set; }
     public required Guid DepotId { get; set; }
     public required string OcppProtocol { get; set; }
-    public RegistrationStatus RegistrationStatus { get; set; } = RegistrationStatus.Accepted;
+    public string RegistrationStatus { get; set; } = "Accepted";
     public string? ChargePointVendor { get; set; }
     public string? ChargePointModel { get; set; }
     public string? ChargePointSerialNumber { get; set; }
