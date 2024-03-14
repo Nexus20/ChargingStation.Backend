@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Transaction
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Connectors", "API\ChargingStation.Connectors\ChargingStation.Connectors.csproj", "{1B111947-56F6-4727-821B-25230469F107}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Heartbeats", "..\ChargingStation.Heartbeats\ChargingStation.Heartbeats.csproj", "{1C97B552-04AF-4B04-A890-B61F268F1148}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{1B111947-56F6-4727-821B-25230469F107}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B111947-56F6-4727-821B-25230469F107}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B111947-56F6-4727-821B-25230469F107}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C97B552-04AF-4B04-A890-B61F268F1148}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C97B552-04AF-4B04-A890-B61F268F1148}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C97B552-04AF-4B04-A890-B61F268F1148}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C97B552-04AF-4B04-A890-B61F268F1148}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,6 +104,7 @@ Global
 		{9B8B93B0-A9D9-4304-B4B7-43B704EF3F33} = {6545E985-58B5-4590-B765-B7CD27628D0B}
 		{11D5D412-246E-4EFA-B6DA-B845C32DC377} = {6545E985-58B5-4590-B765-B7CD27628D0B}
 		{1B111947-56F6-4727-821B-25230469F107} = {6545E985-58B5-4590-B765-B7CD27628D0B}
+		{1C97B552-04AF-4B04-A890-B61F268F1148} = {6545E985-58B5-4590-B765-B7CD27628D0B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A063F0C5-38BF-495E-8B72-2E7F00C1C4DE}

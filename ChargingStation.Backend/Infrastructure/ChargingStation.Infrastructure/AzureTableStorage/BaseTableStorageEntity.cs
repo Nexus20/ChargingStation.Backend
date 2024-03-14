@@ -3,14 +3,14 @@ using Azure.Data.Tables;
 
 namespace ChargingStation.Infrastructure.AzureTableStorage
 {
-    public class BaseTableStorageEntity : ITableEntity
+    public abstract class BaseTableStorageEntity : ITableEntity
     {
         public string PartitionKey { get; set; }
         public string RowKey { get; set; }
         public DateTimeOffset? Timestamp { get; set; }
         public ETag ETag { get; set; }
 
-        public BaseTableStorageEntity(string partitionKey, ETag eTag)
+        protected BaseTableStorageEntity(string partitionKey, ETag eTag)
         {
             PartitionKey = partitionKey;
             Timestamp = DateTimeOffset.UtcNow;
@@ -18,7 +18,7 @@ namespace ChargingStation.Infrastructure.AzureTableStorage
             ETag = eTag;
         }
 
-        public BaseTableStorageEntity(string partitionKey)
+        protected BaseTableStorageEntity(string partitionKey)
         {
             PartitionKey = partitionKey;
             Timestamp = DateTimeOffset.UtcNow;
