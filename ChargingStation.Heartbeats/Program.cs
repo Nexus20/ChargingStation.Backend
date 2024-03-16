@@ -1,4 +1,5 @@
 using ChargingStation.Heartbeats.Extensions;
+using ChargingStation.Heartbeats.Middlewares;
 
 // Add services to the container.
 
@@ -13,6 +14,8 @@ builder.Services.AddHeartbeatServices(builder.Configuration);
 
 // Configure the HTTP request pipeline.
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment())
 {

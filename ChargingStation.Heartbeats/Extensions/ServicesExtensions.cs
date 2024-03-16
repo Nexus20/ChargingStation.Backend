@@ -14,6 +14,7 @@ namespace ChargingStation.Heartbeats.Extensions
         {
             services.AddScoped<IChargePointHttpService, ChargePointHttpService>();
             services.AddScoped<IHeartbeatService, HeartbeatService>();
+            services.AddHttpClient();
 
             services.AddScoped(typeof(ITableManager<>), typeof(AzureTableStorageManager<>));
             var connectionString = configuration.GetConnectionString("AzureTableStorage:AzureTableStorageConnection");
