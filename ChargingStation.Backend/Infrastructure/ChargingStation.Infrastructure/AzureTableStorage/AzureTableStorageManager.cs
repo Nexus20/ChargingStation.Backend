@@ -2,57 +2,50 @@
 
 namespace ChargingStation.Infrastructure.AzureTableStorage
 {
-    public class AzureTableStorageManager<T> where T : BaseTableStorageEntity
+    public class AzureTableStorageManager<T> : ITableManager<T> where T : BaseTableStorageEntity
     {
         private readonly TableServiceClient _tableServiceClient;
-        private readonly string _tableName;
 
-        public AzureTableStorageManager(string connectionString, string tableName)
+        public AzureTableStorageManager(TableServiceClient tableServiceClient)
         {
-            _tableServiceClient = new TableServiceClient(connectionString);
-            _tableName = tableName;
+            _tableServiceClient = tableServiceClient;
         }
 
-        public async Task AddEntityAsync(T entity)
+        public async Task AddEntityAsync(string tableName, T entity)
         {
-            var tableClient = GetTableClient();
+            var tableClient = _tableServiceClient.GetTableClient(tableName);
             await tableClient.AddEntityAsync(entity);
         }
 
-        public async Task<T> GetEntityAsync(string partitionKey, string rowKey)
+        public async Task<T> GetEntityAsync(string tableName, string partitionKey, string rowKey)
         {
-            var tableClient = GetTableClient();
+            var tableClient = _tableServiceClient.GetTableClient(tableName);
             return await tableClient.GetEntityAsync<T>(partitionKey, rowKey);
         }
 
-        public async Task<IEnumerable<T>> GetEntitiesByPartitionKeyAsync(string partitionKey)
+        public async Task<List<T>> GetEntitiesByPartitionKeyAsync(string tableName, string partitionKey)
         {
-            var tableClient = GetTableClient();
+            var tableClient = _tableServiceClient.GetTableClient(tableName);
             return await tableClient.QueryAsync<T>(filter: $"PartitionKey eq '{partitionKey}'").ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> GetAllEntitiesAsync()
+        public async Task<List<T>> GetAllEntitiesAsync(string tableName)
         {
-            var tableClient = GetTableClient();
+            var tableClient = _tableServiceClient.GetTableClient(tableName);
             return await tableClient.QueryAsync<T>().ToListAsync();
         }
 
-        public async Task UpsertEntityAsync(T entity)
+        public async Task UpsertEntityAsync(string tableName, T entity)
         {
-            var tableClient = GetTableClient();
+            var tableClient = _tableServiceClient.GetTableClient(tableName);
             await tableClient.UpsertEntityAsync(entity);
         }
 
-        public async Task DeleteEntityAsync(T entity)
+        public async Task DeleteEntityAsync(string tableName, T entity)
         {
-            var tableClient = GetTableClient();
+            var tableClient = _tableServiceClient.GetTableClient(tableName);
             await tableClient.DeleteEntityAsync(entity.PartitionKey, entity.RowKey);
         }
-
-
-        private TableClient GetTableClient()
-        {
-            return _tableServiceClient.GetTableClient(_tableName);
-        }
     }
+
 }
