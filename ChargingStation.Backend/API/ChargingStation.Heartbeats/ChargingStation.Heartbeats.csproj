@@ -14,12 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Response\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\ChargingStation.Backend\Domain\ChargingStation.Common\ChargingStation.Common.csproj" />
-    <ProjectReference Include="..\ChargingStation.Backend\Infrastructure\ChargingStation.Infrastructure\ChargingStation.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Domain\ChargingStation.Common\ChargingStation.Common.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ChargingStation.Infrastructure\ChargingStation.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

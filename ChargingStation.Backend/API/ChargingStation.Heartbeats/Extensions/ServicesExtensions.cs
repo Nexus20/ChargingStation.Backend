@@ -5,13 +5,13 @@ using ChargingStation.Heartbeats.Services.HeartbeatService;
 using ChargingStation.Infrastructure.AzureTableStorage;
 using MassTransit;
 
-namespace ChargingStation.Heartbeats.Extensions
+namespace ChargingStation.Heartbeats.Extensions;
+
+public static class ServicesExtensions
 {
-    public static class ServicesExtensions
+    public static IServiceCollection AddHeartbeatServices(this IServiceCollection services,
+        IConfiguration configuration)
     {
-        public static IServiceCollection AddHeartbeatServices(this IServiceCollection services,
-            IConfiguration configuration)
-        {
             services.AddScoped<IChargePointHttpService, ChargePointHttpService>();
             services.AddScoped<IHeartbeatService, HeartbeatService>();
             services.AddHttpClient();
@@ -40,5 +40,4 @@ namespace ChargingStation.Heartbeats.Extensions
 
             return services;
         }
-    }
 }

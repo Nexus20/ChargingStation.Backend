@@ -3,23 +3,23 @@ using ChargingStation.Common.Models;
 using ChargingStation.Heartbeats.Services.HeartbeatService;
 using MassTransit;
 
-namespace ChargingStation.Heartbeats.EventConsumers
-{
-    public class HeartbeatConsumer : IConsumer<IntegrationOcppMessage<HeartbeatRequest>>
-    {
-        private readonly ILogger<HeartbeatConsumer> _logger;
-        private readonly IPublishEndpoint _publishEndpoint;
-        private readonly IHeartbeatService _heartbeatService;
+namespace ChargingStation.Heartbeats.EventConsumers;
 
-        public HeartbeatConsumer(ILogger<HeartbeatConsumer> logger, IPublishEndpoint publishEndpoint, IHeartbeatService heartbeatService)
-        {
+public class HeartbeatConsumer : IConsumer<IntegrationOcppMessage<HeartbeatRequest>>
+{
+    private readonly ILogger<HeartbeatConsumer> _logger;
+    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IHeartbeatService _heartbeatService;
+
+    public HeartbeatConsumer(ILogger<HeartbeatConsumer> logger, IPublishEndpoint publishEndpoint, IHeartbeatService heartbeatService)
+    {
             _logger = logger;
             _publishEndpoint = publishEndpoint;
             _heartbeatService = heartbeatService;
         }
 
-        public async Task Consume(ConsumeContext<IntegrationOcppMessage<HeartbeatRequest>> context)
-        {
+    public async Task Consume(ConsumeContext<IntegrationOcppMessage<HeartbeatRequest>> context)
+    {
             _logger.LogInformation("Received heartbeat request.");
 
             var incomingRequest = context.Message.Payload;
@@ -33,5 +33,4 @@ namespace ChargingStation.Heartbeats.EventConsumers
 
             _logger.LogInformation("Heartbeat request processed and response published.");
         }
-    }
 }
