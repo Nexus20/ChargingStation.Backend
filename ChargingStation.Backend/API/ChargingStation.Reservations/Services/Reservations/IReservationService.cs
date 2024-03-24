@@ -1,5 +1,6 @@
 ﻿using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
 using ChargingStation.Reservations.Models.Requests;
 using ChargingStation.Reservations.Models.Responses;
 

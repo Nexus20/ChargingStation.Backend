@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using ChargingStation.ChargePoints.Models.Requests;
-using ChargingStation.ChargePoints.Models.Responses;
 using ChargingStation.ChargePoints.Specifications;
 using ChargingStation.Common.Constants;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Messages_OCPP16.Requests;
-using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.Models.Responses;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using MassTransit;

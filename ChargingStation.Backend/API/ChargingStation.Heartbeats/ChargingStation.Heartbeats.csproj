@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\ChargingStation.Common\ChargingStation.Common.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ChargingStation.Infrastructure\ChargingStation.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ChargingStation.InternalCommunication\ChargingStation.InternalCommunication.csproj" />
   </ItemGroup>
 
 </Project>

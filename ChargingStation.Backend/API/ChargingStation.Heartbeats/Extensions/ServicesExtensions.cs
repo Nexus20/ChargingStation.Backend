@@ -1,8 +1,8 @@
 ﻿using Azure.Data.Tables;
 using ChargingStation.Heartbeats.EventConsumers;
-using ChargingStation.Heartbeats.Services.ChargePoints;
 using ChargingStation.Heartbeats.Services.Heartbeats;
 using ChargingStation.Infrastructure.AzureTableStorage;
+using ChargingStation.InternalCommunication.Extensions;
 using MassTransit;
 
 namespace ChargingStation.Heartbeats.Extensions;
@@ -12,9 +12,8 @@ public static class ServicesExtensions
     public static IServiceCollection AddHeartbeatServices(this IServiceCollection services,
         IConfiguration configuration)
     {
-            services.AddScoped<IChargePointHttpService, ChargePointHttpService>();
+            services.AddChargePointsHttpClient(configuration);
             services.AddScoped<IHeartbeatService, HeartbeatService>();
-            services.AddHttpClient();
 
             services.AddScoped(typeof(ITableManager<>), typeof(AzureTableStorageManager<>));
             var connectionString = configuration.GetConnectionString("AzureTableStorage:AzureTableStorageConnection");

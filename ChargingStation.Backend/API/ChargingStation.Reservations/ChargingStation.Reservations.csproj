@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\ChargingStation.Common\ChargingStation.Common.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ChargingStation.InternalCommunication\ChargingStation.InternalCommunication.csproj" />
     <ProjectReference Include="..\ChargingStation.ChargePoints\ChargingStation.ChargePoints.csproj" />
     <ProjectReference Include="..\ChargingStation.Connectors\ChargingStation.Connectors.csproj" />
     <ProjectReference Include="..\ChargingStation.OcppTags\ChargingStation.OcppTags.csproj" />

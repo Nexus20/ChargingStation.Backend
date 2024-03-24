@@ -1,5 +1,6 @@
 ﻿using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
 using ChargingStation.Heartbeats.Services.Heartbeats;
 using MassTransit;
 

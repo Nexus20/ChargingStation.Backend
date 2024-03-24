@@ -22,4 +22,8 @@
       <None Remove="Messages_OCPP20\**" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Models\Models\Requests\" />
+    </ItemGroup>
+
 </Project>

@@ -3,8 +3,8 @@ using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Heartbeats.Models;
 using ChargingStation.Heartbeats.Models.Request;
-using ChargingStation.Heartbeats.Services.ChargePoints;
 using ChargingStation.Infrastructure.AzureTableStorage;
+using ChargingStation.InternalCommunication.Services.ChargePoints;
 
 namespace ChargingStation.Heartbeats.Services.Heartbeats;
 
@@ -14,55 +14,57 @@ public class HeartbeatService : IHeartbeatService
     private readonly ITableManager<HeartbeatEntity> _tableManager;
     private readonly string _tableName;
 
-    public HeartbeatService(IChargePointHttpService chargePointService, ITableManager<HeartbeatEntity> tableManager, IConfiguration configuration)
+    public HeartbeatService(IChargePointHttpService chargePointService, ITableManager<HeartbeatEntity> tableManager,
+        IConfiguration configuration)
     {
-            _chargePointService = chargePointService;
-            _tableManager = tableManager;
-            _tableName = configuration.GetConnectionString("AzureTableStorage:HeartbeatTable")!;
-        }
+        _chargePointService = chargePointService;
+        _tableManager = tableManager;
+        _tableName = configuration.GetConnectionString("AzureTableStorage:HeartbeatTable")!;
+    }
 
     public async Task AddHeartbeatAsync(HeartbeatEntity request, CancellationToken cancellationToken = default)
     {
-            var chargePoint = await _chargePointService.GetByIdAsync(request.PartitionKey, cancellationToken);
+        var chargePoint = await _chargePointService.GetByIdAsync(Guid.Parse(request.PartitionKey), cancellationToken);
 
-            if (!chargePoint)
-            {
-                throw new NotFoundException(
-                    $"ChargePointId {request.PartitionKey} not found");
-            }
-
-            await _tableManager.AddEntityAsync(_tableName, request);
+        if (chargePoint is null)
+        {
+            throw new NotFoundException($"ChargePointId {request.PartitionKey} not found");
         }
 
-    public async Task<HeartbeatEntity> GetByIdAsync(GetHeartbeatRequest request, CancellationToken cancellationToken = default)
+        await _tableManager.AddEntityAsync(_tableName, request);
+    }
+
+    public async Task<HeartbeatEntity> GetByIdAsync(GetHeartbeatRequest request,
+        CancellationToken cancellationToken = default)
     {
-            var heartbeat = await _tableManager.GetEntityAsync(_tableName, request.PartitionKey, request.RowKey);
+        var heartbeat = await _tableManager.GetEntityAsync(_tableName, request.PartitionKey, request.RowKey);
 
-            if (heartbeat is null)
-                throw new NotFoundException(nameof(HeartbeatEntity), request);
+        if (heartbeat is null)
+            throw new NotFoundException(nameof(HeartbeatEntity), request);
 
-            return heartbeat;
-        }
+        return heartbeat;
+    }
 
     public async Task<List<HeartbeatEntity>> GetAsync(CancellationToken cancellationToken = default)
     {
-            var heartbeats = await _tableManager.GetAllEntitiesAsync(_tableName);
+        var heartbeats = await _tableManager.GetAllEntitiesAsync(_tableName);
 
-            if (!heartbeats.Any())
-                return Enumerable.Empty<HeartbeatEntity>().ToList();
+        if (!heartbeats.Any())
+            return Enumerable.Empty<HeartbeatEntity>().ToList();
 
-            return heartbeats;
-        }
+        return heartbeats;
+    }
 
-    public async Task<HeartbeatResponse> ProcessHeartbeatAsync(HeartbeatRequest request, Guid chargePointId, CancellationToken cancellationToken = default)
+    public async Task<HeartbeatResponse> ProcessHeartbeatAsync(HeartbeatRequest request, Guid chargePointId,
+        CancellationToken cancellationToken = default)
     {
-            DateTimeOffset currentTime = DateTimeOffset.UtcNow;
+        DateTimeOffset currentTime = DateTimeOffset.UtcNow;
 
-            var response = new HeartbeatResponse(currentTime);
-            var createHeartbeatRequest = new HeartbeatEntity(chargePointId.ToString(), currentTime);
+        var response = new HeartbeatResponse(currentTime);
+        var createHeartbeatRequest = new HeartbeatEntity(chargePointId.ToString(), currentTime);
 
-            await AddHeartbeatAsync(createHeartbeatRequest, cancellationToken);
+        await AddHeartbeatAsync(createHeartbeatRequest, cancellationToken);
 
-            return response;
-        }
+        return response;
+    }
 }

@@ -1,6 +1,6 @@
 ﻿using ChargingStation.ChargePoints.Models.Requests;
-using ChargingStation.ChargePoints.Models.Responses;
-using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.Models.Responses;
 
 namespace ChargingStation.ChargePoints.Services;
 

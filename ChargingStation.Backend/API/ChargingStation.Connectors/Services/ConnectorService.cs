@@ -2,8 +2,8 @@
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
-using ChargingStation.Connectors.Models.Requests;
-using ChargingStation.Connectors.Models.Responses;
+using ChargingStation.Common.Models.Connectors.Requests;
+using ChargingStation.Common.Models.Connectors.Responses;
 using ChargingStation.Connectors.Specifications;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;

@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Abstract;
 using ChargingStation.Infrastructure.Extensions;
 using ChargingStation.Infrastructure.Persistence;

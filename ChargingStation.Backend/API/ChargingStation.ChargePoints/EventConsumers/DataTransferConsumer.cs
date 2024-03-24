@@ -2,7 +2,7 @@
 using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Messages_OCPP16.Responses.Enums;
-using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
 using MassTransit;
 
 namespace ChargingStation.ChargePoints.EventConsumers;

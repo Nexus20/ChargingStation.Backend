@@ -5,13 +5,14 @@ using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Messages_OCPP16.Responses.Enums;
 using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
+using ChargingStation.InternalCommunication.Services.ChargePoints;
+using ChargingStation.InternalCommunication.Services.Connectors;
+using ChargingStation.InternalCommunication.Services.OcppTags;
 using ChargingStation.Reservations.Models.Requests;
 using ChargingStation.Reservations.Models.Responses;
-using ChargingStation.Reservations.Services.ChargePoints;
-using ChargingStation.Reservations.Services.Connectors;
-using ChargingStation.Reservations.Services.OcppTags;
 using ChargingStation.Reservations.Specifications;
 using MassTransit;
 

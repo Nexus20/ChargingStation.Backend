@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
 using ChargingStation.WebSockets.OcppConnectionHandlers;
 using MassTransit;
 

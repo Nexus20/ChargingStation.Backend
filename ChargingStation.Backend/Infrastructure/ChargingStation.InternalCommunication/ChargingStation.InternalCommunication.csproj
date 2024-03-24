@@ -10,4 +10,12 @@
       <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Domain\ChargingStation.Common\ChargingStation.Common.csproj" />
+    </ItemGroup>
+
 </Project>

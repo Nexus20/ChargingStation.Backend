@@ -1,9 +1,8 @@
 ﻿using System.Reflection;
+using ChargingStation.InternalCommunication.Extensions;
 using ChargingStation.Transactions.EventConsumers;
 using ChargingStation.Transactions.Repositories;
-using ChargingStation.Transactions.Services.Connectors;
 using ChargingStation.Transactions.Services.MeterValues;
-using ChargingStation.Transactions.Services.OcppTags;
 using ChargingStation.Transactions.Services.Transactions;
 using MassTransit;
 
@@ -19,16 +18,9 @@ public static class ServicesExtensions
         
         services.AddScoped<ITransactionService, TransactionService>();
         services.AddScoped<IMeterValueService, MeterValueService>();
-        
-        services.AddHttpClient<IOcppTagHttpService, OcppTagHttpService>(c =>
-        {
-            c.BaseAddress = new Uri(configuration["ApiSettings:OcppTagServiceAddress"]!);
-        });
-        
-        services.AddHttpClient<IConnectorHttpService, ConnectorHttpService>(c =>
-        {
-            c.BaseAddress = new Uri(configuration["ApiSettings:ConnectorServiceAddress"]!);
-        });
+
+        services.AddOcppTagsHttpClient(configuration);
+        services.AddConnectorsHttpClient(configuration);
         
         services.AddMassTransit(busConfigurator =>
         {

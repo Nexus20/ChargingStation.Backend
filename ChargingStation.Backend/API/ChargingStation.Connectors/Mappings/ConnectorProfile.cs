@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using ChargingStation.Connectors.Models.Requests;
-using ChargingStation.Connectors.Models.Responses;
+using ChargingStation.Common.Models.Connectors.Requests;
+using ChargingStation.Common.Models.Connectors.Responses;
 using ChargingStation.Domain.Entities;
 
 namespace ChargingStation.Connectors.Mappings;

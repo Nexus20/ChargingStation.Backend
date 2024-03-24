@@ -1,4 +1,4 @@
-using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
 using ChargingStation.Transactions.Models.Requests;
 using ChargingStation.Transactions.Models.Responses;
 using ChargingStation.Transactions.Services.Transactions;

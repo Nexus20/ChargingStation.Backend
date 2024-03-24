@@ -1,4 +1,4 @@
-using ChargingStation.Common.Models.Requests;
+using ChargingStation.Common.Models.General.Requests;
 
 namespace ChargingStation.OcppTags.Models.Requests;
 
