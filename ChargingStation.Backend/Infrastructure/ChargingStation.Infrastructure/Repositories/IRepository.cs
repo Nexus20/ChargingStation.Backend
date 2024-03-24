@@ -14,7 +14,7 @@ public interface IRepository<TEntity> where TEntity : Entity
             CancellationToken cancellationToken = default);
 
     Task<List<TEntity>> GetAsync(Specification<TEntity> specification, CancellationToken cancellationToken = default);
-    Task<TEntity?> GetFirstOrDefaultAsync(Specification<TEntity> specification, CancellationToken cancellationToken = default);
+    Task<TEntity?> GetFirstOrDefaultAsync(Specification<TEntity> specification, bool applyTracking = false, CancellationToken cancellationToken = default);
 
     Task<IPagedCollection<TEntity>> GetPagedCollectionAsync(Specification<TEntity> specification, int? pageNumber = 1, int? pageSize = null, bool applyTracking = false, CancellationToken cancellationToken = default);
     

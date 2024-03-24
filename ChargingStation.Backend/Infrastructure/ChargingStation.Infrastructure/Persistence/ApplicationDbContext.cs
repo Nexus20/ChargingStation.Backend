@@ -13,6 +13,7 @@ public class ApplicationDbContext : DbContext {
     public required DbSet<OcppTag> OcppTags { get; set; }
     public required DbSet<OcppTransaction> Transactions { get; set; }
     public required DbSet<Connector> Connectors { get; set; }
+    public required DbSet<Reservation> Reservations { get; set; }
     
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {

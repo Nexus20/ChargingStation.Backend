@@ -7,7 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="MassTransit" Version="8.1.3" />
+    <PackageReference Include="MassTransit.RabbitMQ" Version="8.1.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Domain\ChargingStation.Common\ChargingStation.Common.csproj" />
+    <ProjectReference Include="..\ChargingStation.ChargePoints\ChargingStation.ChargePoints.csproj" />
+    <ProjectReference Include="..\ChargingStation.Connectors\ChargingStation.Connectors.csproj" />
+    <ProjectReference Include="..\ChargingStation.OcppTags\ChargingStation.OcppTags.csproj" />
   </ItemGroup>
 
 </Project>

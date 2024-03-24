@@ -3,7 +3,7 @@ using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Heartbeats.Models;
 using ChargingStation.Heartbeats.Models.Request;
 
-namespace ChargingStation.Heartbeats.Services.HeartbeatService;
+namespace ChargingStation.Heartbeats.Services.Heartbeats;
 
 public interface IHeartbeatService
 {

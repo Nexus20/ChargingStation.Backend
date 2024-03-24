@@ -1,6 +1,6 @@
 ﻿using ChargingStation.Heartbeats.Models;
 using ChargingStation.Heartbeats.Models.Request;
-using ChargingStation.Heartbeats.Services.HeartbeatService;
+using ChargingStation.Heartbeats.Services.Heartbeats;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChargingStation.Heartbeats.Controllers;

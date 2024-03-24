@@ -53,7 +53,7 @@ public class OcppTagService : IOcppTagService
         
         var specification = new GetOcppTagsSpecification(request);
         
-        var ocppTag = await _ocppTagRepository.GetFirstOrDefaultAsync(specification, cancellationToken);
+        var ocppTag = await _ocppTagRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
 
         if (ocppTag is null)
             return null; 

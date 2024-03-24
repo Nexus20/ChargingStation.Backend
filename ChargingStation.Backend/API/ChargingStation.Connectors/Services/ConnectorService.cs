@@ -30,7 +30,7 @@ public class ConnectorService : IConnectorService
     {
         var specification = new GetConnectorsSpecification(request);
         
-        var connector = await _connectorRepository.GetFirstOrDefaultAsync(specification, cancellationToken);
+        var connector = await _connectorRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
         
         if (connector is null)
         {
@@ -46,7 +46,7 @@ public class ConnectorService : IConnectorService
     {
         var specification = new GetConnectorsSpecification(request);
         
-        var connector = await _connectorRepository.GetFirstOrDefaultAsync(specification, cancellationToken);
+        var connector = await _connectorRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
         
         if (connector is not null)
         {

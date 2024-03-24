@@ -1,4 +1,4 @@
-﻿namespace ChargingStation.Heartbeats.Services.Connectors;
+﻿namespace ChargingStation.Heartbeats.Services.ChargePoints;
 
 public interface IChargePointHttpService
 {

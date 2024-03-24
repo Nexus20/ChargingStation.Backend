@@ -1,7 +1,7 @@
 ﻿using Azure.Data.Tables;
 using ChargingStation.Heartbeats.EventConsumers;
-using ChargingStation.Heartbeats.Services.Connectors;
-using ChargingStation.Heartbeats.Services.HeartbeatService;
+using ChargingStation.Heartbeats.Services.ChargePoints;
+using ChargingStation.Heartbeats.Services.Heartbeats;
 using ChargingStation.Infrastructure.AzureTableStorage;
 using MassTransit;
 

@@ -12,4 +12,5 @@ public class Connector : Entity, ITimeMarkable
     
     public List<ConnectorStatus>? ConnectorStatuses { get; set; }
     public List<ConnectorMeterValue>? ConnectorMeterValues { get; set; }
+    public Reservation? Reservation { get; set; }
 }

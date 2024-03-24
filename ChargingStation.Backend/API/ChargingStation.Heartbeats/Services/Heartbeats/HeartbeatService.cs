@@ -3,10 +3,10 @@ using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Heartbeats.Models;
 using ChargingStation.Heartbeats.Models.Request;
-using ChargingStation.Heartbeats.Services.Connectors;
+using ChargingStation.Heartbeats.Services.ChargePoints;
 using ChargingStation.Infrastructure.AzureTableStorage;
 
-namespace ChargingStation.Heartbeats.Services.HeartbeatService;
+namespace ChargingStation.Heartbeats.Services.Heartbeats;
 
 public class HeartbeatService : IHeartbeatService
 {
