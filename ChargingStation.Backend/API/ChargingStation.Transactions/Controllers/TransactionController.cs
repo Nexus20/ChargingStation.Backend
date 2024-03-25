@@ -1,6 +1,6 @@
 using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.Transactions.Responses;
 using ChargingStation.Transactions.Models.Requests;
-using ChargingStation.Transactions.Models.Responses;
 using ChargingStation.Transactions.Services.Transactions;
 using Microsoft.AspNetCore.Mvc;
 

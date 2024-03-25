@@ -6,12 +6,12 @@ using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.Transactions.Responses;
 using ChargingStation.Domain.Entities;
 using ChargingStation.InternalCommunication.Services.Connectors;
 using ChargingStation.InternalCommunication.Services.OcppTags;
 using ChargingStation.OcppTags.Helpers;
 using ChargingStation.Transactions.Models.Requests;
-using ChargingStation.Transactions.Models.Responses;
 using ChargingStation.Transactions.Repositories;
 using ChargingStation.Transactions.Specifications;
 

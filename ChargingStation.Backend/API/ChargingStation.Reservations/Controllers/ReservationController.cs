@@ -1,8 +1,6 @@
-using ChargingStation.Common.Models;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Reservations.Models.Requests;
 using ChargingStation.Reservations.Models.Responses;
-using ChargingStation.Reservations.Services;
 using ChargingStation.Reservations.Services.Reservations;
 using Microsoft.AspNetCore.Mvc;
 

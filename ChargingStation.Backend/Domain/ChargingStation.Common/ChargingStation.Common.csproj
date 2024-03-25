@@ -24,6 +24,7 @@
 
     <ItemGroup>
       <Folder Include="Models\Models\Requests\" />
+      <Folder Include="Models\Transactions\" />
     </ItemGroup>
 
 </Project>

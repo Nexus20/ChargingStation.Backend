@@ -1,6 +1,7 @@
 ﻿using ChargingStation.InternalCommunication.Services.ChargePoints;
 using ChargingStation.InternalCommunication.Services.Connectors;
 using ChargingStation.InternalCommunication.Services.OcppTags;
+using ChargingStation.InternalCommunication.Services.Transactions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -36,6 +37,17 @@ public static class ServicesExtensions
         services.AddHttpClient<IChargePointHttpService, ChargePointHttpService>(c =>
         {
             c.BaseAddress = new Uri(configuration["ApiSettings:ChargePointServiceAddress"]!);
+        });
+
+        return services;
+    }
+    
+    public static IServiceCollection AddTransactionsHttpClient(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddHttpClient<ITransactionHttpService, TransactionHttpService>(c =>
+        {
+            c.BaseAddress = new Uri(configuration["ApiSettings:TransactionServiceAddress"]!);
         });
 
         return services;
