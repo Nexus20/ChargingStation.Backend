@@ -1,4 +1,6 @@
-﻿namespace ChargingStation.OcppTags.Helpers;
+﻿using Microsoft.Extensions.Logging;
+
+namespace ChargingStation.Common.Helpers.OcppTags;
 
 public class OcppTagHelper
 {

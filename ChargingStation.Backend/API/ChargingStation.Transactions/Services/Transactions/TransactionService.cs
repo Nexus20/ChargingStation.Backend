@@ -1,5 +1,6 @@
 using AutoMapper;
 using ChargingStation.Common.Exceptions;
+using ChargingStation.Common.Helpers.OcppTags;
 using ChargingStation.Common.Messages_OCPP16;
 using ChargingStation.Common.Messages_OCPP16.Enums;
 using ChargingStation.Common.Messages_OCPP16.Requests;
@@ -10,7 +11,6 @@ using ChargingStation.Common.Models.Transactions.Responses;
 using ChargingStation.Domain.Entities;
 using ChargingStation.InternalCommunication.Services.Connectors;
 using ChargingStation.InternalCommunication.Services.OcppTags;
-using ChargingStation.OcppTags.Helpers;
 using ChargingStation.Transactions.Models.Requests;
 using ChargingStation.Transactions.Repositories;
 using ChargingStation.Transactions.Specifications;
