@@ -8,10 +8,132 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-  
-#  chargingstation.depots:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#      - ASPNETCORE_HTTP_PORTS=8080
-#    ports:
-#      - "8080"
+        
+  redis:
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+        
+  depots.api:
+    container_name: depots.api
+    ports:
+      - "8001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=orderdb;Database=DepotsDb;User Id=sa"
+        
+  chargepoints.api:
+    container_name: chargepoints.api
+    ports:
+      - "8002:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=orderdb;Database=ChargePointsDb;User Id=sa"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+    depends_on:
+      - rabbitmq
+      - depots.api
+        
+  ocpptags.api:
+    container_name: ocpptags.api
+    ports:
+      - "8003:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=orderdb;Database=OcppTagsDb;User Id=sa"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+    depends_on:
+      - rabbitmq
+      - depots.api
+        
+  connectors.api:
+    container_name: connectors.api
+    ports:
+      - "8004:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=orderdb;Database=ConnectorsDb;User Id=sa"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+    depends_on:
+      - rabbitmq
+      - depots.api
+        
+  transactions.api:
+    container_name: transactions.api
+    ports:
+      - "8005:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=orderdb;Database=TransactionsDb;User Id=sa"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "ApiSettings:ConnectorServiceAddress=http://connectors.api"
+      - "ApiSettings:OcppTagServiceAddress=http://ocpptags.api"
+    depends_on:
+      - rabbitmq
+      - depots.api
+        
+  heartbeats.api:
+    container_name: heartbeats.api
+    ports:
+      - "8006:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=orderdb;Database=HeartbeatsDb;User Id=sa"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api"
+    depends_on:
+      - rabbitmq
+      - depots.api
+        
+  reservations.api:
+    container_name: reservations.api
+    ports:
+      - "8007:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=orderdb;Database=ReservationsDb;User Id=sa"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api"
+      - "ApiSettings:ConnectorServiceAddress=http://connectors.api"
+      - "ApiSettings:OcppTagServiceAddress=http://ocpptags.api"
+    depends_on:
+      - rabbitmq
+      - depots.api
+        
+  chargingprofiles.api:
+    container_name: chargingprofiles.api
+    ports:
+      - "8008:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=orderdb;Database=ChargingProfilesDb;User Id=sa"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+      - "ApiSettings:ConnectorServiceAddress=http://connectors.api"
+      - "ApiSettings:TransactionServiceAddress=http://transactions.api"
+    depends_on:
+      - rabbitmq
+      - depots.api
+      - redis
+        
+  chargingstation.websockets:
+    container_name: chargingstation.websockets
+    ports:
+      - "8020:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@rabbitmq:5672"
+    depends_on:
+      - rabbitmq
+      - depots.api
+      - redis

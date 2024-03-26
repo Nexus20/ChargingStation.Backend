@@ -14,7 +14,7 @@ public static class ServicesExtensions
     {
         services.AddHttpClient<IChargePointCommunicationService, ChargePointCommunicationService>(c =>
         {
-            c.BaseAddress = new Uri(configuration["ApiSettings:ChargingStationServiceAddress"]!);
+            c.BaseAddress = new Uri(configuration["ApiSettings:ChargePointServiceAddress"]!);
         });
 
         services.AddMassTransit(busConfigurator =>

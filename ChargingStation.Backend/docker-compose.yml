@@ -4,9 +4,60 @@ services:
   
   rabbitmq:
     image: rabbitmq:3-management-alpine
+    
+  redis:
+    image: redis:alpine
   
-#  chargingstation.depots:
-#    image: ${DOCKER_REGISTRY-}chargingstationdepots
-#    build:
-#      context: .
-#      dockerfile: API/ChargingStation.Depots/Dockerfile
+  depots.api:
+    image: ${DOCKER_REGISTRY-}depotsapi
+    build:
+      context: .
+      dockerfile: API/ChargingStation.Depots/Dockerfile
+      
+  chargepoints.api:
+    image: ${DOCKER_REGISTRY-}chargepointsapi
+    build:
+      context: .
+      dockerfile: API/ChargingStation.ChargePoints/Dockerfile
+      
+  ocpptags.api:
+    image: ${DOCKER_REGISTRY-}ocpptagsapi
+    build:
+      context: .
+      dockerfile: API/ChargingStation.OcppTags/Dockerfile
+      
+  connectors.api:
+    image: ${DOCKER_REGISTRY-}connectorsapi
+    build:
+      context: .
+      dockerfile: API/ChargingStation.Connectors/Dockerfile
+      
+  transactions.api:
+    image: ${DOCKER_REGISTRY-}transactionsapi
+    build:
+      context: .
+      dockerfile: API/ChargingStation.Transactions/Dockerfile
+      
+  heartbeats.api:
+    image: ${DOCKER_REGISTRY-}heartbeatsapi
+    build:
+      context: .
+      dockerfile: API/ChargingStation.Heartbeats/Dockerfile
+      
+  reservations.api:
+    image: ${DOCKER_REGISTRY-}reservationsapi
+    build:
+      context: .
+      dockerfile: API/ChargingStation.Reservations/Dockerfile
+      
+  chargingprofiles.api:
+    image: ${DOCKER_REGISTRY-}chargingprofilesapi
+    build:
+      context: .
+      dockerfile: API/ChargingStation.ChargingProfiles/Dockerfile
+      
+  chargingstation.websockets:
+    image: ${DOCKER_REGISTRY-}chargingstationwebsockets
+    build:
+      context: .
+      dockerfile: API/ChargingStation.Websockets/Dockerfile
