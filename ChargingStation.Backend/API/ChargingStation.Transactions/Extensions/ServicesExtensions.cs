@@ -27,6 +27,9 @@ public static class ServicesExtensions
             busConfigurator.SetKebabCaseEndpointNameFormatter();
             
             busConfigurator.AddConsumer<StartTransactionConsumer>();
+            busConfigurator.AddConsumer<StopTransactionConsumer>();
+            busConfigurator.AddConsumer<MeterValueConsumer>();
+            
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
                 cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
@@ -34,22 +37,10 @@ public static class ServicesExtensions
                 cfg.ReceiveEndpoint("start-transaction-queue-1_6", c => {
                     c.ConfigureConsumer<StartTransactionConsumer>(ctx);
                 });
-            });
-            
-            busConfigurator.AddConsumer<StopTransactionConsumer>();
-            busConfigurator.UsingRabbitMq((ctx, cfg) =>
-            {
-                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
                 
                 cfg.ReceiveEndpoint("stop-transaction-queue-1_6", c => {
                     c.ConfigureConsumer<StopTransactionConsumer>(ctx);
                 });
-            });
-
-            busConfigurator.AddConsumer<MeterValueConsumer>();
-            busConfigurator.UsingRabbitMq((ctx, cfg) =>
-            {
-                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
                 
                 cfg.ReceiveEndpoint("meter-value-queue-1_6", c => {
                     c.ConfigureConsumer<MeterValueConsumer>(ctx);

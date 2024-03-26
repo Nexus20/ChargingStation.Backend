@@ -23,6 +23,8 @@ public static class ServicesExtensions
             busConfigurator.SetKebabCaseEndpointNameFormatter();
             
             busConfigurator.AddConsumer<ReserveNowResponseConsumer>();
+            busConfigurator.AddConsumer<CancelReservationResponseConsumer>();
+            
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
                 cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
@@ -30,12 +32,6 @@ public static class ServicesExtensions
                 cfg.ReceiveEndpoint("reserve-now-response-queue-1_6", c => {
                     c.ConfigureConsumer<ReserveNowResponseConsumer>(ctx);
                 });
-            });
-            
-            busConfigurator.AddConsumer<CancelReservationResponseConsumer>();
-            busConfigurator.UsingRabbitMq((ctx, cfg) =>
-            {
-                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
                 
                 cfg.ReceiveEndpoint("cancel-reservation-response-queue-1_6", c => {
                     c.ConfigureConsumer<CancelReservationResponseConsumer>(ctx);

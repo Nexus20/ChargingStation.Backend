@@ -17,6 +17,8 @@ public static class ServicesExtensions
             busConfigurator.SetKebabCaseEndpointNameFormatter();
             
             busConfigurator.AddConsumer<BootNotificationConsumer>();
+            busConfigurator.AddConsumer<DataTransferConsumer>();
+            
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
                 cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
@@ -24,12 +26,6 @@ public static class ServicesExtensions
                 cfg.ReceiveEndpoint("boot-notification-queue", c => {
                     c.ConfigureConsumer<BootNotificationConsumer>(ctx);
                 });
-            });
-            
-            busConfigurator.AddConsumer<DataTransferConsumer>();
-            busConfigurator.UsingRabbitMq((ctx, cfg) =>
-            {
-                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
                 
                 cfg.ReceiveEndpoint("data-transfer-queue-1_6", c => {
                     c.ConfigureConsumer<DataTransferConsumer>(ctx);

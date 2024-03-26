@@ -2,10 +2,10 @@ version: '3.4'
 
 services:
   
-  rabbitmq:
+  chargingstation_rabbitmq:
     image: rabbitmq:3-management-alpine
     
-  redis:
+  chargingstation_redis:
     image: redis:alpine
   
   depots.api:
