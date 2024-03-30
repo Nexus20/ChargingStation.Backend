@@ -19,7 +19,7 @@ public class HeartbeatService : IHeartbeatService
     {
         _chargePointService = chargePointService;
         _tableManager = tableManager;
-        _tableName = configuration.GetConnectionString("AzureTableStorage:HeartbeatTable")!;
+        _tableName = configuration.GetValue<string>("TablesConfiguration:HeartbeatTable")!;
     }
 
     public async Task AddHeartbeatAsync(HeartbeatEntity request, CancellationToken cancellationToken = default)

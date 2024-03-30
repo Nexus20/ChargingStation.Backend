@@ -12,26 +12,29 @@ public class HeartbeatConsumer : IConsumer<IntegrationOcppMessage<HeartbeatReque
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IHeartbeatService _heartbeatService;
 
-    public HeartbeatConsumer(ILogger<HeartbeatConsumer> logger, IPublishEndpoint publishEndpoint, IHeartbeatService heartbeatService)
+    public HeartbeatConsumer(ILogger<HeartbeatConsumer> logger, IPublishEndpoint publishEndpoint,
+        IHeartbeatService heartbeatService)
     {
-            _logger = logger;
-            _publishEndpoint = publishEndpoint;
-            _heartbeatService = heartbeatService;
-        }
+        _logger = logger;
+        _publishEndpoint = publishEndpoint;
+        _heartbeatService = heartbeatService;
+    }
 
     public async Task Consume(ConsumeContext<IntegrationOcppMessage<HeartbeatRequest>> context)
     {
-            _logger.LogInformation("Received heartbeat request.");
+        _logger.LogInformation("Received heartbeat request");
 
-            var incomingRequest = context.Message.Payload;
-            var chargePointId = context.Message.ChargePointId;
-            var ocppProtocol = context.Message.OcppProtocol;
+        var incomingRequest = context.Message.Payload;
+        var chargePointId = context.Message.ChargePointId;
+        var ocppProtocol = context.Message.OcppProtocol;
 
-            var response = await _heartbeatService.ProcessHeartbeatAsync(incomingRequest, chargePointId, context.CancellationToken);
+        var response =
+            await _heartbeatService.ProcessHeartbeatAsync(incomingRequest, chargePointId, context.CancellationToken);
 
-            var integrationMessage = ResponseIntegrationOcppMessage.Create(chargePointId, response, context.Message.OcppMessageId, ocppProtocol);
-            await _publishEndpoint.Publish(integrationMessage, context.CancellationToken);
+        var integrationMessage =
+            ResponseIntegrationOcppMessage.Create(chargePointId, response, context.Message.OcppMessageId, ocppProtocol);
+        await _publishEndpoint.Publish(integrationMessage, context.CancellationToken);
 
-            _logger.LogInformation("Heartbeat request processed and response published.");
-        }
+        _logger.LogInformation("Heartbeat request processed and response published");
+    }
 }

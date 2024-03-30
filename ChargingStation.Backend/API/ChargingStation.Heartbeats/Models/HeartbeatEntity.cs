@@ -9,11 +9,11 @@ public class HeartbeatEntity : BaseTableStorageEntity
 
     public HeartbeatEntity(string partitionKey, ETag eTag, DateTimeOffset currentTime) : base(partitionKey, eTag)
     {
-            CurrentTime = currentTime;
-        }
+        CurrentTime = currentTime;
+    }
 
     public HeartbeatEntity(string partitionKey, DateTimeOffset currentTime) : base(partitionKey)
     {
-            CurrentTime = currentTime;
-        }
+        CurrentTime = currentTime;
+    }
 }
