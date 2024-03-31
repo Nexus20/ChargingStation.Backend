@@ -14,7 +14,7 @@ public static class ServicesExtensions
     {
         services.AddHttpClient<IChargePointCommunicationService, ChargePointCommunicationService>(c =>
         {
-            c.BaseAddress = new Uri(configuration["ApiSettings:ChargingStationServiceAddress"]!);
+            c.BaseAddress = new Uri(configuration["ApiSettings:ChargePointServiceAddress"]!);
         });
 
         services.AddMassTransit(busConfigurator =>
@@ -45,6 +45,7 @@ public static class ServicesExtensions
         services.AddScoped<IOcppMessageHandler, StartTransactionMessageHandler>();
         services.AddScoped<IOcppMessageHandler, StatusNotificationMessageHandler>();
         services.AddScoped<IOcppMessageHandler, StopTransactionMessageHandler>();
+        services.AddScoped<IOcppMessageHandler, HeartbeatMessageHandler>();
         
         services.AddScoped<IOcppMessageHandlerProvider, OcppMessageHandlerProvider>();
         services.AddScoped<IOcppWebSocketConnectionHandler, OcppWebSocketConnectionHandler>();

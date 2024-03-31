@@ -2,11 +2,11 @@
 using ChargingStation.Common.Messages_OCPP16.Enums;
 using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
-using ChargingStation.Connectors.Models.Requests;
+using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
+using ChargingStation.InternalCommunication.Services.Connectors;
 using ChargingStation.Transactions.Models.Requests;
-using ChargingStation.Transactions.Services.Connectors;
 using ChargingStation.Transactions.Specifications;
 
 namespace ChargingStation.Transactions.Services.MeterValues;

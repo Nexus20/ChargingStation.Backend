@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Abstract;
 using ChargingStation.Infrastructure.Extensions;
 using ChargingStation.Infrastructure.Persistence;
@@ -65,10 +66,14 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
         return query.ApplySpecifications(specification).ToListAsync(cancellationToken);
     }
 
-    public Task<TEntity?> GetFirstOrDefaultAsync(Specification<TEntity> specification, CancellationToken cancellationToken = default)
+    public Task<TEntity?> GetFirstOrDefaultAsync(Specification<TEntity> specification, bool applyTracking = false, CancellationToken cancellationToken = default)
     {
-        IQueryable<TEntity> query = DbSet;
-        return query.ApplySpecifications(specification).FirstOrDefaultAsync(cancellationToken);
+        var query = DbSet.ApplySpecifications(specification);
+        
+        if(!applyTracking)
+            query = query.AsNoTracking();
+        
+        return query.FirstOrDefaultAsync(cancellationToken);
     }
 
     public async Task<IPagedCollection<TEntity>> GetPagedCollectionAsync(Specification<TEntity> specification, int? pageNumber = 1, int? pageSize = null, bool applyTracking = false,

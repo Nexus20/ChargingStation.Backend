@@ -1,5 +1,6 @@
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.WebSockets.OcppMessageHandlers.Providers;
 

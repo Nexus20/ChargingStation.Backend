@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Linq.Expressions;
 using System.Reflection;
-using ChargingStation.Common.Models.Requests;
+using ChargingStation.Common.Models.General.Requests;
 using ChargingStation.Domain.Abstract;
 
 namespace ChargingStation.Infrastructure.Specifications;

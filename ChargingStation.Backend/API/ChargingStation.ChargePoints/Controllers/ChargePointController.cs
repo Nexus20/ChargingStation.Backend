@@ -1,7 +1,7 @@
 ﻿using ChargingStation.ChargePoints.Models.Requests;
-using ChargingStation.ChargePoints.Models.Responses;
 using ChargingStation.ChargePoints.Services;
-using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.Models.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChargingStation.ChargePoints.Controllers;
@@ -42,7 +42,7 @@ public class ChargePointController : ControllerBase
     [Produces("application/json")]
     [ProducesResponseType(typeof(ChargePointResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Post([FromForm] CreateChargePointRequest chargePoint, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Post([FromBody] CreateChargePointRequest chargePoint, CancellationToken cancellationToken = default)
     {
         var createdChargePoint = await _chargePointService.CreateAsync(chargePoint, cancellationToken);
 

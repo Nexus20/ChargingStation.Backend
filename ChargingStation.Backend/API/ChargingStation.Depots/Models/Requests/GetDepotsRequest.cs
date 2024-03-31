@@ -1,4 +1,4 @@
-﻿using ChargingStation.Common.Models.Requests;
+﻿using ChargingStation.Common.Models.General.Requests;
 using ChargingStation.Domain.Enums;
 
 namespace ChargingStation.Depots.Models.Requests;

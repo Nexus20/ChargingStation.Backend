@@ -1,37 +1,36 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 
-namespace ChargingStation.Infrastructure.AzureTableStorage
+namespace ChargingStation.Infrastructure.AzureTableStorage;
+
+public abstract class BaseTableStorageEntity : ITableEntity
 {
-    public abstract class BaseTableStorageEntity : ITableEntity
+    public string PartitionKey { get; set; }
+    public string RowKey { get; set; }
+    public DateTimeOffset? Timestamp { get; set; }
+    public ETag ETag { get; set; }
+
+    protected BaseTableStorageEntity(string partitionKey, ETag eTag)
     {
-        public string PartitionKey { get; set; }
-        public string RowKey { get; set; }
-        public DateTimeOffset? Timestamp { get; set; }
-        public ETag ETag { get; set; }
+        PartitionKey = partitionKey;
+        Timestamp = DateTimeOffset.UtcNow;
+        RowKey = GenerateRowKey(Timestamp.Value);
+        ETag = eTag;
+    }
 
-        protected BaseTableStorageEntity(string partitionKey, ETag eTag)
-        {
-            PartitionKey = partitionKey;
-            Timestamp = DateTimeOffset.UtcNow;
-            RowKey = GenerateRowKey(Timestamp.Value);
-            ETag = eTag;
-        }
+    protected BaseTableStorageEntity(string partitionKey)
+    {
+        PartitionKey = partitionKey;
+        Timestamp = DateTimeOffset.UtcNow;
+        RowKey = GenerateRowKey(Timestamp.Value);
+    }
 
-        protected BaseTableStorageEntity(string partitionKey)
-        {
-            PartitionKey = partitionKey;
-            Timestamp = DateTimeOffset.UtcNow;
-            RowKey = GenerateRowKey(Timestamp.Value);
-        }
+    private string GenerateRowKey(DateTimeOffset timestamp)
+    {
+        long ticksDifference = DateTime.MaxValue.Ticks - timestamp.Ticks;
 
-        private string GenerateRowKey(DateTimeOffset timestamp)
-        {
-            long ticksDifference = DateTime.MaxValue.Ticks - timestamp.Ticks;
+        string rowKey = ticksDifference.ToString("d19");
 
-            string rowKey = ticksDifference.ToString("d19");
-
-            return rowKey;
-        }
+        return rowKey;
     }
 }

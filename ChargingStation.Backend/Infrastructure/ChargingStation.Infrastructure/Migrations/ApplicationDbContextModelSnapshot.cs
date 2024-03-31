@@ -90,6 +90,84 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.ToTable("ChargePoints");
                 });
 
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ChargingProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ChargingProfileId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ChargingProfileId"));
+
+                    b.Property<int>("ChargingProfileKind")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ChargingProfilePurpose")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Duration")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("MinChargingRate")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("RecurrencyKind")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SchedulingUnit")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StackLevel")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartSchedule")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ValidFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ValidTo")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ChargingProfile");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ChargingSchedulePeriod", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChargingProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("Limit")
+                        .HasColumnType("float");
+
+                    b.Property<int>("NumberPhases")
+                        .HasColumnType("int");
+
+                    b.Property<int>("StartPeriod")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChargingProfileId");
+
+                    b.ToTable("ChargingSchedulePeriod");
+                });
+
             modelBuilder.Entity("ChargingStation.Domain.Entities.Connector", b =>
                 {
                     b.Property<Guid>("Id")
@@ -117,6 +195,33 @@ namespace ChargingStation.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Connectors");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ConnectorChargingProfile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ChargingProfileId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ConnectorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChargingProfileId");
+
+                    b.HasIndex("ConnectorId");
+
+                    b.ToTable("ConnectorChargingProfile");
                 });
 
             modelBuilder.Entity("ChargingStation.Domain.Entities.ConnectorMeterValue", b =>
@@ -361,6 +466,75 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.ToTable("Transactions");
                 });
 
+            modelBuilder.Entity("ChargingStation.Domain.Entities.Reservation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("CancellationRequestId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("ChargePointId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ConnectorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiryDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCancelled")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ReservationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ReservationId"));
+
+                    b.Property<string>("ReservationRequestId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("StartDateTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TransactionId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChargePointId");
+
+                    b.HasIndex("ConnectorId")
+                        .IsUnique()
+                        .HasFilter("[ConnectorId] IS NOT NULL");
+
+                    b.HasIndex("ReservationRequestId")
+                        .IsUnique();
+
+                    b.HasIndex("TagId");
+
+                    b.HasIndex("TransactionId")
+                        .IsUnique()
+                        .HasFilter("[TransactionId] IS NOT NULL");
+
+                    b.ToTable("Reservations");
+                });
+
             modelBuilder.Entity("ChargingStation.Domain.Entities.ChargePoint", b =>
                 {
                     b.HasOne("ChargingStation.Domain.Entities.Depot", "Depot")
@@ -372,6 +546,17 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.Navigation("Depot");
                 });
 
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ChargingSchedulePeriod", b =>
+                {
+                    b.HasOne("ChargingStation.Domain.Entities.ChargingProfile", "ChargingProfile")
+                        .WithMany("ChargingSchedulePeriods")
+                        .HasForeignKey("ChargingProfileId")
+                        .IsRequired()
+                        .HasConstraintName("FK_ChargingSchedulePeriods_ChargingProfile");
+
+                    b.Navigation("ChargingProfile");
+                });
+
             modelBuilder.Entity("ChargingStation.Domain.Entities.Connector", b =>
                 {
                     b.HasOne("ChargingStation.Domain.Entities.ChargePoint", "ChargePoint")
@@ -381,6 +566,25 @@ namespace ChargingStation.Infrastructure.Migrations
                         .HasConstraintName("FK_Connectors_ChargePoint");
 
                     b.Navigation("ChargePoint");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ConnectorChargingProfile", b =>
+                {
+                    b.HasOne("ChargingStation.Domain.Entities.ChargingProfile", "ChargingProfile")
+                        .WithMany("ConnectorChargingProfiles")
+                        .HasForeignKey("ChargingProfileId")
+                        .IsRequired()
+                        .HasConstraintName("FK_ConnectorChargingProfiles_ChargingProfile");
+
+                    b.HasOne("ChargingStation.Domain.Entities.Connector", "Connector")
+                        .WithMany("ConnectorChargingProfiles")
+                        .HasForeignKey("ConnectorId")
+                        .IsRequired()
+                        .HasConstraintName("FK_ConnectorChargingProfiles_Connector");
+
+                    b.Navigation("ChargingProfile");
+
+                    b.Navigation("Connector");
                 });
 
             modelBuilder.Entity("ChargingStation.Domain.Entities.ConnectorMeterValue", b =>
@@ -428,18 +632,62 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.Navigation("Connector");
                 });
 
+            modelBuilder.Entity("ChargingStation.Domain.Entities.Reservation", b =>
+                {
+                    b.HasOne("ChargingStation.Domain.Entities.ChargePoint", "ChargePoint")
+                        .WithMany("Reservations")
+                        .HasForeignKey("ChargePointId")
+                        .IsRequired()
+                        .HasConstraintName("FK_Reservations_ChargePoint");
+
+                    b.HasOne("ChargingStation.Domain.Entities.Connector", "Connector")
+                        .WithOne("Reservation")
+                        .HasForeignKey("ChargingStation.Domain.Entities.Reservation", "ConnectorId");
+
+                    b.HasOne("ChargingStation.Domain.Entities.OcppTag", "Tag")
+                        .WithMany()
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ChargingStation.Domain.Entities.OcppTransaction", "Transaction")
+                        .WithOne("Reservation")
+                        .HasForeignKey("ChargingStation.Domain.Entities.Reservation", "TransactionId");
+
+                    b.Navigation("ChargePoint");
+
+                    b.Navigation("Connector");
+
+                    b.Navigation("Tag");
+
+                    b.Navigation("Transaction");
+                });
+
             modelBuilder.Entity("ChargingStation.Domain.Entities.ChargePoint", b =>
                 {
                     b.Navigation("Connectors");
 
+                    b.Navigation("Reservations");
+
                     b.Navigation("Transactions");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ChargingProfile", b =>
+                {
+                    b.Navigation("ChargingSchedulePeriods");
+
+                    b.Navigation("ConnectorChargingProfiles");
                 });
 
             modelBuilder.Entity("ChargingStation.Domain.Entities.Connector", b =>
                 {
+                    b.Navigation("ConnectorChargingProfiles");
+
                     b.Navigation("ConnectorMeterValues");
 
                     b.Navigation("ConnectorStatuses");
+
+                    b.Navigation("Reservation");
                 });
 
             modelBuilder.Entity("ChargingStation.Domain.Entities.Depot", b =>
@@ -450,6 +698,8 @@ namespace ChargingStation.Infrastructure.Migrations
             modelBuilder.Entity("ChargingStation.Domain.Entities.OcppTransaction", b =>
                 {
                     b.Navigation("ConnectorMeterValues");
+
+                    b.Navigation("Reservation");
                 });
 #pragma warning restore 612, 618
         }

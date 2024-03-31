@@ -1,8 +1,8 @@
 ﻿using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
-using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.Transactions.Responses;
 using ChargingStation.Transactions.Models.Requests;
-using ChargingStation.Transactions.Models.Responses;
 
 namespace ChargingStation.Transactions.Services.Transactions;
 

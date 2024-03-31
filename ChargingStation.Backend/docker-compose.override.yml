@@ -2,16 +2,137 @@ version: '3.4'
 
 services:
   
-  rabbitmq:
-    container_name: rabbitmq
+  chargingstation_rabbitmq:
+    container_name: chargingstation_rabbitmq
     restart: always
     ports:
       - "5672:5672"
       - "15672:15672"
-  
-#  chargingstation.depots:
-#    environment:
-#      - ASPNETCORE_ENVIRONMENT=Development
-#      - ASPNETCORE_HTTP_PORTS=8080
-#    ports:
-#      - "8080"
+        
+  chargingstation_redis:
+    container_name: chargingstation_redis
+    restart: always
+    ports:
+      - "6379:6379"
+        
+  depots.api:
+    container_name: depots.api
+    ports:
+      - "8001:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        
+  chargepoints.api:
+    container_name: chargepoints.api
+    ports:
+      - "8002:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+    depends_on:
+      - chargingstation_rabbitmq
+      - depots.api
+        
+  ocpptags.api:
+    container_name: ocpptags.api
+    ports:
+      - "8003:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+    depends_on:
+      - chargingstation_rabbitmq
+      - depots.api
+        
+  connectors.api:
+    container_name: connectors.api
+    ports:
+      - "8004:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+    depends_on:
+      - chargingstation_rabbitmq
+      - depots.api
+        
+  transactions.api:
+    container_name: transactions.api
+    ports:
+      - "8005:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "ApiSettings:ConnectorServiceAddress=http://connectors.api"
+      - "ApiSettings:OcppTagServiceAddress=http://ocpptags.api"
+    depends_on:
+      - chargingstation_rabbitmq
+      - depots.api
+        
+  heartbeats.api:
+    container_name: heartbeats.api
+    ports:
+      - "8006:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api"
+    depends_on:
+      - chargingstation_rabbitmq
+      - depots.api
+        
+  reservations.api:
+    container_name: reservations.api
+    ports:
+      - "8007:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api"
+      - "ApiSettings:ConnectorServiceAddress=http://connectors.api"
+      - "ApiSettings:OcppTagServiceAddress=http://ocpptags.api"
+    depends_on:
+      - chargingstation_rabbitmq
+      - depots.api
+        
+  chargingprofiles.api:
+    container_name: chargingprofiles.api
+    ports:
+      - "8008:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "ApiSettings:ConnectorServiceAddress=http://connectors.api"
+      - "ApiSettings:TransactionServiceAddress=http://transactions.api"
+    depends_on:
+      - chargingstation_rabbitmq
+      - depots.api
+      - chargingstation_redis
+        
+  chargingstation.websockets:
+    container_name: chargingstation.websockets
+    ports:
+      - "8020:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+    depends_on:
+      - chargingstation_rabbitmq
+      - depots.api

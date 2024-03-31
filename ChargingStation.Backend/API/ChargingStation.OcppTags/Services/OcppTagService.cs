@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.OcppTags.Responses;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.OcppTags.Models.Requests;
-using ChargingStation.OcppTags.Models.Responses;
 using ChargingStation.OcppTags.Specifications;
 
 namespace ChargingStation.OcppTags.Services;
@@ -53,7 +54,7 @@ public class OcppTagService : IOcppTagService
         
         var specification = new GetOcppTagsSpecification(request);
         
-        var ocppTag = await _ocppTagRepository.GetFirstOrDefaultAsync(specification, cancellationToken);
+        var ocppTag = await _ocppTagRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
 
         if (ocppTag is null)
             return null; 

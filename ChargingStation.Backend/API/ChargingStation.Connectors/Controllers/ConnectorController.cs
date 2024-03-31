@@ -1,4 +1,4 @@
-using ChargingStation.Connectors.Models.Requests;
+using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Connectors.Services;
 using Microsoft.AspNetCore.Mvc;
 

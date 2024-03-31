@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using ChargingStation.Common.Constants;
 using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
 using ChargingStation.WebSockets.Models;
 using ChargingStation.WebSockets.OcppMessageHandlers.Providers;
 using ChargingStation.WebSockets.Services;
@@ -83,7 +84,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
                     {
                         _logger.LogInformation("Closing old websocket for {ChargePointId}", chargePointId);
 
-                        await oldSocket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "Client sent new websocket request", CancellationToken.None);
+                        await oldSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client sent new websocket request", CancellationToken.None);
                     }
                 }
                 _logger.LogInformation("Websocket replaced successfully for {ChargePointId}", chargePointId);
@@ -197,7 +198,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
             var uniqueId = match.Groups[2].Value;
             var action = match.Groups[3].Value;
             var jsonPayload = match.Groups[4].Value;
-            _logger.LogInformation("OCPPMiddleware.Receive20 => OCPP-Message: Type={MessageTypeId} / ID={UniqueId} / Action={Action})", messageTypeId, uniqueId, action);
+            _logger.LogInformation("OCPPMiddleware.Receive16 => OCPP-Message: Type={MessageTypeId} / ID={UniqueId} / Action={Action})", messageTypeId, uniqueId, action);
             
             var incomingMessage = new OcppMessage(messageTypeId, uniqueId, action, jsonPayload);
             
@@ -299,7 +300,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
                     if (webSocket != _activeChargePoint[chargePointId].WebSocket)
                     {
                         if(webSocket.State != WebSocketState.CloseReceived)
-                            await webSocket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "New websocket request received for this charger", CancellationToken.None);
+                            await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "New websocket request received for this charger", CancellationToken.None);
                     }
                     else
                         await RemoveConnectionsAsync(chargePointId, webSocket);
@@ -370,9 +371,12 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
                 _logger.LogWarning("Cannot remove charger {ChargePointId}", chargePointId);
             }
 
-            await webSocket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "Client requested closure", CancellationToken.None);
-            _logger.LogInformation("Closed websocket for charger {ChargePointId}. Remaining active chargers: {ActiveChargePointsCount}", chargePointId, _activeChargePoint.Count);
+            if (webSocket.State == WebSocketState.Aborted)
+                await webSocket.CloseOutputAsync(WebSocketCloseStatus.ProtocolError, "Protocol error", CancellationToken.None);
+            else
+                await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client requested closure", CancellationToken.None);
 
+            _logger.LogInformation("Closed websocket for charger {ChargePointId}. Remaining active chargers: {ActiveChargePointsCount}", chargePointId, _activeChargePoint.Count);
         }
         catch (Exception ex)
         {

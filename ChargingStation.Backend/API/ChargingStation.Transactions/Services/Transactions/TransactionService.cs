@@ -1,18 +1,18 @@
 using AutoMapper;
 using ChargingStation.Common.Exceptions;
+using ChargingStation.Common.Helpers.OcppTags;
 using ChargingStation.Common.Messages_OCPP16;
 using ChargingStation.Common.Messages_OCPP16.Enums;
 using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
-using ChargingStation.Common.Models;
-using ChargingStation.Connectors.Models.Requests;
+using ChargingStation.Common.Models.Connectors.Requests;
+using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.Transactions.Responses;
 using ChargingStation.Domain.Entities;
-using ChargingStation.OcppTags.Helpers;
+using ChargingStation.InternalCommunication.Services.Connectors;
+using ChargingStation.InternalCommunication.Services.OcppTags;
 using ChargingStation.Transactions.Models.Requests;
-using ChargingStation.Transactions.Models.Responses;
 using ChargingStation.Transactions.Repositories;
-using ChargingStation.Transactions.Services.Connectors;
-using ChargingStation.Transactions.Services.OcppTags;
 using ChargingStation.Transactions.Specifications;
 
 namespace ChargingStation.Transactions.Services.Transactions;

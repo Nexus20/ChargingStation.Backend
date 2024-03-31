@@ -1,8 +1,9 @@
-﻿using ChargingStation.Common.Messages_OCPP16.Enums;
+﻿using ChargingStation.Common.Helpers.OcppTags;
+using ChargingStation.Common.Messages_OCPP16.Enums;
 using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Models;
-using ChargingStation.OcppTags.Helpers;
+using ChargingStation.Common.Models.General;
 using ChargingStation.OcppTags.Services;
 using MassTransit;
 

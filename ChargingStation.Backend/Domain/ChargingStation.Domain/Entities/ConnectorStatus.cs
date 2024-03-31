@@ -1,3 +1,4 @@
+using ChargingStation.Common.Models.Abstract;
 using ChargingStation.Domain.Abstract;
 
 namespace ChargingStation.Domain.Entities;

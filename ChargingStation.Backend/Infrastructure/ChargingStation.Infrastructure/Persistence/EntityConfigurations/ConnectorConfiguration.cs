@@ -29,5 +29,11 @@ public class ConnectorConfiguration : IEntityTypeConfiguration<Connector>
             .HasForeignKey(cm => cm.ConnectorId)
             .OnDelete(DeleteBehavior.ClientSetNull)
             .HasConstraintName("FK_ConnectorMeterValues_Connector");
+        
+        builder.HasMany(c => c.ConnectorChargingProfiles)
+            .WithOne(cp => cp.Connector)
+            .HasForeignKey(cp => cp.ConnectorId)
+            .OnDelete(DeleteBehavior.ClientSetNull)
+            .HasConstraintName("FK_ConnectorChargingProfiles_Connector");
     }
 }

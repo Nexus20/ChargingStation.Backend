@@ -1,3 +1,4 @@
+using ChargingStation.Common.Models.Abstract;
 using ChargingStation.Domain.Abstract;
 
 namespace ChargingStation.Domain.Entities;
@@ -23,4 +24,5 @@ public class OcppTransaction : Entity, ITimeMarkable
     public Connector? Connector { get; set; }
     
     public List<ConnectorMeterValue>? ConnectorMeterValues { get; set; }
+    public Reservation? Reservation { get; set; }
 }

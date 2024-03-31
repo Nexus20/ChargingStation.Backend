@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
 using ChargingStation.Depots.Models.Responses;
 using ChargingStation.Domain.Entities;
 

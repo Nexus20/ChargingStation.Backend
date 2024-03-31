@@ -1,5 +1,6 @@
 ﻿using System.Net.WebSockets;
 using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.General;
 
 namespace ChargingStation.WebSockets.Models;
 
