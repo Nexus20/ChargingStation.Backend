@@ -37,7 +37,16 @@ public class ConnectorService : IConnectorService
             throw new NotFoundException($"Connector with ChargePointId {request.ChargePointId} and ConnectorId {request.ConnectorId} not found");
         }
         
-        var statusToCreate = _mapper.Map<ConnectorStatus>(request);
+        var statusToCreate = new ConnectorStatus
+        {
+            ConnectorId = connector.Id,
+            CurrentStatus = request.Status,
+            ErrorCode = request.ErrorCode,
+            Info = request.Info,
+            VendorErrorCode = request.VendorErrorCode,
+            VendorId = request.VendorId,
+            StatusUpdatedTimestamp = request.StatusTimestamp
+        };
         await _connectorStatusRepository.AddAsync(statusToCreate, cancellationToken);
         await _connectorStatusRepository.SaveChangesAsync(cancellationToken);
     }

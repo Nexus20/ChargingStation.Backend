@@ -7,7 +7,7 @@ public record StartTransactionResponse
 {
     [JsonProperty("idTagInfo", Required = Required.Always)]
     [Required]
-    public IdTagInfo IdTagInfo { get; set; } = new IdTagInfo();
+    public IdTagInfo IdTagInfo { get; set; } = new();
 
     [JsonProperty("transactionId", Required = Required.Always)]
     public int TransactionId { get; set; }
