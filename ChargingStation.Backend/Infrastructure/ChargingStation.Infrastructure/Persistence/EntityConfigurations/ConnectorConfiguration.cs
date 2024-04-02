@@ -8,8 +8,6 @@ public class ConnectorConfiguration : IEntityTypeConfiguration<Connector>
 {
     public void Configure(EntityTypeBuilder<Connector> builder)
     {
-        builder.Property(c => c.ConnectorId).ValueGeneratedOnAdd();
-        
         builder.HasIndex(x => new { x.ChargePointId, x.ConnectorId }).IsUnique();
         
         builder.HasOne(d => d.ChargePoint)

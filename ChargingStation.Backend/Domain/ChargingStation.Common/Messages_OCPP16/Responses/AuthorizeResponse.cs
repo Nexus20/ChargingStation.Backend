@@ -7,5 +7,5 @@ public record AuthorizeResponse
 {
     [JsonProperty("idTagInfo", Required = Required.Always)]
     [Required]
-    public IdTagInfo IdTagInfo { get; set; }
+    public IdTagInfo IdTagInfo { get; set; } = new();
 }

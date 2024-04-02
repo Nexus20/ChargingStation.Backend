@@ -170,19 +170,6 @@ public class TransactionService : ITransactionService
             }
         }
 
-        if (connectorId > 0)
-        {
-            var updateStatusRequest = new UpdateConnectorStatusRequest()
-            {
-                ChargePointId = chargePointId,
-                ConnectorId = connectorId,
-                Status = "Occupied",
-                StatusTimestamp = request.Timestamp.UtcDateTime,
-            };
-            
-            await _connectorHttpService.UpdateConnectorStatusAsync(updateStatusRequest, cancellationToken);
-        }
-
         if (response.IdTagInfo.Status == IdTagInfoStatus.Accepted)
         {
             try
@@ -193,6 +180,16 @@ public class TransactionService : ITransactionService
                     ConnectorId = connectorId
                 };
                 var connector = await _connectorHttpService.GetOrCreateConnectorAsync(connectorRequest, cancellationToken);
+                
+                var updateStatusRequest = new UpdateConnectorStatusRequest()
+                {
+                    ChargePointId = chargePointId,
+                    ConnectorId = connectorId,
+                    Status = "Occupied",
+                    StatusTimestamp = request.Timestamp.UtcDateTime,
+                };
+        
+                await _connectorHttpService.UpdateConnectorStatusAsync(updateStatusRequest, cancellationToken);
                 
                 var transactionToCreate = new OcppTransaction
                 {

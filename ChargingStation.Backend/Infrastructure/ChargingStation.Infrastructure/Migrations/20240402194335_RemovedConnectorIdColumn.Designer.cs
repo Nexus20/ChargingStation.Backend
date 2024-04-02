@@ -4,6 +4,7 @@ using ChargingStation.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ChargingStation.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240402194335_RemovedConnectorIdColumn")]
+    partial class RemovedConnectorIdColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -177,9 +180,6 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.Property<Guid>("ChargePointId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("ConnectorId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -188,8 +188,7 @@ namespace ChargingStation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ChargePointId", "ConnectorId")
-                        .IsUnique();
+                    b.HasIndex("ChargePointId");
 
                     b.ToTable("Connectors");
                 });
@@ -433,6 +432,7 @@ namespace ChargingStation.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("StopTagId")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
@@ -444,6 +444,11 @@ namespace ChargingStation.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TransactionId"));
+
+                    b.Property<string>("Uid")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");

@@ -8,8 +8,6 @@ public class TransactionConfiguration : IEntityTypeConfiguration<OcppTransaction
 {
     public void Configure(EntityTypeBuilder<OcppTransaction> builder)
     {
-        builder.Property(e => e.Uid).HasMaxLength(50);
-
         builder.Property(t => t.TransactionId).ValueGeneratedOnAdd();
         
         builder.Property(e => e.StartResult).HasMaxLength(100);
