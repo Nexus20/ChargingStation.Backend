@@ -57,7 +57,7 @@ public class OcppTagController : ControllerBase
     [Produces("application/json")]
     [ProducesResponseType(typeof(OcppTagResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Post([FromForm] CreateOcppTagRequest chargePoint, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Post([FromBody] CreateOcppTagRequest chargePoint, CancellationToken cancellationToken = default)
     {
         var createdChargePoint = await _ocppTagService.CreateAsync(chargePoint, cancellationToken);
 

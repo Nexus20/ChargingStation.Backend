@@ -43,7 +43,7 @@ public class DepotController : ControllerBase
     [Produces("application/json")]
     [ProducesResponseType(typeof(DepotResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Post([FromForm] DepotResponse depot, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Post([FromBody] DepotResponse depot, CancellationToken cancellationToken = default)
     {
         var createdDepot = await _depotService.CreateAsync(depot, cancellationToken);
 
