@@ -1,5 +1,6 @@
 ﻿using ChargingStation.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace ChargingStation.Infrastructure.Persistence.EntityConfigurations;
@@ -8,7 +9,8 @@ public class TransactionConfiguration : IEntityTypeConfiguration<OcppTransaction
 {
     public void Configure(EntityTypeBuilder<OcppTransaction> builder)
     {
-        builder.Property(t => t.TransactionId).ValueGeneratedOnAdd();
+        builder.Property(t => t.TransactionId).UseIdentityColumn();
+        builder.Property(t => t.TransactionId).Metadata.SetAfterSaveBehavior(PropertySaveBehavior.Ignore);
         
         builder.Property(e => e.StartResult).HasMaxLength(100);
 
