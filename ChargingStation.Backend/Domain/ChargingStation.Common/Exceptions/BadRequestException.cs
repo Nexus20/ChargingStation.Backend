@@ -13,6 +13,9 @@ public class BadRequestException : Exception
         : base($"{entityTypeName} with such parameters already exists. Fields: {GetFields(entity)}")
     { }
 
+    public BadRequestException(string message) : base(message)
+    { }
+
     private static string GetFields(object entity)
     {
         PropertyInfo[] properties = entity.GetType().GetProperties();

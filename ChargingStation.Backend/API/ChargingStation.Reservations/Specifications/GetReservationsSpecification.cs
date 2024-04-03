@@ -1,4 +1,5 @@
-﻿using ChargingStation.Domain.Entities;
+﻿using ChargingStation.Common.Models.Reservations.Requests;
+using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Specifications;
 using ChargingStation.Reservations.Models.Requests;
 
@@ -9,6 +10,13 @@ public class GetReservationsSpecification : Specification<Reservation>
     public GetReservationsSpecification(GetReservationsRequest request)
     {
         AddFilters(request);
+    }
+    
+    public GetReservationsSpecification(UseReservationRequest request)
+    {
+        AddFilter(r => r.ChargePointId == request.ChargePointId);
+        AddFilter(r => r.ConnectorId == request.ConnectorId);
+        AddFilter(r => r.ReservationId == request.ReservationId);
     }
     
     private void AddFilters(GetReservationsRequest request)
