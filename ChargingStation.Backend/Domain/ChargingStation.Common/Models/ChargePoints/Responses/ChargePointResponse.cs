@@ -1,6 +1,6 @@
 ﻿using ChargingStation.Common.Models.Abstract;
 
-namespace ChargingStation.Common.Models.Models.Responses;
+namespace ChargingStation.Common.Models.ChargePoints.Responses;
 
 public class ChargePointResponse : BaseResponse, ITimeMarkable
 {

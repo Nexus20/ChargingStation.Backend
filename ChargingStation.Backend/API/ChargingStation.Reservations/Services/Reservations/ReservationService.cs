@@ -4,8 +4,8 @@ using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Messages_OCPP16.Responses.Enums;
-using ChargingStation.Common.Models;
 using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.Reservations.Requests;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.Services.ChargePoints;
@@ -71,7 +71,30 @@ public class ReservationService : IReservationService
         var result = _mapper.Map<IPagedCollection<ReservationResponse>>(reservations);
         return result;
     }
-    
+
+    public async Task UseReservationAsync(UseReservationRequest request, CancellationToken cancellationToken = default)
+    {
+        var specification = new GetReservationsSpecification(request);
+        
+        var reservation = await _reservationRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
+        
+        if (reservation is null)
+        {
+            throw new NotFoundException($"Reservation with id {request.ReservationId} for charge point with id {request.ChargePointId} not found");
+        }
+        
+        if (reservation.Status != ReserveNowResponseStatus.Accepted.ToString())
+        {
+            throw new BadRequestException($"Reservation with id {request.ReservationId} for charge point with id {request.ChargePointId} is not accepted");
+        }
+        
+        reservation.IsUsed = true;
+        reservation.Status = "Used";
+        
+        _reservationRepository.Update(reservation);
+        await _reservationRepository.SaveChangesAsync(cancellationToken);
+    }
+
     public async Task CreateReservationAsync(CreateReservationRequest request, CancellationToken cancellationToken = default)
     {
         var ocppTag = await _ocppTagHttpService.GetByIdAsync(request.OcppTagId, cancellationToken);
