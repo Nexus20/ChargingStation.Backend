@@ -39,9 +39,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Heartbeats"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.InternalCommunication", "Infrastructure\ChargingStation.InternalCommunication\ChargingStation.InternalCommunication.csproj", "{2A7C50B5-63F1-4B77-B495-4D5F67E76E2A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.ChargingProfiles", "API\ChargingStation.ChargingProfiles\ChargingStation.ChargingProfiles.csproj", "{2E912E14-49D1-46FA-B651-37ACF9EFF747}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.ChargingProfiles", "API\ChargingStation.ChargingProfiles\ChargingStation.ChargingProfiles.csproj", "{2E912E14-49D1-46FA-B651-37ACF9EFF747}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.CacheManager", "Infrastructure\ChargingStation.CacheManager\ChargingStation.CacheManager.csproj", "{38AD1F79-1843-4ADB-9CD9-EB1316D0C1BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.CacheManager", "Infrastructure\ChargingStation.CacheManager\ChargingStation.CacheManager.csproj", "{38AD1F79-1843-4ADB-9CD9-EB1316D0C1BA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

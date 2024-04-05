@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ChargingStation.Transactions.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class TransactionController : ControllerBase
 {
     private readonly ITransactionService _transactionService;
