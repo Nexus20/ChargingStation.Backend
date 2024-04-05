@@ -1,11 +1,10 @@
 ﻿using ChargingStation.Common.Constants;
 using ChargingStation.Common.Messages_OCPP16.Requests;
-using ChargingStation.Common.Models;
 using ChargingStation.Common.Models.General;
 using ChargingStation.WebSockets.OcppMessageHandlers.Abstract;
 using MassTransit;
 
-namespace ChargingStation.WebSockets.OcppMessageHandlers;
+namespace ChargingStation.WebSockets.OcppMessageHandlers.RequestHandlers;
 
 public class HeartbeatMessageHandler : Ocpp16MessageHandler
 {
@@ -17,7 +16,7 @@ public class HeartbeatMessageHandler : Ocpp16MessageHandler
         _publishEndpoint = publishEndpoint;
     }
 
-    public override string MessageType => Ocpp16MessageTypes.Heartbeat;
+    public override string MessageType => Ocpp16ActionTypes.Heartbeat;
 
     public override async Task HandleAsync(OcppMessage inputMessage, Guid chargePointId,
         CancellationToken cancellationToken = default)

@@ -149,10 +149,25 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
             
             if (socket.State == WebSocketState.Open)
             {
-                var resetRequest = new OcppMessage(OcppMessageTypes.Call, Guid.NewGuid().ToString(), Ocpp16MessageTypes.Reset, JsonConvert.SerializeObject(incomingRequest));
+                var resetRequest = new OcppMessage(OcppMessageTypes.Call, Guid.NewGuid().ToString(), Ocpp16ActionTypes.Reset, JsonConvert.SerializeObject(incomingRequest));
                 await SendResponseAsync(chargePointId, resetRequest);
                 
                 chargePointInfo.RequestDictionary.TryAdd(resetRequest.UniqueId, resetRequest);
+            }
+        }
+    }
+
+    public async Task SendCentralSystemRequestAsync(Guid chargePointId, OcppMessage centralSystemRequest, CancellationToken cancellationToken = default)
+    {
+        if (_activeChargePoint.TryGetValue(chargePointId, out var chargePointInfo))
+        {
+            var socket = chargePointInfo.WebSocket;
+            
+            if (socket.State == WebSocketState.Open)
+            {
+                await SendResponseAsync(chargePointId, centralSystemRequest);
+                
+                chargePointInfo.RequestDictionary.TryAdd(centralSystemRequest.UniqueId, centralSystemRequest);
             }
         }
     }
@@ -213,7 +228,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
             {
                 case OcppMessageTypes.Call:
                     // Process Request
-                    var messageHandler = _ocppMessageHandlerProvider.GetHandler(action, _subProtocol);
+                    var messageHandler = _ocppMessageHandlerProvider.GetRequestHandler(action, _subProtocol);
                     await messageHandler.HandleAsync(incomingMessage, chargePointId);
                     break;
                 case OcppMessageTypes.CallResult:
@@ -222,7 +237,8 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
                     {
                         if (chargePointInfo.RequestDictionary.Remove(uniqueId, out var request))
                         {
-                            // TODO: Handle charging station response
+                            var responseHandler = _ocppMessageHandlerProvider.GetResponseHandler(request.Action, _subProtocol);
+                            await responseHandler.HandleAsync(incomingMessage, chargePointId);
                         }
                         else
                         {

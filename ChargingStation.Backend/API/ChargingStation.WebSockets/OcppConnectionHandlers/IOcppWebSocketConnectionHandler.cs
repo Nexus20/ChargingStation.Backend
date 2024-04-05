@@ -8,5 +8,6 @@ public interface IOcppWebSocketConnectionHandler
 {
     Task HandleConnectionAsync(RequestDelegate next, HttpContext context);
     Task SendResponseAsync(Guid chargePointId, OcppMessage messageOut);
+    Task SendCentralSystemRequestAsync(Guid chargePointId, OcppMessage centralSystemRequest, CancellationToken cancellationToken = default);
     Task SendResetAsync(Guid chargePointId, ResetRequest incomingRequest);
 }

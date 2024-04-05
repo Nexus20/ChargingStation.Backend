@@ -55,7 +55,7 @@ public class AuthorizeConsumer : IConsumer<IntegrationOcppMessage<AuthorizeReque
         else
             response.IdTagInfo.Status = IdTagInfoStatus.Invalid;
         
-        var integrationMessage = ResponseIntegrationOcppMessage.Create(chargePointId, response, context.Message.OcppMessageId, ocppProtocol);
+        var integrationMessage = CentralSystemResponseIntegrationOcppMessage.Create(chargePointId, response, context.Message.OcppMessageId, ocppProtocol);
         await _publishEndpoint.Publish(integrationMessage, context.CancellationToken);
         
         _logger.LogInformation("Authorize message processed");

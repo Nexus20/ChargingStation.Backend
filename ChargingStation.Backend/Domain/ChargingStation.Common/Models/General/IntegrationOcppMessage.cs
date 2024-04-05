@@ -21,16 +21,33 @@ public class IntegrationOcppMessage<TPayload>
     public string OcppProtocol { get; set; }
 }
 
-public sealed class ResponseIntegrationOcppMessage : IntegrationOcppMessage<string>
+public sealed class CentralSystemRequestIntegrationOcppMessage : IntegrationOcppMessage<string>
 {
-    public ResponseIntegrationOcppMessage(Guid chargePointId, string payload, string ocppMessageId, string ocppProtocol) 
+    public string Action { get; set; }
+    
+    public CentralSystemRequestIntegrationOcppMessage(Guid chargePointId, string action, string payload, string ocppMessageId, string ocppProtocol) 
+        : base(chargePointId, JsonConvert.SerializeObject(payload), ocppMessageId, ocppProtocol)
+    {
+        Action = action;
+    }
+    
+    public static CentralSystemRequestIntegrationOcppMessage Create<TMessage>(Guid chargePointId, TMessage payload, string action, string ocppMessageId, string ocppProtocol)
+    {
+        var payloadBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload)));
+        return new CentralSystemRequestIntegrationOcppMessage(chargePointId, action, payloadBase64, ocppMessageId, ocppProtocol);
+    }
+}
+
+public sealed class CentralSystemResponseIntegrationOcppMessage : IntegrationOcppMessage<string>
+{
+    public CentralSystemResponseIntegrationOcppMessage(Guid chargePointId, string payload, string ocppMessageId, string ocppProtocol) 
         : base(chargePointId, JsonConvert.SerializeObject(payload), ocppMessageId, ocppProtocol)
     {
     }
     
-    public static ResponseIntegrationOcppMessage Create<TMessage>(Guid chargePointId, TMessage payload, string ocppMessageId, string ocppProtocol)
+    public static CentralSystemResponseIntegrationOcppMessage Create<TMessage>(Guid chargePointId, TMessage payload, string ocppMessageId, string ocppProtocol)
     {
         var payloadBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(payload)));
-        return new ResponseIntegrationOcppMessage(chargePointId, payloadBase64, ocppMessageId, ocppProtocol);
+        return new CentralSystemResponseIntegrationOcppMessage(chargePointId, payloadBase64, ocppMessageId, ocppProtocol);
     }
 }

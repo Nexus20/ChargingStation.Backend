@@ -3,6 +3,8 @@ using ChargingStation.WebSockets.OcppConnectionHandlers;
 using ChargingStation.WebSockets.OcppMessageHandlers;
 using ChargingStation.WebSockets.OcppMessageHandlers.Abstract;
 using ChargingStation.WebSockets.OcppMessageHandlers.Providers;
+using ChargingStation.WebSockets.OcppMessageHandlers.RequestHandlers;
+using ChargingStation.WebSockets.OcppMessageHandlers.ResponseHandlers;
 using ChargingStation.WebSockets.Services;
 using MassTransit;
 
@@ -20,16 +22,21 @@ public static class ServicesExtensions
         services.AddMassTransit(busConfigurator =>
         {
             busConfigurator.SetKebabCaseEndpointNameFormatter();
-            
-            busConfigurator.AddConsumer<OcppResponseConsumer>();
+
+            busConfigurator.AddConsumer<OcppCentralSystemRequestConsumer>();
+            busConfigurator.AddConsumer<OcppCentralSystemResponseConsumer>();
             busConfigurator.AddConsumer<ResetConsumer>();
             
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
                 cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
                 
+                cfg.ReceiveEndpoint("ocpp-request-queue", c => {
+                    c.ConfigureConsumer<OcppCentralSystemRequestConsumer>(ctx);
+                });
+                
                 cfg.ReceiveEndpoint("ocpp-response-queue", c => {
-                    c.ConfigureConsumer<OcppResponseConsumer>(ctx);
+                    c.ConfigureConsumer<OcppCentralSystemResponseConsumer>(ctx);
                 });
                 
                 cfg.ReceiveEndpoint("reset-queue", c => {
@@ -46,6 +53,9 @@ public static class ServicesExtensions
         services.AddScoped<IOcppMessageHandler, StatusNotificationMessageHandler>();
         services.AddScoped<IOcppMessageHandler, StopTransactionMessageHandler>();
         services.AddScoped<IOcppMessageHandler, HeartbeatMessageHandler>();
+        
+        services.AddScoped<IOcppMessageHandler, ReserveNowResponseMessageHandler>();
+        services.AddScoped<IOcppMessageHandler, CancelReservationResponseMessageHandler>();
         
         services.AddScoped<IOcppMessageHandlerProvider, OcppMessageHandlerProvider>();
         services.AddScoped<IOcppWebSocketConnectionHandler, OcppWebSocketConnectionHandler>();

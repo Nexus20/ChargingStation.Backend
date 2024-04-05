@@ -51,7 +51,7 @@ public class BootNotificationConsumer : IConsumer<IntegrationOcppMessage<BootNot
 
         var response = new BootNotificationResponse(BootNotificationResponseStatus.Accepted, DateTimeOffset.UtcNow, 60);
         
-        var integrationMessage = ResponseIntegrationOcppMessage.Create(chargePointId, response, context.Message.OcppMessageId, ocppProtocol);
+        var integrationMessage = CentralSystemResponseIntegrationOcppMessage.Create(chargePointId, response, context.Message.OcppMessageId, ocppProtocol);
         
         await _publishEndpoint.Publish(integrationMessage, context.CancellationToken);
         

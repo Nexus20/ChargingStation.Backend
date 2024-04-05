@@ -16,6 +16,7 @@ public abstract class OcppMessageHandler : IOcppMessageHandler
 
     public abstract string ProtocolVersion { get; }
     public abstract string MessageType { get; }
+    public virtual bool IsResponseHandler => false;
     
     private readonly IConfiguration _configuration;
     protected ILogger<OcppMessageHandler> Logger { get; }

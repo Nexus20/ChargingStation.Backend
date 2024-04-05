@@ -29,7 +29,7 @@ public class ChargePointCommunicationService : IChargePointCommunicationService
     public async Task HandleMessageAsync(OcppMessage message, Guid chargePointId, CancellationToken cancellationToken = default)
     {
         var messageType = message.MessageType;
-        var handler = _ocppMessageHandlerProvider.GetHandler(messageType, "1.6");
+        var handler = _ocppMessageHandlerProvider.GetRequestHandler(messageType, "1.6");
         await handler.HandleAsync(message, chargePointId, cancellationToken);
     }
 }

@@ -1,6 +1,8 @@
+using ChargingStation.Common.Models.General.Requests;
+
 namespace ChargingStation.Reservations.Models.Requests;
 
-public class GetReservationsRequest
+public class GetReservationsRequest : BaseCollectionRequest
 {
     public DateTime? StartDateTime { get; set; }
     public DateTime? ExpiryDateTime { get; set; }

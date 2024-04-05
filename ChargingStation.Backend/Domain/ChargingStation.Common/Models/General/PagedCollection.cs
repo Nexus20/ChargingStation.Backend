@@ -5,7 +5,7 @@ namespace ChargingStation.Common.Models.General;
 /// <inheritdoc cref="IPagedCollection{TEntity}"/>
 public class PagedCollection<TEntity> : IPagedCollection<TEntity>
 {
-    public IEnumerable<TEntity> Collection { get; set; }
+    public IEnumerable<TEntity> Collection { get; set; } = new List<TEntity>();
     public int PagesCount { get; set; }
     public int CurrentPage { get; set; }
     public int PageSize { get; set; }

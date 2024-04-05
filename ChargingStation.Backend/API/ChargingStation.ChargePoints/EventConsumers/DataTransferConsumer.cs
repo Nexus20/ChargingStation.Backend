@@ -40,7 +40,7 @@ public class DataTransferConsumer : IConsumer<IntegrationOcppMessage<DataTransfe
                 Data = "Data transfer accepted"
             };
 
-            var integrationMessage = ResponseIntegrationOcppMessage.Create(chargePointId, response,
+            var integrationMessage = CentralSystemResponseIntegrationOcppMessage.Create(chargePointId, response,
                 context.Message.OcppMessageId, ocppProtocol);
 
             await _publishEndpoint.Publish(integrationMessage, context.CancellationToken);

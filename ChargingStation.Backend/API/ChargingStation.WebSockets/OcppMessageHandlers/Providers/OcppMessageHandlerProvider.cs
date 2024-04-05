@@ -11,12 +11,22 @@ public class OcppMessageHandlerProvider : IOcppMessageHandlerProvider
         _handlers = handlers;
     }
 
-    public IOcppMessageHandler GetHandler(string messageType, string protocolVersion)
+    public IOcppMessageHandler GetRequestHandler(string messageType, string protocolVersion)
     {
         var handler =  _handlers.FirstOrDefault(x => x.MessageType == messageType && x.ProtocolVersion == protocolVersion);
         
         if (handler == null)
             throw new NotSupportedException($"No handler found for message type {messageType} and protocol version {protocolVersion}");
+        
+        return handler;
+    }
+
+    public IOcppMessageHandler GetResponseHandler(string messageType, string protocolVersion)
+    {
+        var handler =  _handlers.FirstOrDefault(x => x.MessageType == messageType && x.ProtocolVersion == protocolVersion && x.IsResponseHandler);
+        
+        if (handler == null)
+            throw new NotSupportedException($"No response handler found for message type {messageType} and protocol version {protocolVersion}");
         
         return handler;
     }

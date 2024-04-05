@@ -4,5 +4,6 @@ namespace ChargingStation.WebSockets.OcppMessageHandlers.Providers;
 
 public interface IOcppMessageHandlerProvider
 {
-    public IOcppMessageHandler GetHandler(string messageType, string protocolVersion);
+    public IOcppMessageHandler GetRequestHandler(string messageType, string protocolVersion);
+    public IOcppMessageHandler GetResponseHandler(string messageType, string protocolVersion);
 }

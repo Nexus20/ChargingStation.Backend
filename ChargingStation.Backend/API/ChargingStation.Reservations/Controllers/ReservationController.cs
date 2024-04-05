@@ -22,9 +22,12 @@ public class ReservationController : ControllerBase
     [ProducesResponseType(typeof(IPagedCollection<ReservationResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> Get([FromBody] GetReservationsRequest request, CancellationToken cancellationToken = default)
     {
-        var reservation = await _reservationService.GetAsync(request, cancellationToken);
+        var reservations = await _reservationService.GetAsync(request, cancellationToken);
 
-        return Ok(reservation);
+        if (!reservations.Any())
+            return NoContent();
+        
+        return Ok(reservations);
     }
     
     [HttpGet("{id:Guid}")]

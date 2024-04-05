@@ -4,7 +4,7 @@ using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Messages_OCPP16.Responses.Enums;
-using ChargingStation.Common.Models;
+using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
@@ -50,9 +50,7 @@ public class ReservationService : IReservationService
         var reservation = await _reservationRepository.GetByIdAsync(id, cancellationToken);
         
         if (reservation is null)
-        {
             throw new NotFoundException($"Reservation with id {id} not found");
-        }
         
         var result = _mapper.Map<ReservationResponse>(reservation);
         return result;
@@ -61,12 +59,10 @@ public class ReservationService : IReservationService
     public async Task<IPagedCollection<ReservationResponse>> GetAsync(GetReservationsRequest request, CancellationToken cancellationToken = default)
     {
         var specification = new GetReservationsSpecification(request);
-        var reservations = await _reservationRepository.GetAsync(specification, cancellationToken);
+        var reservations = await _reservationRepository.GetPagedCollectionAsync(specification, request.PagePredicate?.Page, request.PagePredicate?.PageSize, cancellationToken: cancellationToken);
         
-        if (reservations.Count == 0)
-        {
+        if (!reservations.Collection.Any())
             return PagedCollection<ReservationResponse>.Empty;
-        }
         
         var result = _mapper.Map<IPagedCollection<ReservationResponse>>(reservations);
         return result;
@@ -77,16 +73,12 @@ public class ReservationService : IReservationService
         var ocppTag = await _ocppTagHttpService.GetByIdAsync(request.OcppTagId, cancellationToken);
         
         if (ocppTag is null)
-        {
             throw new NotFoundException($"OcppTag with id {request.OcppTagId} not found");
-        }
         
         var chargePoint = await _chargePointHttpService.GetByIdAsync(request.ChargePointId, cancellationToken);
         
         if (chargePoint is null)
-        {
             throw new NotFoundException($"Charge point with id {request.ChargePointId} not found");
-        }
         
         var reserveNowRequestId = Guid.NewGuid().ToString("N");
 
@@ -101,7 +93,12 @@ public class ReservationService : IReservationService
         
         if (request.ConnectorId != 0)
         {
-            var connector = await _connectorHttpService.GetAsync(request.ChargePointId, request.ConnectorId, cancellationToken);
+            var getOrCreateConnectorRequest = new GetOrCreateConnectorRequest()
+            {
+                ChargePointId = request.ChargePointId,
+                ConnectorId = request.ConnectorId
+            };
+            var connector = await _connectorHttpService.GetOrCreateConnectorAsync(getOrCreateConnectorRequest, cancellationToken);
             
             if (connector is null)
             {
@@ -115,7 +112,7 @@ public class ReservationService : IReservationService
         await _reservationRepository.SaveChangesAsync(cancellationToken);
         
         var reserveNowRequest = new ReserveNowRequest(request.ConnectorId, request.ExpiryDateTime, ocppTag.TagId, reservation.ReservationId);
-        var integrationOcppMessage = new IntegrationOcppMessage<ReserveNowRequest>(request.ChargePointId, reserveNowRequest, reserveNowRequestId, OcppProtocolVersions.Ocpp16);
+        var integrationOcppMessage = CentralSystemRequestIntegrationOcppMessage.Create(request.ChargePointId, reserveNowRequest, Ocpp16ActionTypes.ReserveNow, reserveNowRequestId, OcppProtocolVersions.Ocpp16);
         await _publishEndpoint.Publish(integrationOcppMessage, cancellationToken);
         
         _logger.LogInformation("Reservation created for charge point with id {ChargePointId} and connector id {ConnectorId}", request.ChargePointId, request.ConnectorId);
@@ -156,7 +153,7 @@ public class ReservationService : IReservationService
         await _reservationRepository.SaveChangesAsync(cancellationToken);
         
         var cancelReservationRequest = new CancelReservationRequest(reservation.ReservationId);
-        var integrationOcppMessage = new IntegrationOcppMessage<CancelReservationRequest>(reservation.ChargePointId, cancelReservationRequest, cancelReservationRequestId, OcppProtocolVersions.Ocpp16);
+        var integrationOcppMessage = CentralSystemRequestIntegrationOcppMessage.Create(reservation.ChargePointId, cancelReservationRequest, Ocpp16ActionTypes.CancelReservation, cancelReservationRequestId, OcppProtocolVersions.Ocpp16);
         await _publishEndpoint.Publish(integrationOcppMessage, cancellationToken);
         
         _logger.LogInformation("Reservation with id {ReservationId} canceled", request.ReservationId);
