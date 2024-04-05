@@ -7,10 +7,12 @@ using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.Reservations.Requests;
 using ChargingStation.Common.Models.Transactions.Responses;
 using ChargingStation.Domain.Entities;
 using ChargingStation.InternalCommunication.Services.Connectors;
 using ChargingStation.InternalCommunication.Services.OcppTags;
+using ChargingStation.InternalCommunication.Services.Reservations;
 using ChargingStation.Transactions.Models.Requests;
 using ChargingStation.Transactions.Repositories;
 using ChargingStation.Transactions.Specifications;
@@ -22,12 +24,13 @@ public class TransactionService : ITransactionService
     private readonly ITransactionRepository _transactionRepository;
     private readonly IOcppTagHttpService _ocppTagHttpService;
     private readonly IConnectorHttpService _connectorHttpService;
+    private readonly IReservationHttpService _reservationHttpService;
     private readonly IMapper _mapper;
     private readonly ILogger<TransactionService> _logger;
     private readonly IConfiguration _configuration;
 
     public TransactionService(ITransactionRepository transactionRepository, IMapper mapper,
-        IOcppTagHttpService ocppTagHttpService, ILogger<TransactionService> logger, IConfiguration configuration, IConnectorHttpService connectorHttpService)
+        IOcppTagHttpService ocppTagHttpService, ILogger<TransactionService> logger, IConfiguration configuration, IConnectorHttpService connectorHttpService, IReservationHttpService reservationHttpService)
     {
         _transactionRepository = transactionRepository;
         _mapper = mapper;
@@ -35,6 +38,7 @@ public class TransactionService : ITransactionService
         _logger = logger;
         _configuration = configuration;
         _connectorHttpService = connectorHttpService;
+        _reservationHttpService = reservationHttpService;
     }
 
     public async Task<IPagedCollection<TransactionResponse>> GetAsync(GetTransactionsRequest request,
@@ -205,6 +209,18 @@ public class TransactionService : ITransactionService
 
                 // Return DB-ID as transaction ID
                 response.TransactionId = transactionToCreate.TransactionId;
+                
+                if (request.ReservationId.HasValue)
+                {
+                    var useReservationRequest = new UseReservationRequest
+                    {
+                        ChargePointId = chargePointId,
+                        ConnectorId = connector.Id,
+                        ReservationId = request.ReservationId.Value
+                    };
+                    
+                    await _reservationHttpService.UseReservationAsync(useReservationRequest, cancellationToken);
+                }
             }
             catch (Exception exp)
             {

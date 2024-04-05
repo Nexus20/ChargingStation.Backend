@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using ChargingStation.Common.Models.Models.Responses;
+using ChargingStation.Common.Models.ChargePoints.Responses;
 
 namespace ChargingStation.InternalCommunication.Services.ChargePoints;
 

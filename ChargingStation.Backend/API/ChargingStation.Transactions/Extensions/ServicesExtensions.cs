@@ -21,6 +21,7 @@ public static class ServicesExtensions
 
         services.AddOcppTagsHttpClient(configuration);
         services.AddConnectorsHttpClient(configuration);
+        services.AddReservationsHttpClient(configuration);
         
         services.AddMassTransit(busConfigurator =>
         {

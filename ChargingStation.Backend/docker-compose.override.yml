@@ -74,6 +74,7 @@ services:
       - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
       - "ApiSettings:ConnectorServiceAddress=http://connectors.api"
       - "ApiSettings:OcppTagServiceAddress=http://ocpptags.api"
+      - "ApiSettings:ReservationServiceAddress=http://reservations.api"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api

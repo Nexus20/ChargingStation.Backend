@@ -1,4 +1,5 @@
 using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.Reservations.Requests;
 using ChargingStation.Reservations.Models.Requests;
 using ChargingStation.Reservations.Models.Responses;
 using ChargingStation.Reservations.Services.Reservations;
@@ -38,8 +39,7 @@ public class ReservationController : ControllerBase
     }
     
     [HttpPost]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(ReservationResponse), StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateReservationAsync([FromBody] CreateReservationRequest request, CancellationToken cancellationToken = default)
     {
@@ -48,12 +48,20 @@ public class ReservationController : ControllerBase
     }
     
     [HttpPost("cancel")]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(ReservationResponse), StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CancelReservationAsync([FromBody] CreateReservationCancellationRequest request, CancellationToken cancellationToken = default)
     {
         await _reservationService.CreateReservationCancellation(request, cancellationToken);
         return Accepted();
+    }
+    
+    [HttpPost("use")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UseReservationAsync([FromBody] UseReservationRequest request, CancellationToken cancellationToken = default)
+    {
+        await _reservationService.UseReservationAsync(request, cancellationToken);
+        return NoContent();
     }
 }
