@@ -28,7 +28,7 @@ public class StartTransactionConsumer : IConsumer<IntegrationOcppMessage<StartTr
 
         var response = await _transactionService.ProcessStartTransactionAsync(incomingRequest, chargePointId, context.CancellationToken);
         
-        var integrationMessage = ResponseIntegrationOcppMessage.Create(chargePointId, response, context.Message.OcppMessageId, ocppProtocol);
+        var integrationMessage = CentralSystemResponseIntegrationOcppMessage.Create(chargePointId, response, context.Message.OcppMessageId, ocppProtocol);
         await _publishEndpoint.Publish(integrationMessage, context.CancellationToken);
         
         _logger.LogInformation("Start transaction message processed");

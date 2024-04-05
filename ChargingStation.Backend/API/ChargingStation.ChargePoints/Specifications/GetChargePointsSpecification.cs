@@ -16,6 +16,9 @@ public class GetChargePointsSpecification : Specification<ChargePoint>
 
     private void AddFilters(GetChargePointRequest request)
     {
+        if(request.DepotId.HasValue)
+            AddFilter(с => с.DepotId == request.DepotId);
+        
         if (!string.IsNullOrEmpty(request.OcppProtocol))
             AddFilter(с => с.OcppProtocol != null && с.OcppProtocol.Contains(request.OcppProtocol));
 

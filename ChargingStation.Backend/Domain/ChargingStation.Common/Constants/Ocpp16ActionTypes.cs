@@ -1,6 +1,6 @@
 namespace ChargingStation.Common.Constants;
 
-public static class Ocpp16MessageTypes
+public static class Ocpp16ActionTypes
 {
     public const string BootNotification = nameof(BootNotification);
     public const string Authorize = nameof(Authorize);
@@ -11,4 +11,6 @@ public static class Ocpp16MessageTypes
     public const string StatusNotification = nameof(StatusNotification);
     public const string DataTransfer = nameof(DataTransfer);
     public const string Reset = nameof(Reset);
+    public const string ReserveNow = nameof(ReserveNow);
+    public const string CancelReservation = nameof(CancelReservation);
 }

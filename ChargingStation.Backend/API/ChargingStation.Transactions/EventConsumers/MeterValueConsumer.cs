@@ -28,7 +28,7 @@ public class MeterValueConsumer : IConsumer<IntegrationOcppMessage<MeterValuesRe
 
         var response = await _meterValueService.ProcessMeterValueAsync(incomingRequest, chargePointId, context.CancellationToken);
         
-        var integrationMessage = ResponseIntegrationOcppMessage.Create(chargePointId, response, context.Message.OcppMessageId, ocppProtocol);
+        var integrationMessage = CentralSystemResponseIntegrationOcppMessage.Create(chargePointId, response, context.Message.OcppMessageId, ocppProtocol);
         await _publishEndpoint.Publish(integrationMessage, context.CancellationToken);
         
         _logger.LogInformation("Meter value message processed");

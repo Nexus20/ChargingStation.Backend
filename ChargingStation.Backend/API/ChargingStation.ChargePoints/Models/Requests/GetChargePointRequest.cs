@@ -4,8 +4,8 @@ namespace ChargingStation.ChargePoints.Models.Requests;
 
 public class GetChargePointRequest : BaseCollectionRequest
 {
-    public Guid DepotId { get; set; }
-    public string OcppProtocol { get; set; } = null!;
+    public Guid? DepotId { get; set; }
+    public string? OcppProtocol { get; set; }
     public string? RegistrationStatus { get; set; }
     public string? ChargePointVendor { get; set; }
     public string? ChargePointModel { get; set; }
