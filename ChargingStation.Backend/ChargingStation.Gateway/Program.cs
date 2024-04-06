@@ -1,11 +1,10 @@
+using ChargingStation.Gateway.Extensions;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-builder.Configuration.AddJsonFile("depotsetting.json", optional: false, reloadOnChange: true);
-
+builder.Configuration.AddOcelotJsonFiles("OcelotSettings");
 builder.Services.AddOcelot(builder.Configuration);
 
 var app = builder.Build();

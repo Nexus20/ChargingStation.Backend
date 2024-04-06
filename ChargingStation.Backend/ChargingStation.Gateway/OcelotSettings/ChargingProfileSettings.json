@@ -1,52 +1,52 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/depot",
+      "DownstreamPathTemplate": "/api/chargingprofile/getall",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5001
+          "Port": 5008
         }
       ],
-      "UpstreamPathTemplate": "/api/depot",
+      "UpstreamPathTemplate": "/api/chargingprofile/getall",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/chargingprofile/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5008
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chargingprofile/{id}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/api/depot/{id}",
+      "DownstreamPathTemplate": "/api/chargingprofile",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5001
+          "Port": 5008
         }
       ],
-      "UpstreamPathTemplate": "/api/depot/{id}",
-      "UpstreamHttpMethod": [ "GET" ]
+      "UpstreamPathTemplate": "/api/chargingprofile",
+      "UpstreamHttpMethod": [ "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/depot/",
+      "DownstreamPathTemplate": "/api/chargingprofile/set",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 5001
+          "Port": 5008
         }
       ],
-      "UpstreamPathTemplate": "/api/depot/",
-      "UpstreamHttpMethod": [ "POST", "PUT" ]
-    },
-    {
-      "DownstreamPathTemplate": "/api/depot/{id}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5001
-        }
-      ],
-      "UpstreamPathTemplate": "/api/depot/{id}",
-      "UpstreamHttpMethod": [ "DELETE" ]
+      "UpstreamPathTemplate": "/api/chargingprofile/set",
+      "UpstreamHttpMethod": [ "POST" ]
     }
   ],
   "GlobalConfiguration": {
