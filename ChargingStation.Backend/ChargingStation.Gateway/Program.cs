@@ -1,16 +1,9 @@
-using ChargingStation.Gateway.Extensions;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-if (builder.Configuration["DOCKER_ENV"] == "true")
-{
-    builder.Configuration.AddOcelotJsonFiles("ocelot_for_docker");
-}
-else
-    builder.Configuration.AddOcelotJsonFiles("OcelotSettings");
-
+builder.Configuration.AddJsonFile($"ocelot.{builder.Environment.EnvironmentName}.json", true, true);
 builder.Services.AddOcelot(builder.Configuration);
 
 var app = builder.Build();

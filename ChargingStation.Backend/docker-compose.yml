@@ -1,10 +1,6 @@
 version: '3.4'
 
 services:
-  
-  sql-server:
-    image: mcr.microsoft.com/mssql/server:latest
-
   chargingstation_rabbitmq:
     image: rabbitmq:3-management-alpine
     
