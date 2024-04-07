@@ -1,17 +1,27 @@
-﻿namespace ChargingStation.Gateway.Extensions
+﻿using Newtonsoft.Json.Linq;
+
+namespace ChargingStation.Gateway.Extensions
 {
     public static class ConfigurationExtensions
     {
         public static IConfigurationBuilder AddOcelotJsonFiles(this IConfigurationBuilder builder, string directory)
         {
-            builder.AddJsonFile($"{directory}\\ChargePointSettings.json", optional: false, reloadOnChange: true);
-            builder.AddJsonFile($"{directory}\\ChargingProfileSettings.json", optional: false, reloadOnChange: true);
-            builder.AddJsonFile($"{directory}\\ConnectorSettings.json", optional: false, reloadOnChange: true);
-            builder.AddJsonFile($"{directory}\\DepotSettings.json", optional: false, reloadOnChange: true);
-            builder.AddJsonFile($"{directory}\\HeartbeatSettings.json", optional: false, reloadOnChange: true);
-            builder.AddJsonFile($"{directory}\\OcppTagSettings.json", optional: false, reloadOnChange: true);
-            builder.AddJsonFile($"{directory}\\ReservationSettings.json", optional: false, reloadOnChange: true);
-            builder.AddJsonFile($"{directory}\\TransactionSettings.json", optional: false, reloadOnChange: true);
+            var mergedConfig = new JObject();
+
+            var files = Directory.GetFiles(directory, "*.json");
+            foreach (var file in files)
+            {
+                var json = JObject.Parse(File.ReadAllText(file));
+                mergedConfig.Merge(json, new JsonMergeSettings
+                {
+                    MergeArrayHandling = MergeArrayHandling.Union
+                });
+            }
+
+            var mergedJsonFilePath = $"{directory}\\OcelotSettings.json";
+            File.WriteAllText(mergedJsonFilePath, mergedConfig.ToString());
+
+            builder.AddJsonFile(mergedJsonFilePath, optional: false, reloadOnChange: true);
 
             return builder;
         }

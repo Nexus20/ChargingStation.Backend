@@ -1,6 +1,15 @@
 version: '3.4'
 
 services:
+
+  sql-server:
+    container_name: sql-server
+    restart: always
+    environment:
+      SA_PASSWORD: "wfd775X7890123456"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
   
   chargingstation_rabbitmq:
     container_name: chargingstation_rabbitmq
@@ -14,6 +23,12 @@ services:
     restart: always
     ports:
       - "6379:6379"
+  
+  chargingstation_gateway:
+    container_name: chargingstation_gateway
+    restart: always
+    ports:
+      - "5000:5000"
         
   depots.api:
     container_name: depots.api

@@ -1,0 +1,403 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost:5000"
+  },
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/api/chargepoint/getall",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chargepoints.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chargepoint/getall",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/chargepoint/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chargepoints.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chargepoint/{id}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/chargepoint",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chargepoints.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chargepoint",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/chargepoint/reset",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chargepoints.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chargepoint/reset",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/chargepoint/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chargepoints.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chargepoint/{id}",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/chargepoint/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chargepoints.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chargepoint/{id}",
+      "UpstreamHttpMethod": [ "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/chargingprofile/getall",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chargingprofiles.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chargingprofile/getall",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/chargingprofile/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chargingprofiles.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chargingprofile/{id}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/chargingprofile",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chargingprofiles.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chargingprofile",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/chargingprofile/set",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chargingprofiles.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chargingprofile/set",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/connector/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "connectors.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/connector/{id}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/connector/GetOrCreate",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "connectors.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/connector/GetOrCreate",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/connector/UpdateStatus",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "connectors.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/connector/UpdateStatus",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/depot/getall",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "depots.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/depot/getall",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/depot/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "depots.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/depot/{id}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/depot",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "depots.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/depot",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/depot/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "depots.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/depot/{id}",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/depot/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "depots.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/depot/{id}",
+      "UpstreamHttpMethod": [ "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/heartbeat/GetAll",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "heartbeats.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/heartbeat/GetAll",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/heartbeat/GetById",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "heartbeats.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/heartbeat/GetById",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/ocpctag/getall",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ocpptags.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/ocpctag/getall",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/ocpctag/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ocpptags.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/ocpctag/{id}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/ocpctag/GetByTagId/{ocpctagid}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ocpptags.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/ocpctag/GetByTagId/{ocpctagid}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/ocpctag",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ocpptags.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/ocpctag",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/ocpctag/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ocpptags.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/ocpctag/{id}",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/ocpctag/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "ocpptags.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/ocpctag/{id}",
+      "UpstreamHttpMethod": [ "DELETE" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/reservation/getall",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reservations.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/reservation/getall",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/reservation/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reservations.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/reservation/{id}",
+      "UpstreamHttpMethod": [ "GET" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/reservation",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reservations.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/reservation",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/reservation/cancel",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reservations.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/reservation/cancel",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/reservation/use",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reservations.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/reservation/use",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/transaction/getall",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "transactions.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/transaction/getall",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/transaction/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "transactions.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/transaction/{id}",
+      "UpstreamHttpMethod": [ "GET" ]
+    }
+  ]
+}

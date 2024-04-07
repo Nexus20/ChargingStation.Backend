@@ -4,7 +4,13 @@ using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Configuration.AddOcelotJsonFiles("OcelotSettings");
+if (builder.Configuration["DOCKER_ENV"] == "true")
+{
+    builder.Configuration.AddOcelotJsonFiles("ocelot_for_docker");
+}
+else
+    builder.Configuration.AddOcelotJsonFiles("OcelotSettings");
+
 builder.Services.AddOcelot(builder.Configuration);
 
 var app = builder.Build();
@@ -17,3 +23,4 @@ if (app.Environment.IsDevelopment())
 await app.UseOcelot();
 
 app.Run();
+
