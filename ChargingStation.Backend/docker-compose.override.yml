@@ -1,7 +1,6 @@
 version: '3.4'
 
-services:
-  
+services:  
   chargingstation_rabbitmq:
     container_name: chargingstation_rabbitmq
     restart: always
@@ -14,6 +13,15 @@ services:
     restart: always
     ports:
       - "6379:6379"
+  
+  chargingstation_gateway:
+    container_name: chargingstation_gateway
+    restart: always
+    ports:
+      - "8000:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
         
   depots.api:
     container_name: depots.api
