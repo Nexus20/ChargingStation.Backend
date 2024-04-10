@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using ChargingStation.Common.Models.Abstract;
-using ChargingStation.Domain.Abstract;
 using ChargingStation.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;

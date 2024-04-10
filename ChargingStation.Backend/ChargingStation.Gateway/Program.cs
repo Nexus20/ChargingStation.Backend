@@ -8,7 +8,7 @@ builder.Services.AddOcelot(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Local"))
 {
     app.UseDeveloperExceptionPage();
 }

@@ -180,7 +180,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
         if (socket.State != WebSocketState.Open 
             && _activeChargePoint.TryGetValue(chargePointId, out var chargePointInfo) 
             && chargePointInfo.WebSocket == socket)
-            await RemoveConnectionsAsync(chargePointId, socket);
+            await RemoveConnectionsAsync(chargePointId, socket, null);
     }
 
     private async Task HandlePayloadAsync(Guid chargePointId, WebSocket webSocket)
@@ -303,7 +303,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
         try
         {
             var data = new ArraySegment<byte>(new byte[1024]);
-            WebSocketReceiveResult result;
+            WebSocketReceiveResult? result;
             var payloadStringBuilder = new StringBuilder();
 
             do
@@ -315,11 +315,12 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
                 {
                     if (webSocket != _activeChargePoint[chargePointId].WebSocket)
                     {
-                        if(webSocket.State != WebSocketState.CloseReceived)
-                            await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "New websocket request received for this charger", CancellationToken.None);
+                        if (webSocket.State != WebSocketState.CloseReceived)
+                            await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure,
+                                "New websocket request received for this charger", CancellationToken.None);
                     }
                     else
-                        await RemoveConnectionsAsync(chargePointId, webSocket);
+                        await RemoveConnectionsAsync(chargePointId, webSocket, result);
                     
                     return null;
                 }
@@ -374,7 +375,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
         return null;
     }
     
-    private async Task RemoveConnectionsAsync(Guid chargePointId, WebSocket webSocket)
+    private async Task RemoveConnectionsAsync(Guid chargePointId, WebSocket webSocket, WebSocketReceiveResult? result)
     {
         try
         {
@@ -387,12 +388,19 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
                 _logger.LogWarning("Cannot remove charger {ChargePointId}", chargePointId);
             }
 
-            if (webSocket.State == WebSocketState.Aborted)
-                await webSocket.CloseOutputAsync(WebSocketCloseStatus.ProtocolError, "Protocol error", CancellationToken.None);
+            if(result != null)
+                await webSocket.CloseOutputAsync(result.CloseStatus.Value, result.CloseStatusDescription, CancellationToken.None);
             else
-                await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Client requested closure", CancellationToken.None);
+                await webSocket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "Client disconnected", CancellationToken.None);
 
             _logger.LogInformation("Closed websocket for charger {ChargePointId}. Remaining active chargers: {ActiveChargePointsCount}", chargePointId, _activeChargePoint.Count);
+        }
+        catch (WebSocketException webSocketException)
+        {
+            _logger.LogError(webSocketException, webSocketException.Message);
+            
+            if(webSocketException.ErrorCode == 203)
+                webSocket.Abort();
         }
         catch (Exception ex)
         {
