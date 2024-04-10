@@ -53,4 +53,11 @@ public class OcppMessage
         Action = action;
         JsonPayload = jsonPayload;
     }
+
+    public OcppMessage(string messageType, string uniqueId, string jsonPayload)
+    {
+        MessageType = messageType;
+        UniqueId = uniqueId;
+        JsonPayload = jsonPayload;
+    }
 }
