@@ -14,8 +14,8 @@ services:
     ports:
       - "6379:6379"
   
-  chargingstation_gateway:
-    container_name: chargingstation_gateway
+  chargingstation.gateway:
+    container_name: chargingstation.gateway
     restart: always
     ports:
       - "8000:8080"

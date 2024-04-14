@@ -7,11 +7,11 @@ services:
   chargingstation_redis:
     image: redis:alpine
 
-  chargingstation_gateway:
+  chargingstation.gateway:
     image: ${DOCKER_REGISTRY-}gateway
     build:
       context: .
-      dockerfile: ChargingStation.Gateway\Dockerfile
+      dockerfile: ChargingStation.Gateway/Dockerfile
   
   depots.api:
     image: ${DOCKER_REGISTRY-}depotsapi
