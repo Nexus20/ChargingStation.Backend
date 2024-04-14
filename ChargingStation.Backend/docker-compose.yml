@@ -65,4 +65,4 @@ services:
     image: ${DOCKER_REGISTRY-}chargingstationwebsockets
     build:
       context: .
-      dockerfile: API/ChargingStation.Websockets/Dockerfile
+      dockerfile: API/ChargingStation.WebSockets/Dockerfile
