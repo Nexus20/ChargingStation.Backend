@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace ChargingStation.Aggregator.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/aggregator/[controller]")]
 public class DepotController : ControllerBase
 {
     private readonly IDepotsAggregatorService _depotsAggregatorService;
