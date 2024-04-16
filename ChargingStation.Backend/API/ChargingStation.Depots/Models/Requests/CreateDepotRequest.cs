@@ -1,10 +1,6 @@
-﻿using ChargingStation.Common.Models.Abstract;
-using ChargingStation.Domain.Abstract;
-using ChargingStation.Domain.Enums;
+﻿namespace ChargingStation.Depots.Models.Requests;
 
-namespace ChargingStation.Domain.Entities;
-
-public class Depot : Entity, ITimeMarkable
+public class CreateDepotRequest
 {
     public required string Name { get; set; }
     public required string Country { get; set; }
@@ -15,16 +11,9 @@ public class Depot : Entity, ITimeMarkable
     public double Latitude { get; set; }
     public double Longitude { get; set; }
     
+    public double? EnergyLimit { get; set; }
+    
     public string? PhoneNumber { get; set; }
     public string? Email { get; set; }
     public string? Description { get; set; }
-    
-    public DepotStatus Status { get; set; }
-    
-    public double? EnergyLimit { get; set; }
-    
-    public List<ChargePoint> ChargePoints { get; set; }
-    
-    public DateTime CreatedAt { get; set; }
-    public DateTime? UpdatedAt { get; set; }
 }
