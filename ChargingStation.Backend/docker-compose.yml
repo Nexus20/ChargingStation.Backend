@@ -7,6 +7,12 @@ services:
   chargingstation_redis:
     image: redis:alpine
 
+  chargingstation.aggregator:
+    image: ${DOCKER_REGISTRY-}aggregator
+    build:
+      context: .
+      dockerfile: API/ChargingStation.Aggregator/Dockerfile
+
   chargingstation.gateway:
     image: ${DOCKER_REGISTRY-}gateway
     build:

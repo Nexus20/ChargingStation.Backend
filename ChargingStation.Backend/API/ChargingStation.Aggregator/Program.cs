@@ -1,20 +1,22 @@
-using System.Reflection;
-using ChargingStation.WebSockets.Extensions;
-using ChargingStation.WebSockets.Middlewares;
+using ChargingStation.Aggregator.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
-builder.Services.AddOcppCommunicationServices(builder.Configuration);
+builder.Services.AddAggregatorServices(builder.Configuration);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddCors(o =>
+    o.AddPolicy("AllowAll", b => b
+        .WithOrigins("http://localhost:4200")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials()
+    ));
 
 var app = builder.Build();
-
-app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Local"))
@@ -23,14 +25,10 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Local"))
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAll");
+
 app.UseAuthorization();
 
 app.MapControllers();
-// Set WebSocketsOptions
-var webSocketOptions = new WebSocketOptions();
-
-// Accept WebSocket
-app.UseWebSockets(webSocketOptions);
-app.UseMiddleware<OcppWebSocketMiddleware>();
 
 app.Run();

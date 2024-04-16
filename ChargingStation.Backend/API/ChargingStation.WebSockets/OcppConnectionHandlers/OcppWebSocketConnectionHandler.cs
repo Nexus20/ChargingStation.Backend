@@ -4,7 +4,6 @@ using System.Text;
 using System.Text.RegularExpressions;
 using ChargingStation.Common.Constants;
 using ChargingStation.Common.Messages_OCPP16.Requests;
-using ChargingStation.Common.Models;
 using ChargingStation.Common.Models.General;
 using ChargingStation.WebSockets.Models;
 using ChargingStation.WebSockets.OcppMessageHandlers.Providers;
@@ -27,7 +26,8 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
 
     private readonly ILogger<OcppWebSocketConnectionHandler> _logger;
     private readonly IChargePointCommunicationService _chargePointCommunicationService;
-    private static ConcurrentDictionary<Guid, ChargePointInfo> _activeChargePoint = new ();
+    private static readonly ConcurrentDictionary<Guid, ChargePointInfo> ActiveChargePointsDictionary = new ();
+    public static List<ChargePointInfo> ActiveChargePoints => ActiveChargePointsDictionary.Values.ToList();
 
     private readonly IOcppMessageHandlerProvider _ocppMessageHandlerProvider;
     private string _subProtocol;
@@ -64,17 +64,17 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
             return;
         }
         
-        if (!_activeChargePoint.ContainsKey(chargePointId))
+        if (!ActiveChargePointsDictionary.ContainsKey(chargePointId))
         {
-            _activeChargePoint.TryAdd(chargePointId, new ChargePointInfo(chargePointId, socket));
-            _logger.LogInformation("No. of active chargers: {ChargersCount}", _activeChargePoint.Count);
+            ActiveChargePointsDictionary.TryAdd(chargePointId, new ChargePointInfo(chargePointId, socket));
+            _logger.LogInformation("No. of active chargers: {ChargersCount}", ActiveChargePointsDictionary.Count);
         }
         else
         {
             try
             {
-                var oldSocket = _activeChargePoint[chargePointId].WebSocket;
-                _activeChargePoint[chargePointId].WebSocket = socket;
+                var oldSocket = ActiveChargePointsDictionary[chargePointId].WebSocket;
+                ActiveChargePointsDictionary[chargePointId].WebSocket = socket;
                 
                 if (oldSocket != null)
                 {
@@ -103,7 +103,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
 
     public async Task SendResponseAsync(Guid chargePointId, OcppMessage messageOut)
     {
-        if (_activeChargePoint.TryGetValue(chargePointId, out var chargePointInfo))
+        if (ActiveChargePointsDictionary.TryGetValue(chargePointId, out var chargePointInfo))
         {
             var socket = chargePointInfo.WebSocket;
             
@@ -143,7 +143,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
 
     public async Task SendResetAsync(Guid chargePointId, ResetRequest incomingRequest)
     {
-        if (_activeChargePoint.TryGetValue(chargePointId, out var chargePointInfo))
+        if (ActiveChargePointsDictionary.TryGetValue(chargePointId, out var chargePointInfo))
         {
             var socket = chargePointInfo.WebSocket;
             
@@ -159,7 +159,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
 
     public async Task SendCentralSystemRequestAsync(Guid chargePointId, OcppMessage centralSystemRequest, CancellationToken cancellationToken = default)
     {
-        if (_activeChargePoint.TryGetValue(chargePointId, out var chargePointInfo))
+        if (ActiveChargePointsDictionary.TryGetValue(chargePointId, out var chargePointInfo))
         {
             var socket = chargePointInfo.WebSocket;
             
@@ -178,7 +178,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
             await HandlePayloadAsync(chargePointId, socket);
 
         if (socket.State != WebSocketState.Open 
-            && _activeChargePoint.TryGetValue(chargePointId, out var chargePointInfo) 
+            && ActiveChargePointsDictionary.TryGetValue(chargePointId, out var chargePointInfo) 
             && chargePointInfo.WebSocket == socket)
             await RemoveConnectionsAsync(chargePointId, socket, null);
     }
@@ -233,7 +233,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
                     break;
                 case OcppMessageTypes.CallResult:
                     
-                    if (_activeChargePoint.TryGetValue(chargePointId, out var chargePointInfo))
+                    if (ActiveChargePointsDictionary.TryGetValue(chargePointId, out var chargePointInfo))
                     {
                         if (chargePointInfo.RequestDictionary.Remove(uniqueId, out var request))
                         {
@@ -313,7 +313,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
                 //When the charger sends close frame
                 if (result.CloseStatus.HasValue)
                 {
-                    if (webSocket != _activeChargePoint[chargePointId].WebSocket)
+                    if (webSocket != ActiveChargePointsDictionary[chargePointId].WebSocket)
                     {
                         if (webSocket.State != WebSocketState.CloseReceived)
                             await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure,
@@ -335,7 +335,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
         }
         catch (WebSocketException webSocketException)
         {
-            if (webSocket != _activeChargePoint[chargePointId].WebSocket)
+            if (webSocket != ActiveChargePointsDictionary[chargePointId].WebSocket)
                 _logger.LogError("WebsocketException occured in the old socket while receiving payload from charger {ChargePointId}. Error: {ExceptionMessage}", chargePointId, webSocketException.Message);
             else
                 _logger.LogError(webSocketException, webSocketException.Message);
@@ -379,7 +379,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
     {
         try
         {
-            if (_activeChargePoint.TryRemove(chargePointId, out _))
+            if (ActiveChargePointsDictionary.TryRemove(chargePointId, out _))
             {
                 _logger.LogInformation("Removed charger {ChargePointId}", chargePointId);
             }
@@ -393,7 +393,7 @@ public class OcppWebSocketConnectionHandler : IOcppWebSocketConnectionHandler
             else
                 await webSocket.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "Client disconnected", CancellationToken.None);
 
-            _logger.LogInformation("Closed websocket for charger {ChargePointId}. Remaining active chargers: {ActiveChargePointsCount}", chargePointId, _activeChargePoint.Count);
+            _logger.LogInformation("Closed websocket for charger {ChargePointId}. Remaining active chargers: {ActiveChargePointsCount}", chargePointId, ActiveChargePointsDictionary.Count);
         }
         catch (WebSocketException webSocketException)
         {

@@ -14,6 +14,11 @@ public class GetChargePointsSpecification : Specification<ChargePoint>
             AddSorting(request.OrderPredicates);
     }
 
+    public GetChargePointsSpecification(ICollection<Guid> depotsIds)
+    {
+        AddFilter(c => depotsIds.Contains(c.DepotId));
+    }
+
     private void AddFilters(GetChargePointRequest request)
     {
         if(request.DepotId.HasValue)
