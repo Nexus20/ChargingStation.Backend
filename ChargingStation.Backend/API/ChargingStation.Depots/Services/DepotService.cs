@@ -45,19 +45,19 @@ public class DepotService : IDepotService
         return result;
     }
 
-    public async Task<DepotResponse> CreateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
+    public async Task<DepotResponse> CreateAsync(CreateDepotRequest request, CancellationToken cancellationToken = default)
     {
         var specification = new GetDepotsSpecification(new GetDepotsRequest()
         {
-            Name = depot.Name 
+            Name = request.Name 
         });
         
         var existing = await _depotRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
 
         if (existing is not null)
-            throw new BadRequestException(nameof(Depot), depot);
+            throw new BadRequestException(nameof(Depot), request);
 
-        var createdDepot = _mapper.Map<Depot>(depot);
+        var createdDepot = _mapper.Map<Depot>(request);
         await _depotRepository.AddAsync(createdDepot, cancellationToken);
         await _depotRepository.SaveChangesAsync(cancellationToken);
 
@@ -65,14 +65,14 @@ public class DepotService : IDepotService
         return result;
     }
 
-    public async Task<DepotResponse> UpdateAsync(DepotResponse depot, CancellationToken cancellationToken = default)
+    public async Task<DepotResponse> UpdateAsync(UpdateDepotRequest request, CancellationToken cancellationToken = default)
     {
-        var depotToUpdate = await _depotRepository.GetByIdAsync(depot.Id, cancellationToken);
+        var depotToUpdate = await _depotRepository.GetByIdAsync(request.Id, cancellationToken);
 
         if (depotToUpdate is null)
-            throw new NotFoundException(nameof(Depot), depot.Id);
+            throw new NotFoundException(nameof(Depot), request.Id);
 
-        _mapper.Map(depot, depotToUpdate);
+        _mapper.Map(request, depotToUpdate);
         _depotRepository.Update(depotToUpdate);
         await _depotRepository.SaveChangesAsync(cancellationToken);
 

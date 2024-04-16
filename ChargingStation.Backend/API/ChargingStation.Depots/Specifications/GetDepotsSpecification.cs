@@ -32,6 +32,15 @@ internal class GetDepotsSpecification : Specification<Depot>
         if (!string.IsNullOrEmpty(request.Building)) 
             AddFilter(d => d.Building.Contains(request.Building));
         
+        if (!string.IsNullOrEmpty(request.PhoneNumber))
+            AddFilter(d => d.PhoneNumber != null && d.PhoneNumber.Contains(request.PhoneNumber));
+        
+        if (!string.IsNullOrEmpty(request.Email))
+            AddFilter(d => d.Email != null && d.Email.Contains(request.Email));
+        
+        if (!string.IsNullOrEmpty(request.Description))
+            AddFilter(d => d.Description != null && d.Description.Contains(request.Description));
+        
         if (request.Status.HasValue) 
             AddFilter(d => d.Status == request.Status);
         
