@@ -39,6 +39,19 @@ public class ChargePointService : IChargePointService
         var result = _mapper.Map<IPagedCollection<ChargePointResponse>>(chargePoints);
         return result;
     }
+    
+    public async Task<List<ChargePointResponse>> GetByDepotsIdsAsync(List<Guid> depotsIds, CancellationToken cancellationToken = default)
+    {
+        var specification = new GetChargePointsSpecification(depotsIds);
+
+        var chargePoints = await _chargePointRepository.GetAsync(specification, cancellationToken: cancellationToken);
+
+        if (chargePoints.Count == 0)
+            return [];
+
+        var result = _mapper.Map<List<ChargePointResponse>>(chargePoints);
+        return result;
+    }
 
     public async Task<ChargePointResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {

@@ -1,9 +1,9 @@
 ﻿using ChargingStation.Common.Models.Abstract;
 using ChargingStation.Domain.Enums;
 
-namespace ChargingStation.Depots.Models.Responses;
+namespace ChargingStation.Aggregator.Models.Responses;
 
-public class DepotResponse : BaseResponse, ITimeMarkable
+public class DepotAggregatedResponse : BaseResponse, ITimeMarkable
 {
     public required string Name { get; set; }
     public required string Country { get; set; }
@@ -24,4 +24,6 @@ public class DepotResponse : BaseResponse, ITimeMarkable
     
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+
+    public ChargePointsStatisticsResponse ChargePointsStatistics { get; set; } = new();
 }

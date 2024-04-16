@@ -1,5 +1,4 @@
 ﻿using System.Net.WebSockets;
-using ChargingStation.Common.Models;
 using ChargingStation.Common.Models.General;
 
 namespace ChargingStation.WebSockets.Models;
@@ -18,7 +17,7 @@ public class ChargePointInfo
 
     public bool Authorized { get; set; }
 
-    public bool WaitingResponse => RequestDictionary.Count != 0;
+    public bool WaitingForResponse => RequestDictionary.Count != 0;
 
     public ChargePointInfo(Guid chargePointId,WebSocket webSocket)
     {
