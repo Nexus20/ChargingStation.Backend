@@ -14,6 +14,22 @@ services:
     ports:
       - "6379:6379"
   
+  chargingstation.aggregator:
+    container_name: chargingstation.aggregator
+    restart: always
+    ports:
+      - "8025:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ApiSettings:DepotsServiceAddress=http://depots.api"
+      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api"
+      - "ApiSettings:WebsocketsServiceAddress=http://chargingstation.websockets"
+    depends_on:
+      - depots.api
+      - chargepoints.api
+      - chargingstation.websockets
+  
   chargingstation.gateway:
     container_name: chargingstation.gateway
     restart: always
