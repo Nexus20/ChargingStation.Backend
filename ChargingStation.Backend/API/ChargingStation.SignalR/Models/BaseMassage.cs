@@ -1,7 +1,6 @@
-﻿namespace ChargingStation.SignalR.Models
+﻿namespace ChargingStation.SignalR.Models;
+
+public class BaseMassage
 {
-    public class BaseMassage
-    {
-        public Guid ChargePointId { get; set; }
-    }
+    public Guid ChargePointId { get; set; }
 }

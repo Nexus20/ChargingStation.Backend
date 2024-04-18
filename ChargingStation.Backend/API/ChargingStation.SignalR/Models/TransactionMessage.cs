@@ -1,8 +1,7 @@
-﻿namespace ChargingStation.SignalR.Models
+﻿namespace ChargingStation.SignalR.Models;
+
+public class TransactionMessage : BaseMassage
 {
-    public class TransactionMessage : BaseMassage
-    {
-        public Guid ConnectorId { get; set; }
-        public int TransactionId { get; set; }
-    }
+    public Guid ConnectorId { get; set; }
+    public int TransactionId { get; set; }
 }

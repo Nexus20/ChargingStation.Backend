@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 
-namespace ChargingStation.SignalR.Hubs
-{
-    public class ChargingStationHub : Hub
-    { }
-}
+namespace ChargingStation.SignalR.Hubs;
+
+public class ChargingStationHub : Hub
+{ }

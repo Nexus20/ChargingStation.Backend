@@ -1,9 +1,8 @@
-﻿namespace ChargingStation.SignalR.Constants
+﻿namespace ChargingStation.SignalR.Constants;
+
+public static class SignalRConstant
 {
-    public static class SignalRConstant
-    {
-        public const string StationConnection = "StationConnection";
-        public const string ConnectorChanges = "ConnectorChanges";
-        public const string Transaction = "Transaction";
-    }
+    public const string StationConnection = "StationConnection";
+    public const string ConnectorChanges = "ConnectorChanges";
+    public const string Transaction = "Transaction";
 }

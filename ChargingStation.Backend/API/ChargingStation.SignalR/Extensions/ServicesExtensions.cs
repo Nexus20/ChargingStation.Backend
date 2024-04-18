@@ -1,29 +1,28 @@
 ﻿using ChargingStation.SignalR.EventConsumers;
 using MassTransit;
 
-namespace ChargingStation.SignalR.Extensions
+namespace ChargingStation.SignalR.Extensions;
+
+public static class ServicesExtensions
 {
-    public static class ServicesExtensions
+    public static IServiceCollection AddSignalRServices(this IServiceCollection services, IConfiguration configuration)
     {
-        public static IServiceCollection AddSignalRServices(this IServiceCollection services, IConfiguration configuration)
+        services.AddMassTransit(busConfigurator =>
         {
-            services.AddMassTransit(busConfigurator =>
+            busConfigurator.SetKebabCaseEndpointNameFormatter();
+
+            busConfigurator.AddConsumer<SignalRResponseConsumer>();
+
+            busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
-                busConfigurator.SetKebabCaseEndpointNameFormatter();
+                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
 
-                busConfigurator.AddConsumer<SignalRResponseConsumer>();
-
-                busConfigurator.UsingRabbitMq((ctx, cfg) =>
-                {
-                    cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
-
-                    cfg.ReceiveEndpoint("signalR-queue", c => {
-                        c.ConfigureConsumer<SignalRResponseConsumer>(ctx);
-                    });
+                cfg.ReceiveEndpoint("signalR-queue", c => {
+                    c.ConfigureConsumer<SignalRResponseConsumer>(ctx);
                 });
             });
+        });
 
-            return services;
-        }
+        return services;
     }
 }
