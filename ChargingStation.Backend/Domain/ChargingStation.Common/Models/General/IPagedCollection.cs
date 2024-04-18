@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System.Diagnostics.CodeAnalysis;
+using Newtonsoft.Json;
 
 namespace ChargingStation.Common.Models.General;
 
@@ -19,4 +20,20 @@ public interface IPagedCollection<T> : IEnumerable<T>
 
     [JsonProperty]
     int ElementsTotalCount { get; set; }
+}
+
+public static class EnumerableExtensions
+{
+    public static bool IsNullOrEmpty<T>([NotNullWhen(false)]this IEnumerable<T>? enumerable)
+    {
+        return enumerable is null || !enumerable.Any();
+    }
+}
+
+public static class PagedCollectionExtensions
+{
+    public static bool IsNullOrEmpty<T>([NotNullWhen(false)]this IPagedCollection<T>? pagedCollection)
+    {
+        return pagedCollection?.Collection is null || !pagedCollection.Collection.Any();
+    }
 }

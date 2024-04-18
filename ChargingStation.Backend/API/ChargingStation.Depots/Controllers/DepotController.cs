@@ -43,9 +43,9 @@ public class DepotController : ControllerBase
     [Produces("application/json")]
     [ProducesResponseType(typeof(DepotResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Post([FromBody] DepotResponse depot, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Post([FromBody] CreateDepotRequest request, CancellationToken cancellationToken = default)
     {
-        var createdDepot = await _depotService.CreateAsync(depot, cancellationToken);
+        var createdDepot = await _depotService.CreateAsync(request, cancellationToken);
 
         return StatusCode(StatusCodes.Status201Created, createdDepot);
     }
@@ -55,9 +55,9 @@ public class DepotController : ControllerBase
     [ProducesResponseType(typeof(DepotResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Put([FromBody] DepotResponse depot, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Put([FromBody] UpdateDepotRequest request, CancellationToken cancellationToken = default)
     {
-        var updatedDepot = await _depotService.UpdateAsync(depot, cancellationToken);
+        var updatedDepot = await _depotService.UpdateAsync(request, cancellationToken);
 
         return Ok(updatedDepot);
     }

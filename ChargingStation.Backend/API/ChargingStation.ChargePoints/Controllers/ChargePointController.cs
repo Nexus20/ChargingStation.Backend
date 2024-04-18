@@ -37,6 +37,16 @@ public class ChargePointController : ControllerBase
 
         return Ok(chargePoint);
     }
+    
+    [HttpGet("getbydepots")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(List<ChargePointResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetByDepotsIds([FromQuery] List<Guid> depotsIds, CancellationToken cancellationToken = default)
+    {
+        var chargePoints = await _chargePointService.GetByDepotsIdsAsync(depotsIds, cancellationToken);
+
+        return Ok(chargePoints);
+    }
 
     [HttpPost]
     [Produces("application/json")]

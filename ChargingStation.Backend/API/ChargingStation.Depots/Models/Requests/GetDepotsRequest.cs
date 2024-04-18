@@ -11,6 +11,9 @@ public class GetDepotsRequest : BaseCollectionRequest
     public string? Street { get; set; }
     public string? Building { get; set; }
     public DepotStatus? Status { get; set; }
+    public string? PhoneNumber { get; set; }
+    public string? Email { get; set; }
+    public string? Description { get; set; }
     public DateTime? CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
 }

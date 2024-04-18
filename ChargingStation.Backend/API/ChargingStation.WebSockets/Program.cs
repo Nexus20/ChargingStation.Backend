@@ -1,9 +1,11 @@
+using System.Reflection;
 using ChargingStation.WebSockets.Extensions;
 using ChargingStation.WebSockets.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddOcppCommunicationServices(builder.Configuration);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
