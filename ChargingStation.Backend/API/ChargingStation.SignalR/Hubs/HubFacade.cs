@@ -10,21 +10,21 @@ public class HubFacade
 
     public HubFacade(IHubContext<ChargingStationHub> hubContext)
     {
-            _hubContext = hubContext;
-        }
+        _hubContext = hubContext;
+    }
 
     public async Task SendBootNotification(StationConnectionMessage stationConnectionMessage)
     {
-            await _hubContext.Clients.All.SendAsync(SignalRConstant.StationConnection, stationConnectionMessage);
-        }
+        await _hubContext.Clients.All.SendAsync(SignalRConstant.StationConnection, stationConnectionMessage);
+    }
 
     public async Task SendMeterValue(ConnectorChangesMessage connectorChangesMessage)
     {
-            await _hubContext.Clients.All.SendAsync(SignalRConstant.ConnectorChanges, connectorChangesMessage);
-        }
+        await _hubContext.Clients.All.SendAsync(SignalRConstant.ConnectorChanges, connectorChangesMessage);
+    }
 
     public async Task SendStartTransaction(TransactionMessage transactionMessage)
     {
-            await _hubContext.Clients.All.SendAsync(SignalRConstant.Transaction, transactionMessage);
-        }
+        await _hubContext.Clients.All.SendAsync(SignalRConstant.Transaction, transactionMessage);
+    }
 }
