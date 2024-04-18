@@ -16,6 +16,8 @@ using ChargingStation.InternalCommunication.Services.Reservations;
 using ChargingStation.Transactions.Models.Requests;
 using ChargingStation.Transactions.Repositories;
 using ChargingStation.Transactions.Specifications;
+using MassTransit;
+using Newtonsoft.Json;
 
 namespace ChargingStation.Transactions.Services.Transactions;
 
@@ -28,9 +30,12 @@ public class TransactionService : ITransactionService
     private readonly IMapper _mapper;
     private readonly ILogger<TransactionService> _logger;
     private readonly IConfiguration _configuration;
+    private readonly IPublishEndpoint _publishEndpoint;
 
     public TransactionService(ITransactionRepository transactionRepository, IMapper mapper,
-        IOcppTagHttpService ocppTagHttpService, ILogger<TransactionService> logger, IConfiguration configuration, IConnectorHttpService connectorHttpService, IReservationHttpService reservationHttpService)
+        IOcppTagHttpService ocppTagHttpService, ILogger<TransactionService> logger, IConfiguration configuration, 
+        IConnectorHttpService connectorHttpService, IReservationHttpService reservationHttpService,
+        IPublishEndpoint publishEndpoint)
     {
         _transactionRepository = transactionRepository;
         _mapper = mapper;
@@ -39,6 +44,7 @@ public class TransactionService : ITransactionService
         _configuration = configuration;
         _connectorHttpService = connectorHttpService;
         _reservationHttpService = reservationHttpService;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task<IPagedCollection<TransactionResponse>> GetAsync(GetTransactionsRequest request,
@@ -207,6 +213,9 @@ public class TransactionService : ITransactionService
                 await _transactionRepository.AddAsync(transactionToCreate, cancellationToken);
                 await _transactionRepository.SaveChangesAsync(cancellationToken);
 
+                var signalRMessage = new SignalRMessage(chargePointId, JsonConvert.SerializeObject(transactionToCreate), transactionToCreate.GetType().Name);
+                await _publishEndpoint.Publish(signalRMessage, cancellationToken);
+
                 // Return DB-ID as transaction ID
                 response.TransactionId = transactionToCreate.TransactionId;
                 
@@ -359,8 +368,12 @@ public class TransactionService : ITransactionService
                             transaction.MeterStop = (double)request.MeterStop / 1000; // Meter value here is always Wh
                             transaction.StopReason = request.Reason.ToString();
                             transaction.StopTime = request.Timestamp.UtcDateTime;
+
                             _transactionRepository.Update(transaction);
                             await _transactionRepository.SaveChangesAsync(cancellationToken);
+
+                            var signalRMessage = new SignalRMessage(chargePointId, JsonConvert.SerializeObject(transaction), transaction.GetType().Name);
+                            await _publishEndpoint.Publish(signalRMessage, cancellationToken);
                         }
                     }
                 }

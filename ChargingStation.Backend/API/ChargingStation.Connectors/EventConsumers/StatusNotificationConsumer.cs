@@ -1,8 +1,8 @@
 ﻿using ChargingStation.Common.Messages_OCPP16.Requests;
-using ChargingStation.Common.Models;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Connectors.Services;
 using MassTransit;
+using Newtonsoft.Json;
 
 namespace ChargingStation.Connectors.EventConsumers;
 
@@ -28,8 +28,9 @@ public class StatusNotificationConsumer : IConsumer<IntegrationOcppMessage<Statu
         var ocppProtocol = context.Message.OcppProtocol;
 
         var response = await _connectorService.ProcessStatusNotificationAsync(incomingRequest, chargePointId, context.CancellationToken);
-        
+
         var integrationMessage = CentralSystemResponseIntegrationOcppMessage.Create(chargePointId, response, context.Message.OcppMessageId, ocppProtocol);
+
         await _publishEndpoint.Publish(integrationMessage, context.CancellationToken);
         
         _logger.LogInformation("Start transaction message processed");

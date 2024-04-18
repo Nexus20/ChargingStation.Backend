@@ -5,6 +5,7 @@ using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Messages_OCPP16.Responses.Enums;
 using ChargingStation.Common.Models.General;
 using MassTransit;
+using Newtonsoft.Json;
 
 namespace ChargingStation.ChargePoints.EventConsumers;
 
@@ -52,9 +53,11 @@ public class BootNotificationConsumer : IConsumer<IntegrationOcppMessage<BootNot
         var response = new BootNotificationResponse(BootNotificationResponseStatus.Accepted, DateTimeOffset.UtcNow, 60);
         
         var integrationMessage = CentralSystemResponseIntegrationOcppMessage.Create(chargePointId, response, context.Message.OcppMessageId, ocppProtocol);
-        
+        var signalRMessage = new SignalRMessage(chargePointId, JsonConvert.SerializeObject(updateRequest), updateRequest.GetType().Name);
+
         await _publishEndpoint.Publish(integrationMessage, context.CancellationToken);
-        
+        await _publishEndpoint.Publish(signalRMessage, context.CancellationToken);
+
         _logger.LogInformation("BootNotificationConsumer consumed successfully. ChargePointId : {ChargePointId}", context.Message.ChargePointId);
     }
 }

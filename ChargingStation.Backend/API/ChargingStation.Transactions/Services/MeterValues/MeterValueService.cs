@@ -3,11 +3,14 @@ using ChargingStation.Common.Messages_OCPP16.Enums;
 using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Models.Connectors.Requests;
+using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.Services.Connectors;
 using ChargingStation.Transactions.Models.Requests;
 using ChargingStation.Transactions.Specifications;
+using MassTransit;
+using Newtonsoft.Json;
 
 namespace ChargingStation.Transactions.Services.MeterValues;
 
@@ -17,13 +20,15 @@ public class MeterValueService : IMeterValueService
     private readonly IRepository<OcppTransaction> _transactionRepository;
     private readonly IRepository<ConnectorMeterValue> _connectorMeterValueRepository;
     private readonly ILogger<MeterValueService> _logger;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public MeterValueService(ILogger<MeterValueService> logger, IConnectorHttpService connectorHttpService, IRepository<OcppTransaction> transactionRepository, IRepository<ConnectorMeterValue> connectorMeterValueRepository)
+    public MeterValueService(ILogger<MeterValueService> logger, IConnectorHttpService connectorHttpService, IRepository<OcppTransaction> transactionRepository, IRepository<ConnectorMeterValue> connectorMeterValueRepository, IPublishEndpoint publishEndpoint)
     {
         _logger = logger;
         _connectorHttpService = connectorHttpService;
         _transactionRepository = transactionRepository;
         _connectorMeterValueRepository = connectorMeterValueRepository;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task<MeterValuesResponse> ProcessMeterValueAsync(MeterValuesRequest request, Guid chargePointId, CancellationToken cancellationToken = default)
@@ -148,8 +153,10 @@ public class MeterValueService : IMeterValueService
                         Unit = sampleValue.Unit.ToString(),
                         MeterValueTimestamp = meterTime?.UtcDateTime,
                     };
-                    
                     meterValuesToAdd.Add(meterValueToAdd);
+
+                    var signalRMessage = new SignalRMessage(chargePointId, JsonConvert.SerializeObject(meterValueToAdd), meterValueToAdd.GetType().Name);
+                    await _publishEndpoint.Publish(signalRMessage, cancellationToken);
                 }
                 
                 await _connectorMeterValueRepository.AddRangeAsync(meterValuesToAdd, cancellationToken);

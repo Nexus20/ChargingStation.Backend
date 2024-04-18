@@ -40,7 +40,7 @@ public sealed class CentralSystemRequestIntegrationOcppMessage : IntegrationOcpp
 
 public sealed class CentralSystemResponseIntegrationOcppMessage : IntegrationOcppMessage<string>
 {
-    public CentralSystemResponseIntegrationOcppMessage(Guid chargePointId, string payload, string ocppMessageId, string ocppProtocol) 
+    public CentralSystemResponseIntegrationOcppMessage(Guid chargePointId, string payload, string ocppMessageId, string ocppProtocol)
         : base(chargePointId, JsonConvert.SerializeObject(payload), ocppMessageId, ocppProtocol)
     {
     }
