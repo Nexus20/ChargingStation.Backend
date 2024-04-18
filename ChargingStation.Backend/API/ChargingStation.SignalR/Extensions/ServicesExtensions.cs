@@ -1,7 +1,7 @@
-﻿using MassTransit;
-using SignalR.EventConsumers;
+﻿using ChargingStation.SignalR.EventConsumers;
+using MassTransit;
 
-namespace SignalR.Extensions
+namespace ChargingStation.SignalR.Extensions
 {
     public static class ServicesExtensions
     {

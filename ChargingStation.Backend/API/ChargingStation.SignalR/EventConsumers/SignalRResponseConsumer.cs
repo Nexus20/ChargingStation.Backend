@@ -1,11 +1,11 @@
 ﻿using ChargingStation.Common.Models.General;
+using ChargingStation.SignalR.Hubs;
+using ChargingStation.SignalR.Models;
 using MassTransit;
 using Newtonsoft.Json;
-using SignalR.Hubs;
-using SignalR.Models;
 
 
-namespace SignalR.EventConsumers;
+namespace ChargingStation.SignalR.EventConsumers;
 
 public class SignalRResponseConsumer : IConsumer<SignalRMessage>
 {

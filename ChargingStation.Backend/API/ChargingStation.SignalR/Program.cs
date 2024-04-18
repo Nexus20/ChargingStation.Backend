@@ -1,4 +1,4 @@
-using SignalR.Extensions;
+using ChargingStation.SignalR.Extensions;
 
 // Add services to the container.
 var builder = WebApplication.CreateBuilder(args);

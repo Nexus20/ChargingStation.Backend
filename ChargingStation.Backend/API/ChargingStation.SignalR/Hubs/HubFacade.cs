@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.SignalR;
-using SignalR.Constants;
-using SignalR.Models;
+﻿using ChargingStation.SignalR.Constants;
+using ChargingStation.SignalR.Models;
+using Microsoft.AspNetCore.SignalR;
 
-namespace SignalR.Hubs
+namespace ChargingStation.SignalR.Hubs
 {
     public class HubFacade
     {

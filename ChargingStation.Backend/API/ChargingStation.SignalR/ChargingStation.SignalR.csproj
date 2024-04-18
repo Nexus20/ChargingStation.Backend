@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ChargingStation.Backend\Domain\ChargingStation.Common\ChargingStation.Common.csproj" />
+    <ProjectReference Include="..\..\Domain\ChargingStation.Common\ChargingStation.Common.csproj" />
   </ItemGroup>
 
 </Project>

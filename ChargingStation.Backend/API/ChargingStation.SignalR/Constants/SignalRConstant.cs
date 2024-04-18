@@ -1,4 +1,4 @@
-﻿namespace SignalR.Constants
+﻿namespace ChargingStation.SignalR.Constants
 {
     public static class SignalRConstant
     {

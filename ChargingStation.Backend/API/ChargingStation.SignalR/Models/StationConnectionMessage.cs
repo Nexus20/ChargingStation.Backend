@@ -1,4 +1,4 @@
-﻿namespace SignalR.Models
+﻿namespace ChargingStation.SignalR.Models
 {
     public class StationConnectionMessage : BaseMassage
     { }
