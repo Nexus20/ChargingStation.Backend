@@ -11,4 +11,5 @@ public interface IConnectorService
     Task<ConnectorResponse> GetOrCreateConnectorAsync(GetOrCreateConnectorRequest request, CancellationToken cancellationToken = default);
     Task<ConnectorResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<StatusNotificationResponse> ProcessStatusNotificationAsync(StatusNotificationRequest request, Guid chargePointId, CancellationToken cancellationToken = default);
+    Task<List<ConnectorResponse>> GetByChargePointsIdsAsync(List<Guid> chargePointsIds, CancellationToken cancellationToken = default);
 }

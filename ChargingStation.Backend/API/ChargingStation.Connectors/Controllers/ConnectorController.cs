@@ -30,6 +30,14 @@ public class ConnectorController : ControllerBase
         return Ok(connector);
     }
     
+    [HttpPost("GetByChargePoints")]
+    public async Task<IActionResult> GetByChargePointsIdsAsync([FromBody]List<Guid> chargePointsIds, CancellationToken cancellationToken)
+    {
+        var connectors = await _connectorService.GetByChargePointsIdsAsync(chargePointsIds, cancellationToken);
+        
+        return Ok(connectors);
+    }
+    
     [HttpPost("UpdateStatus")]
     public async Task<IActionResult> UpdateStatusAsync([FromBody]UpdateConnectorStatusRequest request, CancellationToken cancellationToken)
     {
