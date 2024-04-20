@@ -40,7 +40,7 @@ public class ChargingProfileController : ControllerBase
     [Produces("application/json")]
     [ProducesResponseType(typeof(ChargingProfileResponse), StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> CreateReservationAsync([FromBody] CreateChargingProfileRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> CreateChargingProfileAsync([FromBody] CreateChargingProfileRequest request, CancellationToken cancellationToken = default)
     {
         var result = await _chargingProfileService.CreateAsync(request, cancellationToken);
         return StatusCode(StatusCodes.Status201Created, result);
@@ -50,7 +50,7 @@ public class ChargingProfileController : ControllerBase
     [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
-    public async Task<IActionResult> CreateReservationAsync([FromBody] SetChargingProfileRequest request, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> SetChargingProfileAsync([FromBody] SetChargingProfileRequest request, CancellationToken cancellationToken = default)
     {
         await _chargingProfileService.SetChargingProfileAsync(request, cancellationToken);
         return Accepted();
