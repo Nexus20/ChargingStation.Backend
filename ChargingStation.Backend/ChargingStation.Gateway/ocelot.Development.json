@@ -1,18 +1,6 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/aggregator/depot/getall",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "chargingstation.aggregator",
-          "Port": 8080
-        }
-      ],
-      "UpstreamPathTemplate": "/api/aggregator/depot/getall",
-      "UpstreamHttpMethod": [ "POST" ]
-    },
-    {
       "DownstreamPathTemplate": "/api/chargepoint/getall",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -253,7 +241,7 @@
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/ocpctag/getall",
+      "DownstreamPathTemplate": "/api/ocpptag/getall",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -261,11 +249,11 @@
           "Port": 8080
         }
       ],
-      "UpstreamPathTemplate": "/api/ocpctag/getall",
+      "UpstreamPathTemplate": "/api/ocpptag/getall",
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/ocpctag/{id}",
+      "DownstreamPathTemplate": "/api/ocpptag/{id}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -273,11 +261,11 @@
           "Port": 8080
         }
       ],
-      "UpstreamPathTemplate": "/api/ocpctag/{id}",
+      "UpstreamPathTemplate": "/api/ocpptag/{id}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/api/ocpctag/GetByTagId/{ocpctagid}",
+      "DownstreamPathTemplate": "/api/ocpptag/GetByTagId/{ocpptagid}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -285,11 +273,11 @@
           "Port": 8080
         }
       ],
-      "UpstreamPathTemplate": "/api/ocpctag/GetByTagId/{ocpctagid}",
+      "UpstreamPathTemplate": "/api/ocpptag/GetByTagId/{ocpptagid}",
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
-      "DownstreamPathTemplate": "/api/ocpctag",
+      "DownstreamPathTemplate": "/api/ocpptag",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -297,11 +285,11 @@
           "Port": 8080
         }
       ],
-      "UpstreamPathTemplate": "/api/ocpctag",
+      "UpstreamPathTemplate": "/api/ocpptag",
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
-      "DownstreamPathTemplate": "/api/ocpctag/{id}",
+      "DownstreamPathTemplate": "/api/ocpptag/{id}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -309,11 +297,11 @@
           "Port": 8080
         }
       ],
-      "UpstreamPathTemplate": "/api/ocpctag/{id}",
+      "UpstreamPathTemplate": "/api/ocpptag/{id}",
       "UpstreamHttpMethod": [ "PUT" ]
     },
     {
-      "DownstreamPathTemplate": "/api/ocpctag/{id}",
+      "DownstreamPathTemplate": "/api/ocpptag/{id}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -321,7 +309,7 @@
           "Port": 8080
         }
       ],
-      "UpstreamPathTemplate": "/api/ocpctag/{id}",
+      "UpstreamPathTemplate": "/api/ocpptag/{id}",
       "UpstreamHttpMethod": [ "DELETE" ]
     },
     {
