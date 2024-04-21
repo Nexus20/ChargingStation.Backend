@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using ChargingStation.Common.Models;
 using ChargingStation.Common.Models.General;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Schema;

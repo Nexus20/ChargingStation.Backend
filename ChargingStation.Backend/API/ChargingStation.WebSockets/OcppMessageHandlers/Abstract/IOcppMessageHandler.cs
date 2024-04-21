@@ -1,5 +1,4 @@
-﻿using ChargingStation.Common.Models;
-using ChargingStation.Common.Models.General;
+﻿using ChargingStation.Common.Models.General;
 
 namespace ChargingStation.WebSockets.OcppMessageHandlers.Abstract;
 

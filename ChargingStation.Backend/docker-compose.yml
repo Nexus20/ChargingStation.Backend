@@ -72,3 +72,9 @@ services:
     build:
       context: .
       dockerfile: API/ChargingStation.WebSockets/Dockerfile
+
+  chargingstation.signalr:
+    image: ${DOCKER_REGISTRY-}signalr
+    build:
+      context: .
+      dockerfile: API/ChargingStation.SignalR/Dockerfile

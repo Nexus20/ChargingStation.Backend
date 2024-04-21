@@ -4,9 +4,13 @@ using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Common.Models.Connectors.Responses;
+using ChargingStation.Common.Models.General;
 using ChargingStation.Connectors.Specifications;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
+using ChargingStation.InternalCommunication.SignalRModels;
+using MassTransit;
+using Newtonsoft.Json;
 using ConnectorStatus = ChargingStation.Domain.Entities.ConnectorStatus;
 
 namespace ChargingStation.Connectors.Services;
@@ -17,13 +21,15 @@ public class ConnectorService : IConnectorService
     private readonly IRepository<ConnectorStatus> _connectorStatusRepository;
     private readonly IMapper _mapper;
     private readonly ILogger<ConnectorService> _logger;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public ConnectorService(IRepository<Connector> connectorRepository, IMapper mapper, ILogger<ConnectorService> logger, IRepository<ConnectorStatus> connectorStatusRepository)
+    public ConnectorService(IRepository<Connector> connectorRepository, IMapper mapper, ILogger<ConnectorService> logger, IRepository<ConnectorStatus> connectorStatusRepository, IPublishEndpoint publishEndpoint)
     {
         _connectorRepository = connectorRepository;
         _connectorStatusRepository = connectorStatusRepository;
         _mapper = mapper;
         _logger = logger;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task UpdateConnectorStatusAsync(UpdateConnectorStatusRequest request, CancellationToken cancellationToken = default)
@@ -49,6 +55,15 @@ public class ConnectorService : IConnectorService
         };
         await _connectorStatusRepository.AddAsync(statusToCreate, cancellationToken);
         await _connectorStatusRepository.SaveChangesAsync(cancellationToken);
+
+        var connectorChangesMessage = new ConnectorChangesMessage()
+        {
+            ChargePointId = connector.ChargePointId,
+            ConnectorId = statusToCreate.ConnectorId,
+            Status = statusToCreate.CurrentStatus
+        };
+        var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(connectorChangesMessage), nameof(connectorChangesMessage));
+        await _publishEndpoint.Publish(signalRMessage, cancellationToken);
     }
 
     public async Task<ConnectorResponse> GetOrCreateConnectorAsync(GetOrCreateConnectorRequest request, CancellationToken cancellationToken = default)
@@ -102,7 +117,7 @@ public class ConnectorService : IConnectorService
         };
         
         await UpdateConnectorStatusAsync(updateStatusRequest, cancellationToken);
-        
+
         return response;
     }
 

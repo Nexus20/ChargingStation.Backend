@@ -3,11 +3,15 @@ using ChargingStation.Common.Messages_OCPP16.Enums;
 using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Models.Connectors.Requests;
+using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.Services.Connectors;
+using ChargingStation.InternalCommunication.SignalRModels;
 using ChargingStation.Transactions.Models.Requests;
 using ChargingStation.Transactions.Specifications;
+using MassTransit;
+using Newtonsoft.Json;
 
 namespace ChargingStation.Transactions.Services.MeterValues;
 
@@ -17,18 +21,21 @@ public class MeterValueService : IMeterValueService
     private readonly IRepository<OcppTransaction> _transactionRepository;
     private readonly IRepository<ConnectorMeterValue> _connectorMeterValueRepository;
     private readonly ILogger<MeterValueService> _logger;
+    private readonly IPublishEndpoint _publishEndpoint;
 
-    public MeterValueService(ILogger<MeterValueService> logger, IConnectorHttpService connectorHttpService, IRepository<OcppTransaction> transactionRepository, IRepository<ConnectorMeterValue> connectorMeterValueRepository)
+    public MeterValueService(ILogger<MeterValueService> logger, IConnectorHttpService connectorHttpService, IRepository<OcppTransaction> transactionRepository, IRepository<ConnectorMeterValue> connectorMeterValueRepository, IPublishEndpoint publishEndpoint)
     {
         _logger = logger;
         _connectorHttpService = connectorHttpService;
         _transactionRepository = transactionRepository;
         _connectorMeterValueRepository = connectorMeterValueRepository;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task<MeterValuesResponse> ProcessMeterValueAsync(MeterValuesRequest request, Guid chargePointId, CancellationToken cancellationToken = default)
     {
         var response = new MeterValuesResponse();
+        var connectorChangesMessage = new ConnectorChangesMessage();
 
         var connectorId = -1;
         var msgMeterValue = string.Empty;
@@ -77,6 +84,7 @@ public class MeterValueService : IMeterValueService
                         {
                             if (sampleValue.Unit is SampledValueUnit.W or SampledValueUnit.VA or SampledValueUnit.Var or null)
                             {
+                                connectorChangesMessage.Energy = currentChargeKw;
                                 _logger.LogTrace("MeterValues => Charging '{0:0.0}' W", currentChargeKw);
                                 // convert W => kW
                                 currentChargeKw = currentChargeKw / 1000;
@@ -128,6 +136,7 @@ public class MeterValueService : IMeterValueService
                         // state of charge (battery status)
                         if (double.TryParse(sampleValue.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var stateOfCharge))
                         {
+                            connectorChangesMessage.SoC = (int)stateOfCharge;
                             _logger.LogTrace("MeterValues => SoC: '{0:0.0}'%", stateOfCharge);
                         }
                         else
@@ -148,12 +157,17 @@ public class MeterValueService : IMeterValueService
                         Unit = sampleValue.Unit.ToString(),
                         MeterValueTimestamp = meterTime?.UtcDateTime,
                     };
-                    
                     meterValuesToAdd.Add(meterValueToAdd);
                 }
-                
                 await _connectorMeterValueRepository.AddRangeAsync(meterValuesToAdd, cancellationToken);
                 await _connectorMeterValueRepository.SaveChangesAsync(cancellationToken);
+
+                connectorChangesMessage.ChargePointId = chargePointId;
+                connectorChangesMessage.ConnectorId = connector.Id;
+                connectorChangesMessage.TransactionId = transaction.TransactionId;
+
+                var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(connectorChangesMessage), nameof(connectorChangesMessage));
+                await _publishEndpoint.Publish(signalRMessage, cancellationToken);
             }
         }
         catch (Exception exp)
