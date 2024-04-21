@@ -9,6 +9,7 @@ using ChargingStation.Connectors.Specifications;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Migrations;
 using ChargingStation.Infrastructure.Repositories;
+using ChargingStation.InternalCommunication.SignalRModels;
 using MassTransit;
 using Newtonsoft.Json;
 using ConnectorStatus = ChargingStation.Domain.Entities.ConnectorStatus;
@@ -55,6 +56,15 @@ public class ConnectorService : IConnectorService
         };
         await _connectorStatusRepository.AddAsync(statusToCreate, cancellationToken);
         await _connectorStatusRepository.SaveChangesAsync(cancellationToken);
+
+        var connectorChangesMessage = new ConnectorChangesMessage()
+        {
+            ChargePointId = connector.ChargePointId,
+            ConnectorId = statusToCreate.ConnectorId,
+            Status = statusToCreate.CurrentStatus
+        };
+        var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(connectorChangesMessage), nameof(connectorChangesMessage));
+        await _publishEndpoint.Publish(signalRMessage, cancellationToken);
     }
 
     public async Task<ConnectorResponse> GetOrCreateConnectorAsync(GetOrCreateConnectorRequest request, CancellationToken cancellationToken = default)
@@ -108,9 +118,6 @@ public class ConnectorService : IConnectorService
         };
         
         await UpdateConnectorStatusAsync(updateStatusRequest, cancellationToken);
-
-        var signalRMessage = new SignalRMessage(chargePointId, JsonConvert.SerializeObject(updateStatusRequest), updateStatusRequest.GetType().Name);
-        await _publishEndpoint.Publish(signalRMessage, cancellationToken);
 
         return response;
     }

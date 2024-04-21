@@ -1,6 +1,6 @@
 ﻿using ChargingStation.Common.Models.General;
+using ChargingStation.InternalCommunication.SignalRModels;
 using ChargingStation.SignalR.Hubs;
-using ChargingStation.SignalR.Models;
 using MassTransit;
 using Newtonsoft.Json;
 
@@ -22,14 +22,13 @@ public class SignalRResponseConsumer : IConsumer<SignalRMessage>
 
         switch (message.PayloadType)
         {
-            case "UpdateChargePointRequest":
+            case nameof(StationConnectionMessage):
                 await HandleMessage<StationConnectionMessage>(message, _hubFacade.SendBootNotification);
                 break;
-            case "UpdateConnectorStatusRequest":
-            case "ConnectorMeterValue":
+            case nameof(ConnectorChangesMessage):
                 await HandleMessage<ConnectorChangesMessage>(message, _hubFacade.SendMeterValue);
                 break;
-            case "OcppTransaction":
+            case nameof(TransactionMessage):
                 await HandleMessage<TransactionMessage>(message, _hubFacade.SendStartTransaction);
                 break;
             default:
@@ -37,10 +36,9 @@ public class SignalRResponseConsumer : IConsumer<SignalRMessage>
         }
     }
 
-    private async Task HandleMessage<T>(SignalRMessage message, Func<T, Task> sendMethod) where T : BaseMassage
+    private async Task HandleMessage<T>(SignalRMessage message, Func<T, Task> sendMethod) where T : BaseMessage
     {
         var payload = JsonConvert.DeserializeObject<T>(message.Payload);
-        payload.ChargePointId = message.ChargePointId;
         await sendMethod(payload);
     }
 }

@@ -1,5 +1,5 @@
-﻿using ChargingStation.SignalR.Constants;
-using ChargingStation.SignalR.Models;
+﻿using ChargingStation.InternalCommunication.SignalRModels;
+using ChargingStation.SignalR.Constants;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ChargingStation.SignalR.Hubs;
@@ -15,16 +15,16 @@ public class HubFacade
 
     public async Task SendBootNotification(StationConnectionMessage stationConnectionMessage)
     {
-        await _hubContext.Clients.All.SendAsync(SignalRConstant.StationConnection, stationConnectionMessage);
+        await _hubContext.Clients.All.SendAsync(HubMessageTypes.StationConnection, stationConnectionMessage);
     }
 
     public async Task SendMeterValue(ConnectorChangesMessage connectorChangesMessage)
     {
-        await _hubContext.Clients.All.SendAsync(SignalRConstant.ConnectorChanges, connectorChangesMessage);
+        await _hubContext.Clients.All.SendAsync(HubMessageTypes.ConnectorChanges, connectorChangesMessage);
     }
 
     public async Task SendStartTransaction(TransactionMessage transactionMessage)
     {
-        await _hubContext.Clients.All.SendAsync(SignalRConstant.Transaction, transactionMessage);
+        await _hubContext.Clients.All.SendAsync(HubMessageTypes.Transaction, transactionMessage);
     }
 }

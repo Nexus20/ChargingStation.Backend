@@ -7,6 +7,7 @@ using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.Services.Connectors;
+using ChargingStation.InternalCommunication.SignalRModels;
 using ChargingStation.Transactions.Models.Requests;
 using ChargingStation.Transactions.Specifications;
 using MassTransit;
@@ -34,6 +35,7 @@ public class MeterValueService : IMeterValueService
     public async Task<MeterValuesResponse> ProcessMeterValueAsync(MeterValuesRequest request, Guid chargePointId, CancellationToken cancellationToken = default)
     {
         var response = new MeterValuesResponse();
+        var connectorChangesMessage = new ConnectorChangesMessage();
 
         var connectorId = -1;
         var msgMeterValue = string.Empty;
@@ -82,6 +84,7 @@ public class MeterValueService : IMeterValueService
                         {
                             if (sampleValue.Unit is SampledValueUnit.W or SampledValueUnit.VA or SampledValueUnit.Var or null)
                             {
+                                connectorChangesMessage.Energy = currentChargeKw;
                                 _logger.LogTrace("MeterValues => Charging '{0:0.0}' W", currentChargeKw);
                                 // convert W => kW
                                 currentChargeKw = currentChargeKw / 1000;
@@ -133,6 +136,7 @@ public class MeterValueService : IMeterValueService
                         // state of charge (battery status)
                         if (double.TryParse(sampleValue.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var stateOfCharge))
                         {
+                            connectorChangesMessage.SoC = (int)stateOfCharge;
                             _logger.LogTrace("MeterValues => SoC: '{0:0.0}'%", stateOfCharge);
                         }
                         else
@@ -154,13 +158,16 @@ public class MeterValueService : IMeterValueService
                         MeterValueTimestamp = meterTime?.UtcDateTime,
                     };
                     meterValuesToAdd.Add(meterValueToAdd);
-
-                    var signalRMessage = new SignalRMessage(chargePointId, JsonConvert.SerializeObject(meterValueToAdd), meterValueToAdd.GetType().Name);
-                    await _publishEndpoint.Publish(signalRMessage, cancellationToken);
                 }
-                
                 await _connectorMeterValueRepository.AddRangeAsync(meterValuesToAdd, cancellationToken);
                 await _connectorMeterValueRepository.SaveChangesAsync(cancellationToken);
+
+                connectorChangesMessage.ChargePointId = chargePointId;
+                connectorChangesMessage.ConnectorId = connector.Id;
+                connectorChangesMessage.TransactionId = transaction.TransactionId;
+
+                var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(connectorChangesMessage), nameof(connectorChangesMessage));
+                await _publishEndpoint.Publish(signalRMessage, cancellationToken);
             }
         }
         catch (Exception exp)

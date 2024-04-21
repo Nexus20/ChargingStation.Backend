@@ -13,6 +13,7 @@ using ChargingStation.Domain.Entities;
 using ChargingStation.InternalCommunication.Services.Connectors;
 using ChargingStation.InternalCommunication.Services.OcppTags;
 using ChargingStation.InternalCommunication.Services.Reservations;
+using ChargingStation.InternalCommunication.SignalRModels;
 using ChargingStation.Transactions.Models.Requests;
 using ChargingStation.Transactions.Repositories;
 using ChargingStation.Transactions.Specifications;
@@ -213,7 +214,13 @@ public class TransactionService : ITransactionService
                 await _transactionRepository.AddAsync(transactionToCreate, cancellationToken);
                 await _transactionRepository.SaveChangesAsync(cancellationToken);
 
-                var signalRMessage = new SignalRMessage(chargePointId, JsonConvert.SerializeObject(transactionToCreate), transactionToCreate.GetType().Name);
+                var transactionMessage = new TransactionMessage()
+                {
+                    ChargePointId = chargePointId,
+                    ConnectorId = connector.Id,
+                    TransactionId = transactionToCreate.TransactionId
+                };
+                var signalRMessage = new SignalRMessage( JsonConvert.SerializeObject(transactionMessage), nameof(transactionMessage));
                 await _publishEndpoint.Publish(signalRMessage, cancellationToken);
 
                 // Return DB-ID as transaction ID
@@ -372,7 +379,13 @@ public class TransactionService : ITransactionService
                             _transactionRepository.Update(transaction);
                             await _transactionRepository.SaveChangesAsync(cancellationToken);
 
-                            var signalRMessage = new SignalRMessage(chargePointId, JsonConvert.SerializeObject(transaction), transaction.GetType().Name);
+                            var transactionMessage = new TransactionMessage()
+                            {
+                                ChargePointId = chargePointId,
+                                ConnectorId = transaction.ConnectorId,
+                                TransactionId = transaction.TransactionId,
+                            };
+                            var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(transactionMessage), nameof(transactionMessage));
                             await _publishEndpoint.Publish(signalRMessage, cancellationToken);
                         }
                     }
