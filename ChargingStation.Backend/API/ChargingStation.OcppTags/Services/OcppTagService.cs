@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using ChargingStation.Common.Exceptions;
-using ChargingStation.Common.Models;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Models.OcppTags.Responses;
 using ChargingStation.Domain.Entities;

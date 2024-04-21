@@ -7,7 +7,6 @@ using ChargingStation.Common.Models.Connectors.Responses;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Connectors.Specifications;
 using ChargingStation.Domain.Entities;
-using ChargingStation.Infrastructure.Migrations;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.SignalRModels;
 using MassTransit;

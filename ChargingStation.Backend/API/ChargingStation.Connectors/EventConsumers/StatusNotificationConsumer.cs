@@ -2,7 +2,6 @@
 using ChargingStation.Common.Models.General;
 using ChargingStation.Connectors.Services;
 using MassTransit;
-using Newtonsoft.Json;
 
 namespace ChargingStation.Connectors.EventConsumers;
 
