@@ -8,6 +8,7 @@ public static class ServicesExtensions
 {
     public static IServiceCollection AddSignalRServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddSignalR();
         services.AddSingleton<HubFacade>();
 
         services.AddMassTransit(busConfigurator =>

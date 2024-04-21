@@ -1,4 +1,5 @@
 using ChargingStation.SignalR.Extensions;
+using ChargingStation.SignalR.Hubs;
 
 // Add services to the container.
 var builder = WebApplication.CreateBuilder(args);
@@ -21,6 +22,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseAuthorization();
 
+app.MapHub<ChargingStationHub>("/ChargePointHub");
 app.MapControllers();
 
 app.Run();
