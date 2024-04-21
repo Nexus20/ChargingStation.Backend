@@ -51,6 +51,16 @@ public class GetReservationsSpecification : Specification<Reservation>
             AddFilter(r => r.Status == request.Status);
         }
         
+        if (!string.IsNullOrWhiteSpace(request.Name))
+        {
+            AddFilter(r => r.Name == request.Name);
+        }
+        
+        if (!string.IsNullOrWhiteSpace(request.Description))
+        {
+            AddFilter(r => r.Description == request.Description);
+        }
+        
         AddFilter(r => r.IsCancelled == request.IsCancelled);
     }
 }

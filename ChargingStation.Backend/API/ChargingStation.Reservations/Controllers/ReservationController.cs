@@ -39,12 +39,21 @@ public class ReservationController : ControllerBase
     }
     
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateReservationAsync([FromBody] CreateReservationRequest request, CancellationToken cancellationToken = default)
     {
         await _reservationService.CreateReservationAsync(request, cancellationToken);
-        return Accepted();
+        return Created();
+    }
+    
+    [HttpPut]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> UpdateReservationAsync([FromBody] UpdateReservationRequest request, CancellationToken cancellationToken = default)
+    {
+        await _reservationService.UpdateReservationAsync(request, cancellationToken);
+        return NoContent();
     }
     
     [HttpPost("cancel")]
