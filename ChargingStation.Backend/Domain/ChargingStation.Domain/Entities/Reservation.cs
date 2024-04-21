@@ -33,4 +33,7 @@ public class Reservation : Entity, ITimeMarkable
     public string? CancellationRequestId { get; set; }
     public bool IsCancelled { get; set; }
     public bool IsUsed { get; set; }
+    
+    public string? Name { get; set; }
+    public string? Description { get; set; }
 }

@@ -11,4 +11,6 @@ public class GetReservationsRequest : BaseCollectionRequest
     public Guid? TagId { get; set; }
     public string? Status { get; set; }
     public bool IsCancelled { get; set; }
+    public string? Name { get; set; }
+    public string? Description { get; set; }
 }

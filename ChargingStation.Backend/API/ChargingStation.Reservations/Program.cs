@@ -1,5 +1,6 @@
 using ChargingStation.Infrastructure;
 using ChargingStation.Reservations.Extensions;
+using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,7 +34,9 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Local"))
 
 app.UseCors("AllowAll");
 app.UseAuthorization();
+app.UseHangfireDashboard();
 
 app.MapControllers();
+app.MapHangfireDashboard();
 
 app.Run();
