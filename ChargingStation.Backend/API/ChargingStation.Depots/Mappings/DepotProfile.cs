@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using ChargingStation.Common.Models;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Depots.Models.Requests;
 using ChargingStation.Depots.Models.Responses;

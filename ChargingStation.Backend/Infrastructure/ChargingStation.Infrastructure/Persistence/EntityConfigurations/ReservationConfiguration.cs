@@ -19,7 +19,7 @@ public class ReservationConfiguration : IEntityTypeConfiguration<Reservation>
             .HasConstraintName("FK_Reservations_ChargePoint");
         
         builder.HasOne(r => r.Connector)
-            .WithOne(c => c.Reservation)
+            .WithMany(c => c.Reservations)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.ClientSetNull);
 

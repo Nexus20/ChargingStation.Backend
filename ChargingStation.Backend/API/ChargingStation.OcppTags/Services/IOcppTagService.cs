@@ -1,5 +1,4 @@
-﻿using ChargingStation.Common.Models;
-using ChargingStation.Common.Models.General;
+﻿using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Models.OcppTags.Responses;
 using ChargingStation.OcppTags.Models.Requests;
 

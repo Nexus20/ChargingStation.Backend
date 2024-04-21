@@ -7,7 +7,6 @@ using ChargingStation.Common.Models.Connectors.Responses;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Connectors.Specifications;
 using ChargingStation.Domain.Entities;
-using ChargingStation.Infrastructure.Migrations;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.SignalRModels;
 using MassTransit;
@@ -120,5 +119,27 @@ public class ConnectorService : IConnectorService
         await UpdateConnectorStatusAsync(updateStatusRequest, cancellationToken);
 
         return response;
+    }
+
+    public async Task<List<ConnectorResponse>> GetByChargePointsIdsAsync(List<Guid> chargePointsIds, CancellationToken cancellationToken = default)
+    {
+        var specification = new GetConnectorsWithStatusesSpecification(chargePointsIds);
+        
+        var entities = await _connectorRepository.GetAsync(specification, cancellationToken: cancellationToken);
+
+        var responses = entities.Select(x =>
+        {
+            var response = _mapper.Map<ConnectorResponse>(x);
+
+            if (x.ConnectorStatuses is null || x.ConnectorStatuses.Count == 0) 
+                return response;
+            
+            var lastStatus = x.ConnectorStatuses.OrderByDescending(cs => cs.StatusUpdatedTimestamp).First();
+            response.CurrentStatus = _mapper.Map<ConnectorStatusResponse>(lastStatus);
+
+            return response;
+        }).ToList();
+        
+        return responses;
     }
 }

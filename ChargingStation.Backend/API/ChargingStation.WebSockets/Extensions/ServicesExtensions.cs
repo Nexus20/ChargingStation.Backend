@@ -1,6 +1,5 @@
 ﻿using ChargingStation.WebSockets.EventConsumers;
 using ChargingStation.WebSockets.OcppConnectionHandlers;
-using ChargingStation.WebSockets.OcppMessageHandlers;
 using ChargingStation.WebSockets.OcppMessageHandlers.Abstract;
 using ChargingStation.WebSockets.OcppMessageHandlers.Providers;
 using ChargingStation.WebSockets.OcppMessageHandlers.RequestHandlers;
