@@ -6,6 +6,7 @@ using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Messages_OCPP16.Responses.Enums;
 using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.OcppTags.Responses;
 using ChargingStation.Common.Models.Reservations.Requests;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
@@ -15,6 +16,7 @@ using ChargingStation.InternalCommunication.Services.OcppTags;
 using ChargingStation.Reservations.Models.Requests;
 using ChargingStation.Reservations.Models.Responses;
 using ChargingStation.Reservations.Specifications;
+using Hangfire;
 using MassTransit;
 
 namespace ChargingStation.Reservations.Services.Reservations;
@@ -113,6 +115,7 @@ public class ReservationService : IReservationService
             StartDateTime = DateTime.UtcNow,
             ExpiryDateTime = request.ExpiryDateTime,
             ReservationRequestId = reserveNowRequestId,
+            Status = "Created"
         };
         
         if (request.ConnectorId != 0)
@@ -130,16 +133,69 @@ public class ReservationService : IReservationService
             }
             
             reservation.ConnectorId = connector.Id;
+            
+            var conflictingReservationsSpecification = new GetConflictingReservationsSpecification(request.StartDateTime, request.ExpiryDateTime, TimeSpan.FromMinutes(30), request.ChargePointId, connector.Id);
+            var conflictingReservations = await _reservationRepository.GetAsync(conflictingReservationsSpecification, cancellationToken: cancellationToken);
+            
+            if (conflictingReservations.Count != 0)
+            {
+                throw new BadRequestException("Conflicting reservation found");
+            }
         }
         
         await _reservationRepository.AddAsync(reservation, cancellationToken);
         await _reservationRepository.SaveChangesAsync(cancellationToken);
+
+        BackgroundJob.Schedule(
+            () => SendReserveNowRequestAsync(reserveNowRequestId, request, ocppTag, reservation.ReservationId, reservation.Id, cancellationToken),
+            request.StartDateTime
+            );
         
-        var reserveNowRequest = new ReserveNowRequest(request.ConnectorId, request.ExpiryDateTime, ocppTag.TagId, reservation.ReservationId);
+        _logger.LogInformation("Reservation created for charge point with id {ChargePointId} and connector id {ConnectorId}", request.ChargePointId, request.ConnectorId);
+    }
+
+    /// <remarks>This method must be public, because Hangfire works only with public methods.</remarks>
+    public async Task SendReserveNowRequestAsync(string reserveNowRequestId, CreateReservationRequest request, OcppTagResponse ocppTag, int reservationId, Guid reservationGuid, CancellationToken cancellationToken = default)
+    {
+        var reserveNowRequest = new ReserveNowRequest(request.ConnectorId, request.ExpiryDateTime, ocppTag.TagId, reservationId);
         var integrationOcppMessage = CentralSystemRequestIntegrationOcppMessage.Create(request.ChargePointId, reserveNowRequest, Ocpp16ActionTypes.ReserveNow, reserveNowRequestId, OcppProtocolVersions.Ocpp16);
         await _publishEndpoint.Publish(integrationOcppMessage, cancellationToken);
         
-        _logger.LogInformation("Reservation created for charge point with id {ChargePointId} and connector id {ConnectorId}", request.ChargePointId, request.ConnectorId);
+        var reservationEntity = await _reservationRepository.GetByIdAsync(reservationGuid, cancellationToken);
+        
+        if (reservationEntity is null)
+        {
+            _logger.LogWarning("Reservation with id {ReservationId} not found", reservationId);
+            return;
+        }
+        
+        reservationEntity.Status = "RequestSent";
+        
+        _reservationRepository.Update(reservationEntity);
+        await _reservationRepository.SaveChangesAsync(cancellationToken);
+    }
+    
+    public async Task UpdateReservationAsync(UpdateReservationRequest request, CancellationToken cancellationToken = default)
+    {
+        var reservationToUpdate = await _reservationRepository.GetByIdAsync(request.Id, cancellationToken);
+        
+        if (reservationToUpdate is null)
+            throw new NotFoundException($"Reservation with id {request.Id} not found");
+        
+        var conflictingReservationsSpecification = new GetConflictingReservationsSpecification(request.StartDateTime, request.ExpiryDateTime, TimeSpan.FromMinutes(30), reservationToUpdate.ChargePointId, request.ConnectorId);
+        var conflictingReservations = await _reservationRepository.GetAsync(conflictingReservationsSpecification, cancellationToken: cancellationToken);
+        
+        if (conflictingReservations.Count != 0)
+        {
+            throw new BadRequestException("Conflicting reservation found");
+        }
+
+        _mapper.Map(request, reservationToUpdate);
+        
+        _reservationRepository.Update(reservationToUpdate);
+        await _reservationRepository.SaveChangesAsync(cancellationToken);
+        
+        _logger.LogInformation("Reservation with id {ReservationId} updated", request.Id);
     }
 
     public async Task ProcessReservationResponseAsync(ReserveNowResponse reservationResponse, string ocppMessageId, CancellationToken cancellationToken = default)

@@ -24,6 +24,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - "ApiSettings:DepotsServiceAddress=http://depots.api:8080"
       - "ApiSettings:ChargePointsServiceAddress=http://chargepoints.api:8080"
+      - "ApiSettings:ConnectorsServiceAddress=http://connectors.api:8080"
       - "ApiSettings:WebsocketsServiceAddress=http://chargingstation.websockets:8080"
     depends_on:
       - depots.api
@@ -125,6 +126,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:HangfireConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-hangfire-yechu;Persist Security Info=False;User ID=sqladmin;Password={your_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
       - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api:8080"
       - "ApiSettings:ConnectorServiceAddress=http://connectors.api:8080"

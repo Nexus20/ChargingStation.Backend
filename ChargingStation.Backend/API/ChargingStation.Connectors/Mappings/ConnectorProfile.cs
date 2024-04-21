@@ -10,6 +10,7 @@ public class ConnectorProfile : Profile
     public ConnectorProfile()
     {
         CreateMap<GetOrCreateConnectorRequest, Connector>();
-        CreateMap<Connector, ConnectorResponse>();
+        CreateMap<Connector, ConnectorResponse>()
+            .ForMember(d => d.CurrentStatus, o => o.Ignore());
     }
 }

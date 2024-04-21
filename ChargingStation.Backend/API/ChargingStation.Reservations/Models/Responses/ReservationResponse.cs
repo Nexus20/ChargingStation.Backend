@@ -12,4 +12,6 @@ public class ReservationResponse
     public DateTime StartDateTime { get; set; }
     public DateTime ExpiryDateTime { get; set; }
     public bool IsCancelled { get; set; }
+    public string? Name { get; set; }
+    public string? Description { get; set; }
 }
