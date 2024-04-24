@@ -147,6 +147,8 @@ services:
       - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
       - "ApiSettings:ConnectorServiceAddress=http://connectors.api:8080"
       - "ApiSettings:TransactionServiceAddress=http://transactions.api:8080"
+      - "ApiSettings:DepotServiceAddress=http://depots.api:8080"
+      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api:8080"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api

@@ -17,13 +17,13 @@ public class EnergyConsumptionSettingsController : ControllerBase
     }
     
     [HttpPost("set")]
-    [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [Produces("text/plain")]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> SetEnergyConsumptionSettingsAsync([FromBody] SetDepotEnergyConsumptionSettingsRequest request, CancellationToken cancellationToken = default)
     {
-        await _energyConsumptionSettingsService.SetEnergyConsumptionSettingsAsync(request, cancellationToken);
-        return Created();
+        var createdSettingsId = await _energyConsumptionSettingsService.SetEnergyConsumptionSettingsAsync(request, cancellationToken);
+        return StatusCode(StatusCodes.Status201Created, createdSettingsId);
     }
     
     [HttpGet("{id}")]

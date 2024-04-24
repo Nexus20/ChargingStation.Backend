@@ -28,7 +28,7 @@ public class EnergyConsumptionSettingsService : IEnergyConsumptionSettingsServic
         _logger = logger;
     }
 
-    public async Task SetEnergyConsumptionSettingsAsync(SetDepotEnergyConsumptionSettingsRequest request,
+    public async Task<Guid> SetEnergyConsumptionSettingsAsync(SetDepotEnergyConsumptionSettingsRequest request,
         CancellationToken cancellationToken = default)
     {
         var depot = await _depotHttpService.GetByIdAsync(request.DepotId, cancellationToken);
@@ -61,6 +61,8 @@ public class EnergyConsumptionSettingsService : IEnergyConsumptionSettingsServic
         await _depotEnergyConsumptionSettingsRepository.SaveChangesAsync(cancellationToken);
         
         _logger.LogInformation("Energy consumption settings for depot {RequestDepotId} has been set", request.DepotId);
+        
+        return depotEnergyConsumptionSettings.Id;
     }
 
     public async Task<DepotEnergyConsumptionSettingsResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
