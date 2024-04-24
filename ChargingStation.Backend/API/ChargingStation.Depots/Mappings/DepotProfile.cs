@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
+using ChargingStation.Common.Models.Depots.Responses;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Depots.Models.Requests;
-using ChargingStation.Depots.Models.Responses;
 using ChargingStation.Domain.Entities;
 
 namespace ChargingStation.Depots.Mappings;

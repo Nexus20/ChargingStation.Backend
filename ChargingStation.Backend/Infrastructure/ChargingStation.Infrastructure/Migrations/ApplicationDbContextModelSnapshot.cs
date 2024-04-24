@@ -90,6 +90,36 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.ToTable("ChargePoints");
                 });
 
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ChargePointEnergyConsumptionSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<double>("ChargePointEnergyLimit")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("ChargePointId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DepotEnergyConsumptionSettingsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChargePointId");
+
+                    b.HasIndex("DepotEnergyConsumptionSettingsId");
+
+                    b.ToTable("ChargePointEnergyConsumptionSettings");
+                });
+
             modelBuilder.Entity("ChargingStation.Domain.Entities.ChargingProfile", b =>
                 {
                     b.Property<Guid>("Id")
@@ -337,9 +367,6 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<double?>("EnergyLimit")
-                        .HasColumnType("float");
-
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
 
@@ -366,6 +393,68 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Depots");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.DepotEnergyConsumptionSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("DepotEnergyLimit")
+                        .HasColumnType("float");
+
+                    b.Property<Guid>("DepotId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ValidFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ValidTo")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepotId");
+
+                    b.ToTable("DepotEnergyConsumptionSettings");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.EnergyConsumptionIntervalSettings", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DepotEnergyConsumptionSettingsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<double>("EnergyLimit")
+                        .HasColumnType("float");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepotEnergyConsumptionSettingsId");
+
+                    b.ToTable("EnergyConsumptionIntervalSettings");
                 });
 
             modelBuilder.Entity("ChargingStation.Domain.Entities.OcppTag", b =>
@@ -553,6 +642,25 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.Navigation("Depot");
                 });
 
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ChargePointEnergyConsumptionSettings", b =>
+                {
+                    b.HasOne("ChargingStation.Domain.Entities.ChargePoint", "ChargePoint")
+                        .WithMany("EnergyConsumptionSettings")
+                        .HasForeignKey("ChargePointId")
+                        .IsRequired()
+                        .HasConstraintName("FK_ChargePointEnergyConsumptionSettings_ChargePoint");
+
+                    b.HasOne("ChargingStation.Domain.Entities.DepotEnergyConsumptionSettings", "DepotEnergyConsumptionSettings")
+                        .WithMany("ChargePointsLimits")
+                        .HasForeignKey("DepotEnergyConsumptionSettingsId")
+                        .IsRequired()
+                        .HasConstraintName("FK_ChargePointsLimits_DepotEnergyConsumptionSettings");
+
+                    b.Navigation("ChargePoint");
+
+                    b.Navigation("DepotEnergyConsumptionSettings");
+                });
+
             modelBuilder.Entity("ChargingStation.Domain.Entities.ChargingSchedulePeriod", b =>
                 {
                     b.HasOne("ChargingStation.Domain.Entities.ChargingProfile", "ChargingProfile")
@@ -624,6 +732,28 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.Navigation("Connector");
                 });
 
+            modelBuilder.Entity("ChargingStation.Domain.Entities.DepotEnergyConsumptionSettings", b =>
+                {
+                    b.HasOne("ChargingStation.Domain.Entities.Depot", "Depot")
+                        .WithMany("EnergyConsumptionSettings")
+                        .HasForeignKey("DepotId")
+                        .IsRequired()
+                        .HasConstraintName("FK_DepotEnergyConsumptionSettings_Depot");
+
+                    b.Navigation("Depot");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.EnergyConsumptionIntervalSettings", b =>
+                {
+                    b.HasOne("ChargingStation.Domain.Entities.DepotEnergyConsumptionSettings", "DepotEnergyConsumptionSettings")
+                        .WithMany("Intervals")
+                        .HasForeignKey("DepotEnergyConsumptionSettingsId")
+                        .IsRequired()
+                        .HasConstraintName("FK_Intervals_DepotEnergyConsumptionSettings");
+
+                    b.Navigation("DepotEnergyConsumptionSettings");
+                });
+
             modelBuilder.Entity("ChargingStation.Domain.Entities.OcppTransaction", b =>
                 {
                     b.HasOne("ChargingStation.Domain.Entities.ChargePoint", null)
@@ -674,6 +804,8 @@ namespace ChargingStation.Infrastructure.Migrations
                 {
                     b.Navigation("Connectors");
 
+                    b.Navigation("EnergyConsumptionSettings");
+
                     b.Navigation("Reservations");
 
                     b.Navigation("Transactions");
@@ -700,6 +832,15 @@ namespace ChargingStation.Infrastructure.Migrations
             modelBuilder.Entity("ChargingStation.Domain.Entities.Depot", b =>
                 {
                     b.Navigation("ChargePoints");
+
+                    b.Navigation("EnergyConsumptionSettings");
+                });
+
+            modelBuilder.Entity("ChargingStation.Domain.Entities.DepotEnergyConsumptionSettings", b =>
+                {
+                    b.Navigation("ChargePointsLimits");
+
+                    b.Navigation("Intervals");
                 });
 
             modelBuilder.Entity("ChargingStation.Domain.Entities.OcppTransaction", b =>

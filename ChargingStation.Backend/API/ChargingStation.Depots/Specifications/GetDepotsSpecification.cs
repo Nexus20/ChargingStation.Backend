@@ -1,4 +1,4 @@
-﻿using ChargingStation.Depots.Models.Requests;
+﻿using ChargingStation.Common.Models.Depots.Requests;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Specifications;
 

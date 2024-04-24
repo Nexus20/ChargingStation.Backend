@@ -1,6 +1,6 @@
-using ChargingStation.Aggregator.Models.Requests;
 using ChargingStation.Aggregator.Models.Responses;
 using ChargingStation.Aggregator.Services;
+using ChargingStation.Common.Models.Depots.Requests;
 using ChargingStation.Common.Models.General;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,5 +25,16 @@ public class DepotController : ControllerBase
         var depots = await _depotsAggregatorService.GetAsync(request, cancellationToken);
 
         return Ok(depots);
+    }
+    
+    [HttpGet("{id}")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(DepotAggregatedDetailsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken = default)
+    {
+        var depot = await _depotsAggregatorService.GetByIdAsync(id, cancellationToken);
+
+        return Ok(depot);
     }
 }

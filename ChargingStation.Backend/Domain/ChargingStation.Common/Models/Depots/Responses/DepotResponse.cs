@@ -1,7 +1,7 @@
-﻿using ChargingStation.Common.Models.Abstract;
-using ChargingStation.Domain.Enums;
+﻿using ChargingStation.Common.Enums;
+using ChargingStation.Common.Models.Abstract;
 
-namespace ChargingStation.Depots.Models.Responses;
+namespace ChargingStation.Common.Models.Depots.Responses;
 
 public class DepotResponse : BaseResponse, ITimeMarkable
 {
@@ -19,8 +19,6 @@ public class DepotResponse : BaseResponse, ITimeMarkable
     public double Longitude { get; set; }
     
     public DepotStatus Status { get; set; }
-    
-    public double? EnergyLimit { get; set; }
     
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

@@ -1,6 +1,6 @@
 ﻿using Bogus;
+using ChargingStation.Common.Enums;
 using ChargingStation.Domain.Entities;
-using ChargingStation.Domain.Enums;
 using ChargingStation.Infrastructure.Persistence;
 
 namespace ChargingStation.Depots.Extensions;

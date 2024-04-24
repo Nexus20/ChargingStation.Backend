@@ -1,4 +1,4 @@
-﻿namespace ChargingStation.Domain.Enums;
+﻿namespace ChargingStation.Common.Enums;
 
 public enum DepotStatus
 {

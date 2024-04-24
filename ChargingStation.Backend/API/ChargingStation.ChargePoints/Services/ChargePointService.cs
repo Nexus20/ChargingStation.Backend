@@ -53,6 +53,19 @@ public class ChargePointService : IChargePointService
         return result;
     }
 
+    public async Task<List<ChargePointResponse>> GetByIdsAsync(List<Guid> chargePointsIds, CancellationToken cancellationToken = default)
+    {
+        var specification = new GetChargePointsByIdsSpecification(chargePointsIds);
+        
+        var chargePoints = await _chargePointRepository.GetAsync(specification, cancellationToken: cancellationToken);
+        
+        if (chargePoints.Count == 0)
+            return [];
+        
+        var result = _mapper.Map<List<ChargePointResponse>>(chargePoints);
+        return result;
+    }
+
     public async Task<ChargePointResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var chargePoint = await _chargePointRepository.GetByIdAsync(id, cancellationToken);

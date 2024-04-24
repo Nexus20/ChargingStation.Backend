@@ -3,7 +3,7 @@ using ChargingStation.ChargingProfiles.Models.Responses;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Models.General;
 
-namespace ChargingStation.ChargingProfiles.Services;
+namespace ChargingStation.ChargingProfiles.Services.ChargingProfiles;
 
 public interface IChargingProfileService
 {

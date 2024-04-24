@@ -1,5 +1,7 @@
 ﻿using ChargingStation.InternalCommunication.Services.ChargePoints;
 using ChargingStation.InternalCommunication.Services.Connectors;
+using ChargingStation.InternalCommunication.Services.Depots;
+using ChargingStation.InternalCommunication.Services.EnergyConsumption;
 using ChargingStation.InternalCommunication.Services.OcppTags;
 using ChargingStation.InternalCommunication.Services.Reservations;
 using ChargingStation.InternalCommunication.Services.Transactions;
@@ -10,6 +12,17 @@ namespace ChargingStation.InternalCommunication.Extensions;
 
 public static class ServicesExtensions
 {
+    public static IServiceCollection AddDepotsHttpClient(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddHttpClient<IDepotHttpService, DepotHttpService>(c =>
+        {
+            c.BaseAddress = new Uri(configuration["ApiSettings:DepotServiceAddress"]!);
+        });
+
+        return services;
+    }
+    
     public static IServiceCollection AddOcppTagsHttpClient(this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -60,6 +73,17 @@ public static class ServicesExtensions
         services.AddHttpClient<IReservationHttpService, ReservationHttpService>(c =>
         {
             c.BaseAddress = new Uri(configuration["ApiSettings:ReservationServiceAddress"]!);
+        });
+
+        return services;
+    }
+    
+    public static IServiceCollection AddEnergyConsumptionSettingsHttpClient(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddHttpClient<IEnergyConsumptionHttpService, EnergyConsumptionHttpService>(c =>
+        {
+            c.BaseAddress = new Uri(configuration["ApiSettings:EnergyConsumptionServiceAddress"]!);
         });
 
         return services;
