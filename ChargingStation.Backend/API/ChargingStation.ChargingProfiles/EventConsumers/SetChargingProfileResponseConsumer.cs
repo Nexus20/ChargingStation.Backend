@@ -1,4 +1,4 @@
-﻿using ChargingStation.ChargingProfiles.Services;
+﻿using ChargingStation.ChargingProfiles.Services.ChargingProfiles;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Models.General;
 using MassTransit;

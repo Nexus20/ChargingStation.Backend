@@ -1,6 +1,7 @@
+using ChargingStation.Common.Models.Depots.Requests;
+using ChargingStation.Common.Models.Depots.Responses;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Depots.Models.Requests;
-using ChargingStation.Depots.Models.Responses;
 
 namespace ChargingStation.Depots.Services;
 

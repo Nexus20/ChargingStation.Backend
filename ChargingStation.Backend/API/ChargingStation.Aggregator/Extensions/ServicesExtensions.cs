@@ -1,7 +1,8 @@
-﻿using ChargingStation.Aggregator.Services;
+﻿using System.Reflection;
+using ChargingStation.Aggregator.Services;
 using ChargingStation.Aggregator.Services.ChargePoints;
 using ChargingStation.Aggregator.Services.Connectors;
-using ChargingStation.Aggregator.Services.Depots;
+using ChargingStation.InternalCommunication.Extensions;
 
 namespace ChargingStation.Aggregator.Extensions;
 
@@ -9,12 +10,12 @@ public static class ServicesExtensions
 {
     public static IServiceCollection AddAggregatorServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IDepotsAggregatorService, DepotsAggregatorService>();
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
-        services.AddHttpClient<IDepotsHttpService, DepotsHttpService>(c =>
-        {
-            c.BaseAddress = new Uri($"{configuration["ApiSettings:DepotsServiceAddress"]!}/api/depot/");
-        });
+        services.AddScoped<IDepotsAggregatorService, DepotsAggregatorService>();
+
+        services.AddDepotsHttpClient(configuration);
+        services.AddEnergyConsumptionSettingsHttpClient(configuration);
         
         services.AddHttpClient<IChargePointsHttpService, ChargePointsHttpService>(c =>
         {

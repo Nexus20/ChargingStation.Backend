@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using ChargingStation.Common.Exceptions;
+using ChargingStation.Common.Models.Depots.Requests;
+using ChargingStation.Common.Models.Depots.Responses;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Depots.Models.Requests;
-using ChargingStation.Depots.Models.Responses;
 using ChargingStation.Depots.Specifications;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;

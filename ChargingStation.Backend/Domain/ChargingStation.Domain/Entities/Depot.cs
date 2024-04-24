@@ -1,6 +1,6 @@
-﻿using ChargingStation.Common.Models.Abstract;
+﻿using ChargingStation.Common.Enums;
+using ChargingStation.Common.Models.Abstract;
 using ChargingStation.Domain.Abstract;
-using ChargingStation.Domain.Enums;
 
 namespace ChargingStation.Domain.Entities;
 
@@ -21,10 +21,10 @@ public class Depot : Entity, ITimeMarkable
     
     public DepotStatus Status { get; set; }
     
-    public double? EnergyLimit { get; set; }
-    
     public List<ChargePoint> ChargePoints { get; set; }
     
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+    
+    public List<DepotEnergyConsumptionSettings>? EnergyConsumptionSettings { get; set; }
 }

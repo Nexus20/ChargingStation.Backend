@@ -1,6 +1,34 @@
 {
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/aggregator/Depot/getall",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chargingstation.aggregator",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/aggregator/Depot/getall",
+      "UpstreamHttpMethod": [
+        "POST"
+      ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/aggregator/Depot/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chargingstation.aggregator",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/aggregator/Depot/{id}",
+      "UpstreamHttpMethod": [
+        "GET"
+      ]
+    },
+    {
       "DownstreamPathTemplate": "/api/chargepoint/getall",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

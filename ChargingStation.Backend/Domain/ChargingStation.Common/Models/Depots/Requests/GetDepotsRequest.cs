@@ -1,7 +1,7 @@
-﻿using ChargingStation.Common.Models.General.Requests;
-using ChargingStation.Domain.Enums;
+﻿using ChargingStation.Common.Enums;
+using ChargingStation.Common.Models.General.Requests;
 
-namespace ChargingStation.Aggregator.Models.Requests;
+namespace ChargingStation.Common.Models.Depots.Requests;
 
 public class GetDepotsRequest : BaseCollectionRequest
 {

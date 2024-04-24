@@ -22,10 +22,11 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ApiSettings:DepotsServiceAddress=http://depots.api:8080"
+      - "ApiSettings:DepotServiceAddress=http://depots.api:8080"
       - "ApiSettings:ChargePointsServiceAddress=http://chargepoints.api:8080"
       - "ApiSettings:ConnectorsServiceAddress=http://connectors.api:8080"
       - "ApiSettings:WebsocketsServiceAddress=http://chargingstation.websockets:8080"
+      - "ApiSettings:EnergyConsumptionServiceAddress=http://chargingprofiles.api:8080/api/EnergyConsumptionSettings/"
     depends_on:
       - depots.api
       - chargepoints.api
@@ -146,6 +147,8 @@ services:
       - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
       - "ApiSettings:ConnectorServiceAddress=http://connectors.api:8080"
       - "ApiSettings:TransactionServiceAddress=http://transactions.api:8080"
+      - "ApiSettings:DepotServiceAddress=http://depots.api:8080"
+      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api:8080"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
