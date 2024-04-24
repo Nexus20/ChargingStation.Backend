@@ -49,6 +49,13 @@ public class EnergyConsumptionSettingsService : IEnergyConsumptionSettingsServic
         if(request.DepotEnergyLimit != request.Intervals.Sum(x => x.EnergyLimit))
             throw new BadRequestException("Depot energy limit must be equal to sum of intervals energy limits");
         
+        var conflictingSettingsSpecification = new GetDepotEnergyConsumptionConflictingSettings(request.DepotId, request.ValidFrom, request.ValidTo);
+        
+        var conflictingSettings = await _depotEnergyConsumptionSettingsRepository.GetAsync(conflictingSettingsSpecification, cancellationToken: cancellationToken);
+        
+        if(conflictingSettings.Count != 0)
+            throw new BadRequestException("Conflicting settings found");
+        
         var depotEnergyConsumptionSettings = _mapper.Map<DepotEnergyConsumptionSettings>(request);
         await _depotEnergyConsumptionSettingsRepository.AddAsync(depotEnergyConsumptionSettings, cancellationToken);
         await _depotEnergyConsumptionSettingsRepository.SaveChangesAsync(cancellationToken);

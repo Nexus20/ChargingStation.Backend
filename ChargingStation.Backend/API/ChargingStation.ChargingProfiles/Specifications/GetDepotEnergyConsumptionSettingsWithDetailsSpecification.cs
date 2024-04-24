@@ -12,13 +12,3 @@ public class GetDepotEnergyConsumptionSettingsWithDetailsSpecification : Specifi
         AddInclude(nameof(DepotEnergyConsumptionSettings.Intervals));
     }
 }
-
-public class GetDepotEnergyConsumptionSettingsWithDetailsByDepotSpecification : Specification<DepotEnergyConsumptionSettings>
-{
-    public GetDepotEnergyConsumptionSettingsWithDetailsByDepotSpecification(Guid depotId)
-    {
-        AddFilter(x => x.DepotId == depotId);
-        AddInclude(nameof(DepotEnergyConsumptionSettings.ChargePointsLimits));
-        AddInclude(nameof(DepotEnergyConsumptionSettings.Intervals));
-    }
-}
