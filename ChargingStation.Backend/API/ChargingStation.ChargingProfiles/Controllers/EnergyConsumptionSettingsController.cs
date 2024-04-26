@@ -49,4 +49,18 @@ public class EnergyConsumptionSettingsController : ControllerBase
         
         return Ok(settings);
     }
+    
+    [HttpGet("getByChargingStation/{chargingStationId}")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(DepotEnergyConsumptionSettingsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> GetByChargingStationAsync(Guid chargingStationId, CancellationToken cancellationToken)
+    {
+        var settings = await _energyConsumptionSettingsService.GetByChargingStationIdAsync(chargingStationId, cancellationToken);
+        
+        if(settings is null)
+            return NoContent();
+        
+        return Ok(settings);
+    }
 }

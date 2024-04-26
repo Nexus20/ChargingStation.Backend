@@ -3,7 +3,7 @@ using ChargingStation.Infrastructure.Persistence;
 using ChargingStation.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
 
-namespace ChargingStation.Transactions.Repositories;
+namespace ChargingStation.Transactions.Repositories.Transactions;
 
 public class TransactionRepository : Repository<OcppTransaction>, ITransactionRepository
 {

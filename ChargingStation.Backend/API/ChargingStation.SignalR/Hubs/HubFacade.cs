@@ -27,4 +27,9 @@ public class HubFacade
     {
         await _hubContext.Clients.All.SendAsync(HubMessageTypes.Transaction, transactionMessage);
     }
+    
+    public async Task SendEnergyLimitExceeded(EnergyLimitExceededMessage energyLimitExceededMessage)
+    {
+        await _hubContext.Clients.All.SendAsync(HubMessageTypes.EnergyLimitExceeded, energyLimitExceededMessage);
+    }
 }

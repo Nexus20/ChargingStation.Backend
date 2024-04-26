@@ -101,6 +101,7 @@ services:
       - "ApiSettings:ConnectorServiceAddress=http://connectors.api:8080"
       - "ApiSettings:OcppTagServiceAddress=http://ocpptags.api:8080"
       - "ApiSettings:ReservationServiceAddress=http://reservations.api:8080"
+      - "ApiSettings:EnergyConsumptionServiceAddress=http://chargingprofiles.api:8080/api/EnergyConsumptionSettings/"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api

@@ -31,6 +31,9 @@ public class SignalRResponseConsumer : IConsumer<SignalRMessage>
             case nameof(TransactionMessage):
                 await HandleMessage<TransactionMessage>(message, _hubFacade.SendStartTransaction);
                 break;
+            case nameof(EnergyLimitExceededMessage):
+                await HandleMessage<EnergyLimitExceededMessage>(message, _hubFacade.SendEnergyLimitExceeded);
+                break;
             default:
                 break;
         }

@@ -16,6 +16,7 @@ using ChargingStation.InternalCommunication.Services.Reservations;
 using ChargingStation.InternalCommunication.SignalRModels;
 using ChargingStation.Transactions.Models.Requests;
 using ChargingStation.Transactions.Repositories;
+using ChargingStation.Transactions.Repositories.Transactions;
 using ChargingStation.Transactions.Specifications;
 using MassTransit;
 using Newtonsoft.Json;

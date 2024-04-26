@@ -4,6 +4,7 @@ namespace ChargingStation.Reservations.Models.Requests;
 
 public class GetReservationsRequest : BaseCollectionRequest
 {
+    public Guid? DepotId { get; set; }
     public DateTime? StartDateTime { get; set; }
     public DateTime? ExpiryDateTime { get; set; }
     public Guid? ChargePointId { get; set; }

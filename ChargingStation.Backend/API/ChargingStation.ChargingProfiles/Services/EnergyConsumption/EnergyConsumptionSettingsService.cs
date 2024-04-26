@@ -90,4 +90,21 @@ public class EnergyConsumptionSettingsService : IEnergyConsumptionSettingsServic
         var result = _mapper.Map<DepotEnergyConsumptionSettingsResponse>(depotEnergyConsumptionSettings);
         return result;
     }
+
+    public async Task<DepotEnergyConsumptionSettingsResponse?> GetByChargingStationIdAsync(Guid chargingStationId, CancellationToken cancellationToken = default)
+    {
+        var specification = new GetDepotEnergyConsumptionSettingsWithDetailsByChargingStationSpecification(chargingStationId);
+        
+        var depotEnergyConsumptionSettings = await _depotEnergyConsumptionSettingsRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
+        
+        if(depotEnergyConsumptionSettings is null)
+            return null;
+        
+        depotEnergyConsumptionSettings.ChargePointsLimits = depotEnergyConsumptionSettings.ChargePointsLimits!
+            .Where(x => x.ChargePointId == chargingStationId)
+            .ToList();
+        
+        var result = _mapper.Map<DepotEnergyConsumptionSettingsResponse>(depotEnergyConsumptionSettings);
+        return result;
+    }
 }

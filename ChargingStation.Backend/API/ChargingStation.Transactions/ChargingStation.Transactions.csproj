@@ -23,6 +23,7 @@
     <ProjectReference Include="..\..\Domain\ChargingStation.Domain\ChargingStation.Domain.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ChargingStation.Infrastructure\ChargingStation.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ChargingStation.InternalCommunication\ChargingStation.InternalCommunication.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\ChargingStation.Mailing\ChargingStation.Mailing.csproj" />
   </ItemGroup>
 
 </Project>
