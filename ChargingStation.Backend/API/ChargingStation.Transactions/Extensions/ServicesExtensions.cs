@@ -1,7 +1,10 @@
 ﻿using System.Reflection;
 using ChargingStation.InternalCommunication.Extensions;
+using ChargingStation.Mailing.Extensions;
 using ChargingStation.Transactions.EventConsumers;
 using ChargingStation.Transactions.Repositories;
+using ChargingStation.Transactions.Repositories.ConnectorMeterValues;
+using ChargingStation.Transactions.Repositories.Transactions;
 using ChargingStation.Transactions.Services.MeterValues;
 using ChargingStation.Transactions.Services.Transactions;
 using MassTransit;
@@ -15,6 +18,7 @@ public static class ServicesExtensions
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         services.AddScoped<ITransactionRepository, TransactionRepository>();
+        services.AddScoped<IConnectorMeterValueRepository, ConnectorMeterValueRepository>();
         
         services.AddScoped<ITransactionService, TransactionService>();
         services.AddScoped<IMeterValueService, MeterValueService>();
@@ -22,6 +26,9 @@ public static class ServicesExtensions
         services.AddOcppTagsHttpClient(configuration);
         services.AddConnectorsHttpClient(configuration);
         services.AddReservationsHttpClient(configuration);
+        services.AddEnergyConsumptionSettingsHttpClient(configuration);
+        
+        services.AddMailingServices(configuration);
         
         services.AddMassTransit(busConfigurator =>
         {

@@ -1,5 +1,4 @@
-﻿
-namespace ChargingStation.Common.Models.General;
+﻿namespace ChargingStation.Common.Models.General;
 
 public class SignalRMessage
 {

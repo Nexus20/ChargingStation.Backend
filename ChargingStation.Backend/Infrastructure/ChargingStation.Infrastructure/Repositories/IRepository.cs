@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Abstract;
+using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Specifications;
 
 namespace ChargingStation.Infrastructure.Repositories;

@@ -21,6 +21,12 @@ public class GetReservationsSpecification : Specification<Reservation>
     
     private void AddFilters(GetReservationsRequest request)
     {
+        if (request.DepotId.HasValue)
+        {
+            AddInclude(nameof(Reservation.ChargePoint));
+            AddFilter(r => r.ChargePoint.DepotId == request.DepotId);
+        }
+        
         if (request.ChargePointId.HasValue)
         {
             AddFilter(r => r.ChargePointId == request.ChargePointId);

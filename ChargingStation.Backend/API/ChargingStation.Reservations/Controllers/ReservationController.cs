@@ -24,10 +24,6 @@ public class ReservationController : ControllerBase
     public async Task<IActionResult> Get([FromBody] GetReservationsRequest request, CancellationToken cancellationToken = default)
     {
         var reservations = await _reservationService.GetAsync(request, cancellationToken);
-
-        if (!reservations.Any())
-            return NoContent();
-        
         return Ok(reservations);
     }
     

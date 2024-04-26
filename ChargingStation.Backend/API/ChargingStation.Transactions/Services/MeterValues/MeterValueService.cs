@@ -7,8 +7,12 @@ using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.Services.Connectors;
+using ChargingStation.InternalCommunication.Services.EnergyConsumption;
 using ChargingStation.InternalCommunication.SignalRModels;
+using ChargingStation.Mailing.Messages;
+using ChargingStation.Mailing.Services;
 using ChargingStation.Transactions.Models.Requests;
+using ChargingStation.Transactions.Repositories.ConnectorMeterValues;
 using ChargingStation.Transactions.Specifications;
 using MassTransit;
 using Newtonsoft.Json;
@@ -18,18 +22,22 @@ namespace ChargingStation.Transactions.Services.MeterValues;
 public class MeterValueService : IMeterValueService
 {
     private readonly IConnectorHttpService _connectorHttpService;
+    private readonly IEnergyConsumptionHttpService _energyConsumptionHttpService;
     private readonly IRepository<OcppTransaction> _transactionRepository;
-    private readonly IRepository<ConnectorMeterValue> _connectorMeterValueRepository;
+    private readonly IConnectorMeterValueRepository _connectorMeterValueRepository;
     private readonly ILogger<MeterValueService> _logger;
     private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IEmailService _emailService;
 
-    public MeterValueService(ILogger<MeterValueService> logger, IConnectorHttpService connectorHttpService, IRepository<OcppTransaction> transactionRepository, IRepository<ConnectorMeterValue> connectorMeterValueRepository, IPublishEndpoint publishEndpoint)
+    public MeterValueService(ILogger<MeterValueService> logger, IConnectorHttpService connectorHttpService, IRepository<OcppTransaction> transactionRepository, IConnectorMeterValueRepository connectorMeterValueRepository, IPublishEndpoint publishEndpoint, IEnergyConsumptionHttpService energyConsumptionHttpService, IEmailService emailService)
     {
         _logger = logger;
         _connectorHttpService = connectorHttpService;
         _transactionRepository = transactionRepository;
         _connectorMeterValueRepository = connectorMeterValueRepository;
         _publishEndpoint = publishEndpoint;
+        _energyConsumptionHttpService = energyConsumptionHttpService;
+        _emailService = emailService;
     }
 
     public async Task<MeterValuesResponse> ProcessMeterValueAsync(MeterValuesRequest request, Guid chargePointId, CancellationToken cancellationToken = default)
@@ -85,23 +93,23 @@ public class MeterValueService : IMeterValueService
                             if (sampleValue.Unit is SampledValueUnit.W or SampledValueUnit.VA or SampledValueUnit.Var or null)
                             {
                                 connectorChangesMessage.Energy = currentChargeKw;
-                                _logger.LogTrace("MeterValues => Charging '{0:0.0}' W", currentChargeKw);
+                                _logger.LogTrace("MeterValues => Charging '{CurrentChargeW:0.0}' W", currentChargeKw);
                                 // convert W => kW
                                 currentChargeKw = currentChargeKw / 1000;
                             }
                             else if (sampleValue.Unit is SampledValueUnit.KW or SampledValueUnit.KVA or SampledValueUnit.Kvar)
                             {
                                 // already kW => OK
-                                _logger.LogTrace("MeterValues => Charging '{0:0.0}' kW", currentChargeKw);
+                                _logger.LogTrace("MeterValues => Charging '{CurrentChargeKw:0.0}' kW", currentChargeKw);
                             }
                             else
                             {
-                                _logger.LogWarning("MeterValues => Charging: unexpected unit: '{0}' (Value={1})", sampleValue.Unit, sampleValue.Value);
+                                _logger.LogWarning("MeterValues => Charging: unexpected unit: '{Unit}' (Value={Value})", sampleValue.Unit, sampleValue.Value);
                             }
                         }
                         else
                         {
-                            _logger.LogError("MeterValues => Charging: invalid value '{0}' (Unit={1})", sampleValue.Value, sampleValue.Unit);
+                            _logger.LogError("MeterValues => Charging: invalid value '{Value}' (Unit={Unit})", sampleValue.Value, sampleValue.Unit);
                         }
                     }
                     else if (sampleValue.Measurand is SampledValueMeasurand.Energy_Active_Import_Register or null)
@@ -111,14 +119,14 @@ public class MeterValueService : IMeterValueService
                         {
                             if (sampleValue.Unit is SampledValueUnit.Wh or SampledValueUnit.Varh or null)
                             {
-                                _logger.LogTrace("MeterValues => Value: '{0:0.0}' Wh", meterKwh);
+                                _logger.LogTrace("MeterValues => Value: '{MeterWh:0.0}' Wh", meterKwh);
                                 // convert Wh => kWh
                                 meterKwh = meterKwh / 1000;
                             }
                             else if (sampleValue.Unit is SampledValueUnit.KWh or SampledValueUnit.Kvarh)
                             {
                                 // already kWh => OK
-                                _logger.LogTrace("MeterValues => Value: '{0:0.0}' kWh", meterKwh);
+                                _logger.LogTrace("MeterValues => Value: '{MeterKwh:0.0}' kWh", meterKwh);
                             }
                             else
                             {
@@ -168,6 +176,8 @@ public class MeterValueService : IMeterValueService
 
                 var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(connectorChangesMessage), nameof(connectorChangesMessage));
                 await _publishEndpoint.Publish(signalRMessage, cancellationToken);
+                
+                await CheckEnergyConsumptionLimitAndWarnAsync(chargePointId, cancellationToken);
             }
         }
         catch (Exception exp)
@@ -176,5 +186,83 @@ public class MeterValueService : IMeterValueService
         }
 
         return response;
+    }
+
+    private async Task CheckEnergyConsumptionLimitAndWarnAsync(Guid chargePointId,
+        CancellationToken cancellationToken = default)
+    {
+        var energyConsumptionSettings =
+            await _energyConsumptionHttpService.GetByChargingStationIdAsync(chargePointId, cancellationToken);
+
+        if (energyConsumptionSettings is null)
+            return;
+
+        var depotLimit = energyConsumptionSettings.DepotEnergyLimit;
+        var chargePointLimit = energyConsumptionSettings.ChargePointsLimits.First(x => x.ChargePointId == chargePointId).ChargePointEnergyLimit;
+        var currentInterval = energyConsumptionSettings.Intervals.First(x => x.StartTime <= DateTime.UtcNow && x.EndTime >= DateTime.UtcNow);
+        var currentIntervalLimit = currentInterval.EnergyLimit;
+
+        var totalEnergyConsumedByDepot = await _connectorMeterValueRepository.GetTotalEnergyConsumedByDepotAsync(energyConsumptionSettings.DepotId, currentInterval.StartTime, cancellationToken);
+        var totalEnergyConsumedByDepotInCurrentInterval = await _connectorMeterValueRepository.GetTotalEnergyConsumedByDepotAsync(energyConsumptionSettings.DepotId, currentInterval.StartTime, cancellationToken);
+
+        var totalEnergyConsumedByChargePoint = await _connectorMeterValueRepository.GetTotalEnergyConsumedByChargePointAsync(chargePointId, currentInterval.StartTime, cancellationToken);
+        var totalEnergyConsumedByChargePointInCurrentInterval = await _connectorMeterValueRepository.GetTotalEnergyConsumedByChargePointAsync(chargePointId, currentInterval.StartTime, cancellationToken);
+
+        if (totalEnergyConsumedByDepot > depotLimit)
+        {
+            _logger.LogWarning("MeterValues => Depot energy limit exceeded: {TotalEnergyConsumedByDepot} > {DepotLimit}", totalEnergyConsumedByDepot, depotLimit);
+            var warningEmailMessage = new EnergyConsumptionWarningEmailMessage(energyConsumptionSettings.DepotId, chargePointId, DateTime.UtcNow, totalEnergyConsumedByDepot, depotLimit);
+            await _emailService.SendMessageAsync(warningEmailMessage, cancellationToken: cancellationToken);
+
+            var energyLimitExceededMessage = new EnergyLimitExceededMessage
+            {
+                ChargePointId = chargePointId,
+                DepotId = energyConsumptionSettings.DepotId,
+                EnergyConsumptionLimit = depotLimit,
+                EnergyConsumption = totalEnergyConsumedByDepot,
+                WarningTimestamp = DateTime.UtcNow
+            };
+
+            var energyLimitExceededSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(energyLimitExceededMessage), nameof(EnergyLimitExceededMessage));
+            await _publishEndpoint.Publish(energyLimitExceededSignalRMessage, cancellationToken);
+        }
+
+        if (totalEnergyConsumedByDepotInCurrentInterval > currentIntervalLimit)
+        {
+            _logger.LogWarning("MeterValues => Depot energy limit exceeded for current interval: {TotalEnergyConsumedByDepot} > {CurrentIntervalLimit}", totalEnergyConsumedByDepot, currentIntervalLimit);
+            var warningEmailMessage = new EnergyConsumptionWarningEmailMessage(energyConsumptionSettings.DepotId, chargePointId, DateTime.UtcNow, totalEnergyConsumedByDepot, currentIntervalLimit);
+            await _emailService.SendMessageAsync(warningEmailMessage, cancellationToken: cancellationToken);
+
+            var energyLimitExceededMessage = new EnergyLimitExceededMessage
+            {
+                ChargePointId = chargePointId,
+                DepotId = energyConsumptionSettings.DepotId,
+                EnergyConsumptionLimit = currentIntervalLimit,
+                EnergyConsumption = totalEnergyConsumedByDepotInCurrentInterval,
+                WarningTimestamp = DateTime.UtcNow
+            };
+
+            var energyLimitExceededSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(energyLimitExceededMessage), nameof(EnergyLimitExceededMessage));
+            await _publishEndpoint.Publish(energyLimitExceededSignalRMessage, cancellationToken);
+        }
+
+        if (totalEnergyConsumedByChargePoint > chargePointLimit)
+        {
+            _logger.LogWarning("MeterValues => Charge point energy limit exceeded: {TotalEnergyConsumedByChargePoint} > {ChargePointLimit}", totalEnergyConsumedByChargePoint, chargePointLimit);
+            var warningEmailMessage = new EnergyConsumptionWarningEmailMessage(energyConsumptionSettings.DepotId, chargePointId, DateTime.UtcNow, totalEnergyConsumedByChargePoint, chargePointLimit);
+            await _emailService.SendMessageAsync(warningEmailMessage, cancellationToken: cancellationToken);
+
+            var energyLimitExceededMessage = new EnergyLimitExceededMessage
+            {
+                ChargePointId = chargePointId,
+                DepotId = energyConsumptionSettings.DepotId,
+                EnergyConsumptionLimit = chargePointLimit,
+                EnergyConsumption = totalEnergyConsumedByChargePoint,
+                WarningTimestamp = DateTime.UtcNow
+            };
+
+            var energyLimitExceededSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(energyLimitExceededMessage), nameof(EnergyLimitExceededMessage));
+            await _publishEndpoint.Publish(energyLimitExceededSignalRMessage, cancellationToken);
+        }
     }
 }
