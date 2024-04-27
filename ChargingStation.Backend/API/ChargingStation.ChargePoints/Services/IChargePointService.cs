@@ -14,5 +14,6 @@ public interface IChargePointService
     Task ResetAsync(ResetChargePointRequest request, CancellationToken cancellationToken);
     Task<List<ChargePointResponse>> GetByDepotsIdsAsync(List<Guid> depotsIds, CancellationToken cancellationToken = default);
     Task<List<ChargePointResponse>> GetByIdsAsync(List<Guid> chargePointsIds, CancellationToken cancellationToken = default);
+    Task ChangeAvailabilityAsync(ChangeChargePointAvailabilityRequest request, CancellationToken cancellationToken = default);
 }
 

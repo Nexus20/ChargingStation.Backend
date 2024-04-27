@@ -66,6 +66,22 @@ public class ChargePointService : IChargePointService
         return result;
     }
 
+    public async Task ChangeAvailabilityAsync(ChangeChargePointAvailabilityRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var chargePoint = await _chargePointRepository.GetByIdAsync(request.ChargePointId, cancellationToken);
+        
+        if (chargePoint is null)
+            throw new NotFoundException(nameof(ChargePoint), request.ChargePointId);
+
+        var changeAvailabilityRequest = new ChangeAvailabilityRequest(0, request.AvailabilityType);
+        
+        var integrationOcppMessage = CentralSystemRequestIntegrationOcppMessage.Create(request.ChargePointId, changeAvailabilityRequest, Ocpp16ActionTypes.ChangeAvailability, Guid.NewGuid().ToString("N"), OcppProtocolVersions.Ocpp16);
+        
+        await _publishEndpoint.Publish(integrationOcppMessage, cancellationToken);
+        _logger.LogInformation("Change availability to \"{NewAvailability}\" request sent to charge point with id {ChargePointId}", request.AvailabilityType.ToString(), request.ChargePointId);
+    }
+
     public async Task<ChargePointResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var chargePoint = await _chargePointRepository.GetByIdAsync(id, cancellationToken);

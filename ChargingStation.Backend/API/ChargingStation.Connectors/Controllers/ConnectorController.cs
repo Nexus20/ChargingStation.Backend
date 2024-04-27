@@ -1,5 +1,6 @@
 using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Common.Models.Connectors.Responses;
+using ChargingStation.Connectors.Models.Requests;
 using ChargingStation.Connectors.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -50,5 +51,13 @@ public class ConnectorController : ControllerBase
         await _connectorService.UpdateConnectorStatusAsync(request, cancellationToken);
         
         return NoContent();
+    }
+    
+    [HttpPost("changeavailability")]
+    public async Task<IActionResult> ChangeAvailabilityAsync([FromBody] ChangeConnectorAvailabilityRequest request, CancellationToken cancellationToken = default)
+    {
+        await _connectorService.ChangeAvailabilityAsync(request, cancellationToken);
+
+        return Accepted();
     }
 }

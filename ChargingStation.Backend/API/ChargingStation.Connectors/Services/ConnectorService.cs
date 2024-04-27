@@ -1,10 +1,12 @@
 ﻿using AutoMapper;
+using ChargingStation.Common.Constants;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Common.Models.Connectors.Responses;
 using ChargingStation.Common.Models.General;
+using ChargingStation.Connectors.Models.Requests;
 using ChargingStation.Connectors.Specifications;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
@@ -149,5 +151,20 @@ public class ConnectorService : IConnectorService
         }).ToList();
         
         return responses;
+    }
+
+    public async Task ChangeAvailabilityAsync(ChangeConnectorAvailabilityRequest request, CancellationToken cancellationToken = default)
+    {
+        var connector = await _connectorRepository.GetByIdAsync(request.ConnectorId, cancellationToken);
+        
+        if (connector is null)
+            throw new NotFoundException(nameof(Connector), request.ConnectorId);
+        
+        var changeAvailabilityRequest = new ChangeAvailabilityRequest(connector.ConnectorId, request.AvailabilityType);
+        
+        var integrationOcppMessage = CentralSystemRequestIntegrationOcppMessage.Create(connector.ChargePointId, changeAvailabilityRequest, Ocpp16ActionTypes.ChangeAvailability, Guid.NewGuid().ToString("N"), OcppProtocolVersions.Ocpp16);
+        
+        await _publishEndpoint.Publish(integrationOcppMessage, cancellationToken);
+        _logger.LogInformation("Change availability to \"{NewAvailability}\" request sent to connector {ConnectorId} of charge point with id {ChargePointId}", request.AvailabilityType.ToString(), connector.ConnectorId, connector.ChargePointId);
     }
 }
