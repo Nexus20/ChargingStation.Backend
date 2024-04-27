@@ -58,7 +58,7 @@ public class HeartbeatService : IHeartbeatService
     public async Task<HeartbeatResponse> ProcessHeartbeatAsync(HeartbeatRequest request, Guid chargePointId,
         CancellationToken cancellationToken = default)
     {
-        DateTimeOffset currentTime = DateTimeOffset.UtcNow;
+        var currentTime = DateTimeOffset.UtcNow;
 
         var response = new HeartbeatResponse(currentTime);
         var createHeartbeatRequest = new HeartbeatEntity(chargePointId.ToString(), currentTime);
