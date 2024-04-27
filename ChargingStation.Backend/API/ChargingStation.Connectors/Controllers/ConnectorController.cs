@@ -1,4 +1,5 @@
 using ChargingStation.Common.Models.Connectors.Requests;
+using ChargingStation.Common.Models.Connectors.Responses;
 using ChargingStation.Connectors.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,6 +17,8 @@ public class ConnectorController : ControllerBase
     }
 
     [HttpGet("{id:Guid}")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(ConnectorResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var connector = await _connectorService.GetByIdAsync(id, cancellationToken);
@@ -31,6 +34,8 @@ public class ConnectorController : ControllerBase
     }
     
     [HttpPost("GetByChargePoints")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(List<ConnectorResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetByChargePointsIdsAsync([FromBody]List<Guid> chargePointsIds, CancellationToken cancellationToken)
     {
         var connectors = await _connectorService.GetByChargePointsIdsAsync(chargePointsIds, cancellationToken);
@@ -39,6 +44,7 @@ public class ConnectorController : ControllerBase
     }
     
     [HttpPost("UpdateStatus")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateStatusAsync([FromBody]UpdateConnectorStatusRequest request, CancellationToken cancellationToken)
     {
         await _connectorService.UpdateConnectorStatusAsync(request, cancellationToken);
