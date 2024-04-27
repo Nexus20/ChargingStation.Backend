@@ -7,8 +7,9 @@ public class ChargePoint : Entity, ITimeMarkable
 {
     public required Guid DepotId { get; set; }
     public required Depot Depot { get; set; }
+    public required string Name { get; set; }
     public string? OcppProtocol { get; set; }
-    public required string RegistrationStatus { get; set; } = "Accepted";
+    public required string RegistrationStatus { get; set; } = "Created";
     public string? ChargePointVendor { get; set; }
     public string? ChargePointModel { get; set; }
     public string? ChargePointSerialNumber { get; set; }
