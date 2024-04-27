@@ -40,7 +40,15 @@ public class ConnectorService : IConnectorService
         
         if (connector is null)
         {
-            throw new NotFoundException($"Connector with ChargePointId {request.ChargePointId} and ConnectorId {request.ConnectorId} not found");
+            _logger.LogWarning("Connector not found. Creating new connector");
+            var connectorToCreate = new Connector() 
+            {
+                ChargePointId = request.ChargePointId,
+                ConnectorId = request.ConnectorId,
+            };
+            await _connectorRepository.AddAsync(connectorToCreate, cancellationToken);
+            await _connectorRepository.SaveChangesAsync(cancellationToken);
+            connector = connectorToCreate;
         }
         
         var statusToCreate = new ConnectorStatus
