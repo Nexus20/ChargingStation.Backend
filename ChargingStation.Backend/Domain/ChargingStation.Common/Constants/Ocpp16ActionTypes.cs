@@ -13,4 +13,5 @@ public static class Ocpp16ActionTypes
     public const string Reset = nameof(Reset);
     public const string ReserveNow = nameof(ReserveNow);
     public const string CancelReservation = nameof(CancelReservation);
+    public const string ChangeAvailability = nameof(ChangeAvailability);
 }

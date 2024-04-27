@@ -77,6 +77,14 @@ public class ChargePointController : ControllerBase
 
         return NoContent();
     }
+    
+    [HttpPost("changeavailability")]
+    public async Task<IActionResult> ChangeAvailabilityAsync([FromBody] ChangeChargePointAvailabilityRequest request, CancellationToken cancellationToken = default)
+    {
+        await _chargePointService.ChangeAvailabilityAsync(request, cancellationToken);
+
+        return Accepted();
+    }
 
     [HttpPut("{id}")]
     [Produces("application/json")]

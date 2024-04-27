@@ -15,7 +15,6 @@ using ChargingStation.InternalCommunication.Services.OcppTags;
 using ChargingStation.InternalCommunication.Services.Reservations;
 using ChargingStation.InternalCommunication.SignalRModels;
 using ChargingStation.Transactions.Models.Requests;
-using ChargingStation.Transactions.Repositories;
 using ChargingStation.Transactions.Repositories.Transactions;
 using ChargingStation.Transactions.Specifications;
 using MassTransit;
@@ -329,7 +328,7 @@ public class TransactionService : ITransactionService
                         {
                             ChargePointId = chargePointId,
                             ConnectorId = connector.ConnectorId,
-                            Status = "Occupied",
+                            Status = "Available",
                             StatusTimestamp = request.Timestamp.UtcDateTime,
                         };
                         await _connectorHttpService.UpdateConnectorStatusAsync(updateStatusRequest, cancellationToken);
@@ -389,6 +388,8 @@ public class TransactionService : ITransactionService
                             var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(transactionMessage), nameof(transactionMessage));
                             await _publishEndpoint.Publish(signalRMessage, cancellationToken);
                         }
+                        
+                        await ChangeAvailabilityIfEnergyConsumptionLimitReachedAsync(chargePointId, cancellationToken);
                     }
                 }
                 else
@@ -404,5 +405,10 @@ public class TransactionService : ITransactionService
         }
 
         return response;
+    }
+
+    private async Task ChangeAvailabilityIfEnergyConsumptionLimitReachedAsync(Guid chargePointId, CancellationToken cancellationToken)
+    {
+        
     }
 }
