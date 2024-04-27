@@ -1,5 +1,6 @@
 using ChargingStation.Infrastructure;
 using ChargingStation.Reservations.Extensions;
+using ChargingStation.Reservations.Middlewares;
 using Hangfire;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +25,7 @@ builder.Services.AddCors(o =>
     ));
 
 var app = builder.Build();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Local"))
