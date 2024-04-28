@@ -18,7 +18,7 @@ public class EmailService : IEmailService
         _mailingConfiguration = mailingSettingsOptions.Value;
     }
 
-    public Task SendMessageAsync(IEmailMessage message, string to = "yevhen.chubarov@nure.ua", CancellationToken cancellationToken = default)
+    public async Task SendMessageAsync(IEmailMessage message, string to = "yevhen.chubarov@nure.ua", CancellationToken cancellationToken = default)
     {
         var request = new MailjetRequest
             {
@@ -33,7 +33,7 @@ public class EmailService : IEmailService
                         new JObject
                         {
                             { "Email", _mailingConfiguration.EmailFrom },
-                            { "Name", "WineQuality" }
+                            { "Name", "E-Charge Hub" }
                         }
                     },
                     {
@@ -61,6 +61,12 @@ public class EmailService : IEmailService
                 }
             });
 
-        return _mailjetClient.PostAsync(request);
+        var response = await _mailjetClient.PostAsync(request);
+        
+        if (!response.IsSuccessStatusCode)
+        {
+            var responseContent = response.Content.ToString();
+            throw new Exception($"Failed to send email. Response: {responseContent}");
+        }
     }
 }

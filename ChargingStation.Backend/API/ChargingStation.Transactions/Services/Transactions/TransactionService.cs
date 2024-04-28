@@ -459,7 +459,7 @@ public class TransactionService : ITransactionService
         {
             var disableChargePointRequest = new ChangeChargePointAvailabilityRequest
             {
-                ChargePointId = default,
+                ChargePointId = chargePointId,
                 AvailabilityType = ChangeAvailabilityRequestType.Inoperative
             };
             

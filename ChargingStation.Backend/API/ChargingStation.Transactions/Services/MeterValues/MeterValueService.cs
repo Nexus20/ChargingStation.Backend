@@ -158,12 +158,12 @@ public class MeterValueService : IMeterValueService
                         ConnectorId = connector.Id,
                         TransactionId = transaction.Id,
                         Value = sampleValue.Value,
-                        Measurand = sampleValue.Measurand.ToString(),
+                        Measurand = sampleValue.Measurand!.Value.ToString(),
                         Location = sampleValue.Location.ToString(),
                         Phase = sampleValue.Phase.ToString(),
                         Format = sampleValue.Format.ToString(),
                         Unit = sampleValue.Unit.ToString(),
-                        MeterValueTimestamp = meterTime?.UtcDateTime,
+                        MeterValueTimestamp = meterTime?.UtcDateTime ?? DateTime.UtcNow
                     };
                     meterValuesToAdd.Add(meterValueToAdd);
                 }
@@ -225,9 +225,8 @@ public class MeterValueService : IMeterValueService
 
             var energyLimitExceededSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(energyLimitExceededMessage), nameof(EnergyLimitExceededMessage));
             await _publishEndpoint.Publish(energyLimitExceededSignalRMessage, cancellationToken);
-        }
-
-        if (totalEnergyConsumedByDepotInCurrentInterval > currentIntervalLimit)
+        } 
+        else if (totalEnergyConsumedByDepotInCurrentInterval > currentIntervalLimit)
         {
             _logger.LogWarning("MeterValues => Depot energy limit exceeded for current interval: {TotalEnergyConsumedByDepot} > {CurrentIntervalLimit}", totalEnergyConsumedByDepot, currentIntervalLimit);
             var warningEmailMessage = new EnergyConsumptionWarningEmailMessage(energyConsumptionSettings.DepotId, chargePointId, DateTime.UtcNow, totalEnergyConsumedByDepot, currentIntervalLimit);
@@ -245,8 +244,7 @@ public class MeterValueService : IMeterValueService
             var energyLimitExceededSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(energyLimitExceededMessage), nameof(EnergyLimitExceededMessage));
             await _publishEndpoint.Publish(energyLimitExceededSignalRMessage, cancellationToken);
         }
-
-        if (totalEnergyConsumedByChargePoint > chargePointLimit)
+        else if (totalEnergyConsumedByChargePoint > chargePointLimit)
         {
             _logger.LogWarning("MeterValues => Charge point energy limit exceeded: {TotalEnergyConsumedByChargePoint} > {ChargePointLimit}", totalEnergyConsumedByChargePoint, chargePointLimit);
             var warningEmailMessage = new EnergyConsumptionWarningEmailMessage(energyConsumptionSettings.DepotId, chargePointId, DateTime.UtcNow, totalEnergyConsumedByChargePoint, chargePointLimit);
