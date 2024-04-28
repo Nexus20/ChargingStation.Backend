@@ -1,4 +1,5 @@
 ﻿using ChargingStation.ChargePoints.Models.Requests;
+using ChargingStation.Common.Models.ChargePoints.Requests;
 using ChargingStation.Common.Models.ChargePoints.Responses;
 using ChargingStation.Common.Models.General;
 

@@ -6,4 +6,5 @@ public static class HubMessageTypes
     public const string ConnectorChanges = nameof(ConnectorChanges);
     public const string EnergyLimitExceeded = nameof(EnergyLimitExceeded);
     public const string Transaction = nameof(Transaction);
+    public const string ChargePointAutomaticDisable = nameof(ChargePointAutomaticDisable);
 }

@@ -4,6 +4,7 @@ using ChargingStation.ChargePoints.Specifications;
 using ChargingStation.Common.Constants;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Messages_OCPP16.Requests;
+using ChargingStation.Common.Models.ChargePoints.Requests;
 using ChargingStation.Common.Models.ChargePoints.Responses;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;

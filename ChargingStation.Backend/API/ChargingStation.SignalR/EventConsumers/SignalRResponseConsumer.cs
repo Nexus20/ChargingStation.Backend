@@ -1,5 +1,6 @@
 ﻿using ChargingStation.Common.Models.General;
 using ChargingStation.InternalCommunication.SignalRModels;
+using ChargingStation.SignalR.Constants;
 using ChargingStation.SignalR.Hubs;
 using MassTransit;
 using Newtonsoft.Json;
@@ -23,26 +24,27 @@ public class SignalRResponseConsumer : IConsumer<SignalRMessage>
         switch (message.PayloadType)
         {
             case nameof(StationConnectionMessage):
-                await HandleMessage<StationConnectionMessage>(message, _hubFacade.SendBootNotification);
+                await HandleMessage<StationConnectionMessage>(message, HubMessageTypes.StationConnection);
                 break;
             case nameof(ConnectorChangesMessage):
-                await HandleMessage<ConnectorChangesMessage>(message, _hubFacade.SendMeterValue);
+                await HandleMessage<ConnectorChangesMessage>(message, HubMessageTypes.ConnectorChanges);
                 break;
             case nameof(TransactionMessage):
-                await HandleMessage<TransactionMessage>(message, _hubFacade.SendStartTransaction);
+                await HandleMessage<TransactionMessage>(message, HubMessageTypes.Transaction);
                 break;
             case nameof(EnergyLimitExceededMessage):
-                await HandleMessage<EnergyLimitExceededMessage>(message, _hubFacade.SendEnergyLimitExceeded);
+                await HandleMessage<EnergyLimitExceededMessage>(message, HubMessageTypes.EnergyLimitExceeded);
                 break;
-            default:
+            case nameof(ChargePointAutomaticDisableMessage):
+                await HandleMessage<ChargePointAutomaticDisableMessage>(message, HubMessageTypes.ChargePointAutomaticDisable);
                 break;
         }
     }
 
-    private async Task HandleMessage<T>(SignalRMessage message, Func<T, Task> sendMethod) where T : BaseMessage
+    private async Task HandleMessage<T>(SignalRMessage message, string hubMethod) where T : BaseMessage
     {
         var payload = JsonConvert.DeserializeObject<T>(message.Payload);
-        await sendMethod(payload);
+        await _hubFacade.SendCentralSystemMessageAsync(payload, hubMethod);
     }
 }
 

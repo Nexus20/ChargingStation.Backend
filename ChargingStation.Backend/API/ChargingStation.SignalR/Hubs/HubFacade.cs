@@ -12,24 +12,9 @@ public class HubFacade
     {
         _hubContext = hubContext;
     }
-
-    public async Task SendBootNotification(StationConnectionMessage stationConnectionMessage)
-    {
-        await _hubContext.Clients.All.SendAsync(HubMessageTypes.StationConnection, stationConnectionMessage);
-    }
-
-    public async Task SendMeterValue(ConnectorChangesMessage connectorChangesMessage)
-    {
-        await _hubContext.Clients.All.SendAsync(HubMessageTypes.ConnectorChanges, connectorChangesMessage);
-    }
-
-    public async Task SendStartTransaction(TransactionMessage transactionMessage)
-    {
-        await _hubContext.Clients.All.SendAsync(HubMessageTypes.Transaction, transactionMessage);
-    }
     
-    public async Task SendEnergyLimitExceeded(EnergyLimitExceededMessage energyLimitExceededMessage)
+    public async Task SendCentralSystemMessageAsync(BaseMessage message, string messageType)
     {
-        await _hubContext.Clients.All.SendAsync(HubMessageTypes.EnergyLimitExceeded, energyLimitExceededMessage);
+        await _hubContext.Clients.All.SendAsync(messageType, message);
     }
 }
