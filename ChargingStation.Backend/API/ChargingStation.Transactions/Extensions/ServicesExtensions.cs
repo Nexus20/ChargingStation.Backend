@@ -23,10 +23,11 @@ public static class ServicesExtensions
         services.AddScoped<ITransactionService, TransactionService>();
         services.AddScoped<IMeterValueService, MeterValueService>();
 
-        services.AddOcppTagsHttpClient(configuration);
+        services.AddChargePointsHttpClient(configuration);
         services.AddConnectorsHttpClient(configuration);
-        services.AddReservationsHttpClient(configuration);
+        services.AddOcppTagsHttpClient(configuration);
         services.AddEnergyConsumptionSettingsHttpClient(configuration);
+        services.AddReservationsHttpClient(configuration);
         
         services.AddMailingServices(configuration);
         

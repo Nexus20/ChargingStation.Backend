@@ -1,6 +1,6 @@
 ﻿using ChargingStation.Common.Messages_OCPP16.Requests.Enums;
 
-namespace ChargingStation.ChargePoints.Models.Requests;
+namespace ChargingStation.Common.Models.ChargePoints.Requests;
 
 public class ChangeChargePointAvailabilityRequest
 {

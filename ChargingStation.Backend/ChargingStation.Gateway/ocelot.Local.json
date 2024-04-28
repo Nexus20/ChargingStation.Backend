@@ -113,6 +113,20 @@
       ]
     },
     {
+      "DownstreamPathTemplate": "/api/chargepoint/changeavailability",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5002
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chargepoint/changeavailability",
+      "UpstreamHttpMethod": [
+        "POST"
+      ]
+    },
+    {
       "DownstreamPathTemplate": "/api/chargingprofile/getall",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

@@ -101,6 +101,20 @@
       "UpstreamHttpMethod": [ "DELETE" ]
     },
     {
+      "DownstreamPathTemplate": "/api/chargepoint/changeavailability",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chargepoints.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chargepoint/changeavailability",
+      "UpstreamHttpMethod": [
+        "POST"
+      ]
+    },
+    {
       "DownstreamPathTemplate": "/api/chargingprofile/getall",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

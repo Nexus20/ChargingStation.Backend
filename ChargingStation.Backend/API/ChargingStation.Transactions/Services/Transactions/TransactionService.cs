@@ -4,17 +4,24 @@ using ChargingStation.Common.Helpers.OcppTags;
 using ChargingStation.Common.Messages_OCPP16;
 using ChargingStation.Common.Messages_OCPP16.Enums;
 using ChargingStation.Common.Messages_OCPP16.Requests;
+using ChargingStation.Common.Messages_OCPP16.Requests.Enums;
 using ChargingStation.Common.Messages_OCPP16.Responses;
+using ChargingStation.Common.Models.ChargePoints.Requests;
 using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Models.Reservations.Requests;
 using ChargingStation.Common.Models.Transactions.Responses;
 using ChargingStation.Domain.Entities;
+using ChargingStation.InternalCommunication.Services.ChargePoints;
 using ChargingStation.InternalCommunication.Services.Connectors;
+using ChargingStation.InternalCommunication.Services.EnergyConsumption;
 using ChargingStation.InternalCommunication.Services.OcppTags;
 using ChargingStation.InternalCommunication.Services.Reservations;
 using ChargingStation.InternalCommunication.SignalRModels;
+using ChargingStation.Mailing.Messages;
+using ChargingStation.Mailing.Services;
 using ChargingStation.Transactions.Models.Requests;
+using ChargingStation.Transactions.Repositories.ConnectorMeterValues;
 using ChargingStation.Transactions.Repositories.Transactions;
 using ChargingStation.Transactions.Specifications;
 using MassTransit;
@@ -25,27 +32,48 @@ namespace ChargingStation.Transactions.Services.Transactions;
 public class TransactionService : ITransactionService
 {
     private readonly ITransactionRepository _transactionRepository;
-    private readonly IOcppTagHttpService _ocppTagHttpService;
+    private readonly IConnectorMeterValueRepository _connectorMeterValueRepository;
+    
+    private readonly IChargePointHttpService _chargePointHttpService;
     private readonly IConnectorHttpService _connectorHttpService;
+    private readonly IOcppTagHttpService _ocppTagHttpService;
+    private readonly IEnergyConsumptionHttpService _energyConsumptionHttpService;
     private readonly IReservationHttpService _reservationHttpService;
+    
+    private readonly IPublishEndpoint _publishEndpoint;
+    private readonly IEmailService _emailService;
+    
+    private readonly IConfiguration _configuration;
     private readonly IMapper _mapper;
     private readonly ILogger<TransactionService> _logger;
-    private readonly IConfiguration _configuration;
-    private readonly IPublishEndpoint _publishEndpoint;
 
-    public TransactionService(ITransactionRepository transactionRepository, IMapper mapper,
-        IOcppTagHttpService ocppTagHttpService, ILogger<TransactionService> logger, IConfiguration configuration, 
-        IConnectorHttpService connectorHttpService, IReservationHttpService reservationHttpService,
-        IPublishEndpoint publishEndpoint)
+    public TransactionService(ITransactionRepository transactionRepository,
+                              IConnectorMeterValueRepository connectorMeterValueRepository, 
+                              IChargePointHttpService chargePointHttpService,
+                              IConnectorHttpService connectorHttpService, 
+                              IOcppTagHttpService ocppTagHttpService,
+                              IEnergyConsumptionHttpService energyConsumptionHttpService, 
+                              IReservationHttpService reservationHttpService,
+                              IPublishEndpoint publishEndpoint, 
+                              IEmailService emailService, 
+                              IConfiguration configuration, IMapper mapper,
+                              ILogger<TransactionService> logger)
     {
         _transactionRepository = transactionRepository;
-        _mapper = mapper;
-        _ocppTagHttpService = ocppTagHttpService;
-        _logger = logger;
-        _configuration = configuration;
+        _connectorMeterValueRepository = connectorMeterValueRepository;
+        
+        _chargePointHttpService = chargePointHttpService;
         _connectorHttpService = connectorHttpService;
+        _ocppTagHttpService = ocppTagHttpService;
+        _energyConsumptionHttpService = energyConsumptionHttpService;
         _reservationHttpService = reservationHttpService;
+        
         _publishEndpoint = publishEndpoint;
+        _emailService = emailService;
+        
+        _configuration = configuration;
+        _mapper = mapper;
+        _logger = logger;
     }
 
     public async Task<IPagedCollection<TransactionResponse>> GetAsync(GetTransactionsRequest request,
@@ -409,6 +437,45 @@ public class TransactionService : ITransactionService
 
     private async Task ChangeAvailabilityIfEnergyConsumptionLimitReachedAsync(Guid chargePointId, CancellationToken cancellationToken)
     {
+        var energyConsumptionSettings = await _energyConsumptionHttpService.GetByChargingStationIdAsync(chargePointId, cancellationToken);
+
+        if (energyConsumptionSettings is null)
+            return;
+
+        var depotLimit = energyConsumptionSettings.DepotEnergyLimit;
+        var chargePointLimit = energyConsumptionSettings.ChargePointsLimits.First(x => x.ChargePointId == chargePointId).ChargePointEnergyLimit;
+        var currentInterval = energyConsumptionSettings.Intervals.First(x => x.StartTime <= DateTime.UtcNow && x.EndTime >= DateTime.UtcNow);
+        var currentIntervalLimit = currentInterval.EnergyLimit;
+
+        var totalEnergyConsumedByDepot = await _connectorMeterValueRepository.GetTotalEnergyConsumedByDepotAsync(energyConsumptionSettings.DepotId, currentInterval.StartTime, cancellationToken);
+        var totalEnergyConsumedByDepotInCurrentInterval = await _connectorMeterValueRepository.GetTotalEnergyConsumedByDepotAsync(energyConsumptionSettings.DepotId, currentInterval.StartTime, cancellationToken);
+
+        var totalEnergyConsumedByChargePoint = await _connectorMeterValueRepository.GetTotalEnergyConsumedByChargePointAsync(chargePointId, currentInterval.StartTime, cancellationToken);
+        var totalEnergyConsumedByChargePointInCurrentInterval = await _connectorMeterValueRepository.GetTotalEnergyConsumedByChargePointAsync(chargePointId, currentInterval.StartTime, cancellationToken);
         
+        if (totalEnergyConsumedByDepot > depotLimit
+            || totalEnergyConsumedByDepotInCurrentInterval > currentIntervalLimit
+            || totalEnergyConsumedByChargePoint > chargePointLimit)
+        {
+            var disableChargePointRequest = new ChangeChargePointAvailabilityRequest
+            {
+                ChargePointId = default,
+                AvailabilityType = ChangeAvailabilityRequestType.Inoperative
+            };
+            
+            await _chargePointHttpService.ChangeAvailabilityAsync(disableChargePointRequest, cancellationToken);
+            
+            var warningEmailMessage = new ChargePointAutomaticDisableEmailMessage(energyConsumptionSettings.DepotId, chargePointId);
+            await _emailService.SendMessageAsync(warningEmailMessage, cancellationToken: cancellationToken);
+
+            var chargePointAutomaticDisableMessage = new ChargePointAutomaticDisableMessage
+            {
+                ChargePointId = chargePointId,
+                DepotId = energyConsumptionSettings.DepotId,
+            };
+
+            var chargePointAutomaticDisableSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(chargePointAutomaticDisableMessage), nameof(ChargePointAutomaticDisableMessage));
+            await _publishEndpoint.Publish(chargePointAutomaticDisableSignalRMessage, cancellationToken);
+        }
     }
 }
