@@ -2,7 +2,7 @@
 
 namespace ChargingStation.Domain.Entities;
 
-public class TimeZones : Entity
+public class TimeZone : Entity
 {
     public required string Name { get; set; }
     public required TimeSpan BaseUtcOffset { get; set; }

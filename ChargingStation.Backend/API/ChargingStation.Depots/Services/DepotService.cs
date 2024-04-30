@@ -36,7 +36,9 @@ public class DepotService : IDepotService
 
     public async Task<DepotResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var depot = await _depotRepository.GetByIdAsync(id, cancellationToken);
+        var specification = new GetDepotSpecification(id);
+
+        var depot = await _depotRepository.GetAsync(specification, cancellationToken);
         
         if(depot is null)
             throw new NotFoundException(nameof(Depot), id);

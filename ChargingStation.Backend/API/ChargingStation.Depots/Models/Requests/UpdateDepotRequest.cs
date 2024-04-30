@@ -17,4 +17,5 @@ public class UpdateDepotRequest
     public string? PhoneNumber { get; set; }
     public string? Email { get; set; }
     public string? Description { get; set; }
+    public Guid? TimeZoneId { get; set; }
 }
