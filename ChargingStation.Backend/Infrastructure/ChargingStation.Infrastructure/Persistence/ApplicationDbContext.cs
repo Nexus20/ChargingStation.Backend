@@ -14,6 +14,7 @@ public class ApplicationDbContext : DbContext {
     public required DbSet<OcppTransaction> Transactions { get; set; }
     public required DbSet<Connector> Connectors { get; set; }
     public required DbSet<Reservation> Reservations { get; set; }
+    public required DbSet<TimeZones> TimeZones { get; set; }
     
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {

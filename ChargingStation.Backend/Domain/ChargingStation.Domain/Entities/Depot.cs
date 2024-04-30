@@ -22,6 +22,9 @@ public class Depot : Entity, ITimeMarkable
     public DepotStatus Status { get; set; }
     
     public List<ChargePoint> ChargePoints { get; set; }
+
+    public required Guid TimeZoneId { get; set; }
+    public TimeZones? TimeZone { get; set; }
     
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }

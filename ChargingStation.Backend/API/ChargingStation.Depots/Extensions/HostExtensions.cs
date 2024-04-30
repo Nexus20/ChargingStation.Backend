@@ -1,5 +1,6 @@
 ﻿using Bogus;
 using ChargingStation.Common.Enums;
+using ChargingStation.Depots.Seed;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Persistence;
 
@@ -13,11 +14,14 @@ public static class HostExtensions
         var services = scope.ServiceProvider;
         var context = services.GetRequiredService<ApplicationDbContext>();
         
-        if(context.Depots.Any())
+        if(context.Depots.Any() && context.TimeZones.Any())
             return host;
 
+        SeedData.SeedTimeZones(context);
+
         Randomizer.Seed = new Random(123);
-        
+
+        var timeZones = context.TimeZones.ToList();
         var depots = new Faker<Depot>()
             .RuleFor(d => d.Name, f => f.Company.CompanyName())
             .RuleFor(d => d.Country, f => f.Address.Country())
@@ -27,6 +31,7 @@ public static class HostExtensions
             .RuleFor(d => d.Status, f => DepotStatus.Available)
             .RuleFor(d => d.CreatedAt, f => DateTime.Now)
             .RuleFor(d => d.UpdatedAt, f => null)
+            .RuleFor(d => d.TimeZoneId, f => f.PickRandom(timeZones).Id)
             .Generate(10);
         
         context.Depots.AddRange(depots);
