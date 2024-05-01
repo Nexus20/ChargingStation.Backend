@@ -1,14 +1,12 @@
-﻿using ChargingStation.Domain.Abstract;
+﻿using ChargingStation.Common.Models.Abstract;
 
-namespace ChargingStation.Domain.Entities;
+namespace ChargingStation.Common.Models.TimeZone;
 
-public class TimeZone : Entity
+public class TimeZoneResponse : BaseResponse
 {
     public required string DisplayName { get; set; }
     public required TimeSpan BaseUtcOffset { get; set; }
     public required string IanaId { get; set; }
     public required string WindowsId { get; set; }
-
-    public List<Depot>? Depots { get; set; }
 }
 

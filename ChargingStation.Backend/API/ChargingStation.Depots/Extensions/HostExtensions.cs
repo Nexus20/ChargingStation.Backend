@@ -1,8 +1,9 @@
 ﻿using Bogus;
 using ChargingStation.Common.Enums;
-using ChargingStation.Depots.Seed;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Persistence;
+using Newtonsoft.Json;
+using TimeZone = ChargingStation.Domain.Entities.TimeZone;
 
 namespace ChargingStation.Depots.Extensions;
 
@@ -17,7 +18,7 @@ public static class HostExtensions
         if(context.Depots.Any() && context.TimeZones.Any())
             return host;
 
-        SeedData.SeedTimeZones(context);
+        SeedTimeZones(context);
 
         Randomizer.Seed = new Random(123);
 
@@ -38,5 +39,14 @@ public static class HostExtensions
         context.SaveChanges();
         
         return host;
+    }
+
+    private static void SeedTimeZones(ApplicationDbContext context)
+    {
+        var json = File.ReadAllText("time_zones.json");
+        var timeZones = JsonConvert.DeserializeObject<List<TimeZone>>(json);
+
+        context.TimeZones.AddRange(timeZones!);
+        context.SaveChanges();
     }
 }

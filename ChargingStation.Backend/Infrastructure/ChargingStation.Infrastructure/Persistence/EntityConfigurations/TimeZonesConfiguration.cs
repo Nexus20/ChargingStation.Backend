@@ -9,7 +9,6 @@ public class TimeZonesConfiguration : IEntityTypeConfiguration<Domain.Entities.T
     public void Configure(EntityTypeBuilder<Domain.Entities.TimeZone> builder)
     {
         builder.Property(e => e.BaseUtcOffset)
-            .HasColumnType("time")
             .IsRequired()
             .HasConversion<TimeSpanToStringConverter>()
             .HasMaxLength(16);
@@ -22,12 +21,13 @@ public class TimeZonesConfiguration : IEntityTypeConfiguration<Domain.Entities.T
             .HasMaxLength(128)
             .IsRequired();
 
-        builder.Property(e => e.Name)
+        builder.Property(e => e.DisplayName)
             .HasMaxLength(128)
             .IsRequired();
 
         builder.HasMany<Depot>()
             .WithOne(d => d.TimeZone)
-            .HasForeignKey(d => d.TimeZoneId);
+            .HasForeignKey(d => d.TimeZoneId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
     }
 }

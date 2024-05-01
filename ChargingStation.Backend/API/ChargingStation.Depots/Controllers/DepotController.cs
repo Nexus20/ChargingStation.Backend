@@ -1,6 +1,7 @@
 ﻿using ChargingStation.Common.Models.Depots.Requests;
 using ChargingStation.Common.Models.Depots.Responses;
 using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.TimeZone;
 using ChargingStation.Depots.Models.Requests;
 using ChargingStation.Depots.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -70,5 +71,15 @@ public class DepotController : ControllerBase
         await _depotService.DeleteAsync(id, cancellationToken);
 
         return NoContent();
+    }
+
+    [HttpPost("listTimeZone")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(IPagedCollection<TimeZoneResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetTimeZone([FromBody] GetTimeZoneRequest request, CancellationToken cancellationToken = default)
+    {
+        var depots = await _depotService.GetTimeZoneAsync(request, cancellationToken);
+
+        return Ok(depots);
     }
 }
