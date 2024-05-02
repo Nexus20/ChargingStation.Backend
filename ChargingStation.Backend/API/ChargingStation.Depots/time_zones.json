@@ -1,0 +1,975 @@
+[
+  {
+    "Id": "0BD5833C-2946-4186-B6AB-9B4175702D01",
+    "BaseUtcOffset": "-12:00:00",
+    "WindowsId": "Dateline Standard Time",
+    "IanaId": "Etc/GMT+12",
+    "DisplayName": "(UTC-12:00) International Date Line West"
+  },
+  {
+    "Id": "DAB64F40-4067-445B-8482-3E6E9D5BC23B",
+    "BaseUtcOffset": "-11:00:00",
+    "WindowsId": "UTC-11",
+    "IanaId": "Etc/GMT+11",
+    "DisplayName": "(UTC-11:00) Coordinated Universal Time-11"
+  },
+  {
+    "Id": "5B8611B5-3079-44F1-9370-0EDFAF4B220E",
+    "BaseUtcOffset": "-10:00:00",
+    "WindowsId": "Aleutian Standard Time",
+    "IanaId": "America/Adak",
+    "DisplayName": "(UTC-10:00) Aleutian Islands"
+  },
+  {
+    "Id": "878BFA80-C156-4419-A5BF-40B8F8B8D123",
+    "BaseUtcOffset": "-10:00:00",
+    "WindowsId": "Hawaiian Standard Time",
+    "IanaId": "Pacific/Honolulu",
+    "DisplayName": "(UTC-10:00) Hawaii"
+  },
+  {
+    "Id": "107D5CF8-64B8-4A0F-86A8-3DF6C642EBD8",
+    "BaseUtcOffset": "-09:30:00",
+    "WindowsId": "Marquesas Standard Time",
+    "IanaId": "Pacific/Marquesas",
+    "DisplayName": "(UTC-09:30) Marquesas Islands"
+  },
+  {
+    "Id": "4DA6F246-E96C-4C2F-8244-370C699A8C6D",
+    "BaseUtcOffset": "-09:00:00",
+    "WindowsId": "Alaskan Standard Time",
+    "IanaId": "America/Anchorage",
+    "DisplayName": "(UTC-09:00) Alaska"
+  },
+  {
+    "Id": "231CB2EA-7E5F-49DE-BD3E-50078908A987",
+    "BaseUtcOffset": "-09:00:00",
+    "WindowsId": "UTC-09",
+    "IanaId": "Etc/GMT+9",
+    "DisplayName": "(UTC-09:00) Coordinated Universal Time-09"
+  },
+  {
+    "Id": "6A5CA6D8-AB49-43E1-9DDF-FB63DAE65DD7",
+    "BaseUtcOffset": "-08:00:00",
+    "WindowsId": "Pacific Standard Time (Mexico)",
+    "IanaId": "America/Tijuana",
+    "DisplayName": "(UTC-08:00) Baja California"
+  },
+  {
+    "Id": "D96F5250-68A6-4DFB-AFB5-ED2ACC8DA365",
+    "BaseUtcOffset": "-08:00:00",
+    "WindowsId": "UTC-08",
+    "IanaId": "Etc/GMT+8",
+    "DisplayName": "(UTC-08:00) Coordinated Universal Time-08"
+  },
+  {
+    "Id": "81152A35-5169-4167-B1D0-8F37B7371512",
+    "BaseUtcOffset": "-08:00:00",
+    "WindowsId": "Pacific Standard Time",
+    "IanaId": "America/Los_Angeles",
+    "DisplayName": "(UTC-08:00) Pacific Time (US & Canada)"
+  },
+  {
+    "Id": "7E326E25-6C65-4F11-8F89-485F767E809D",
+    "BaseUtcOffset": "-07:00:00",
+    "WindowsId": "US Mountain Standard Time",
+    "IanaId": "America/Phoenix",
+    "DisplayName": "(UTC-07:00) Arizona"
+  },
+  {
+    "Id": "EE523005-2119-480F-8F83-2BDDE8D3CE26",
+    "BaseUtcOffset": "-07:00:00",
+    "WindowsId": "Mountain Standard Time (Mexico)",
+    "IanaId": "America/Chihuahua",
+    "DisplayName": "(UTC-07:00) La Paz, Mazatlan"
+  },
+  {
+    "Id": "46BAF7D3-0B72-4732-BD51-503F597BBC62",
+    "BaseUtcOffset": "-07:00:00",
+    "WindowsId": "Mountain Standard Time",
+    "IanaId": "America/Denver",
+    "DisplayName": "(UTC-07:00) Mountain Time (US & Canada)"
+  },
+  {
+    "Id": "45F270FF-F827-477A-9252-8793D7F19C74",
+    "BaseUtcOffset": "-07:00:00",
+    "WindowsId": "Yukon Standard Time",
+    "IanaId": "America/Whitehorse",
+    "DisplayName": "(UTC-07:00) Yukon"
+  },
+  {
+    "Id": "0F51B7B0-D8DC-4FE5-AFDA-81ED71C69D76",
+    "BaseUtcOffset": "-06:00:00",
+    "WindowsId": "Central America Standard Time",
+    "IanaId": "America/Guatemala",
+    "DisplayName": "(UTC-06:00) Central America"
+  },
+  {
+    "Id": "2A40EE2B-DF25-47B8-A1FB-6981626E00A6",
+    "BaseUtcOffset": "-06:00:00",
+    "WindowsId": "Central Standard Time",
+    "IanaId": "America/Chicago",
+    "DisplayName": "(UTC-06:00) Central Time (US & Canada)"
+  },
+  {
+    "Id": "F0DA1232-3235-49F2-81FC-6D5D3EA17412",
+    "BaseUtcOffset": "-06:00:00",
+    "WindowsId": "Easter Island Standard Time",
+    "IanaId": "Pacific/Easter",
+    "DisplayName": "(UTC-06:00) Easter Island"
+  },
+  {
+    "Id": "C4A3708C-3D52-47D0-8EA2-F0147F023F45",
+    "BaseUtcOffset": "-06:00:00",
+    "WindowsId": "Central Standard Time (Mexico)",
+    "IanaId": "America/Mexico_City",
+    "DisplayName": "(UTC-06:00) Guadalajara, Mexico City, Monterrey"
+  },
+  {
+    "Id": "521E0EF6-8055-4D1B-88CD-D0C6FA445B9E",
+    "BaseUtcOffset": "-06:00:00",
+    "WindowsId": "Canada Central Standard Time",
+    "IanaId": "America/Regina",
+    "DisplayName": "(UTC-06:00) Saskatchewan"
+  },
+  {
+    "Id": "A09E5E17-494F-462C-A8D5-6F6269E4683A",
+    "BaseUtcOffset": "-05:00:00",
+    "WindowsId": "SA Pacific Standard Time",
+    "IanaId": "America/Bogota",
+    "DisplayName": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+  },
+  {
+    "Id": "D1FE651B-3C42-49A4-A463-87C0EF972C8C",
+    "BaseUtcOffset": "-05:00:00",
+    "WindowsId": "Eastern Standard Time (Mexico)",
+    "IanaId": "America/Cancun",
+    "DisplayName": "(UTC-05:00) Chetumal"
+  },
+  {
+    "Id": "C62D9C33-73DC-4EEC-866E-561B7F246DBB",
+    "BaseUtcOffset": "-05:00:00",
+    "WindowsId": "Eastern Standard Time",
+    "IanaId": "America/New_York",
+    "DisplayName": "(UTC-05:00) Eastern Time (US & Canada)"
+  },
+  {
+    "Id": "E4D9DE56-1058-4024-A210-57D3971D9E89",
+    "BaseUtcOffset": "-05:00:00",
+    "WindowsId": "Haiti Standard Time",
+    "IanaId": "America/Port-au-Prince",
+    "DisplayName": "(UTC-05:00) Haiti"
+  },
+  {
+    "Id": "853D573B-E263-458B-822A-4CF8A5F25E70",
+    "BaseUtcOffset": "-05:00:00",
+    "WindowsId": "Cuba Standard Time",
+    "IanaId": "America/Havana",
+    "DisplayName": "(UTC-05:00) Havana"
+  },
+  {
+    "Id": "356701A5-DFEB-42A8-B2A6-EE69673C8C91",
+    "BaseUtcOffset": "-05:00:00",
+    "WindowsId": "US Eastern Standard Time",
+    "IanaId": "America/Indianapolis",
+    "DisplayName": "(UTC-05:00) Indiana (East)"
+  },
+  {
+    "Id": "7BA8F962-CD2D-4E91-A44A-5DF6FF2C2085",
+    "BaseUtcOffset": "-05:00:00",
+    "WindowsId": "Turks And Caicos Standard Time",
+    "IanaId": "America/Grand_Turk",
+    "DisplayName": "(UTC-05:00) Turks and Caicos"
+  },
+  {
+    "Id": "E3D82E8C-3EDC-4FEB-A3E1-279E1008C7E6",
+    "BaseUtcOffset": "-04:00:00",
+    "WindowsId": "Paraguay Standard Time",
+    "IanaId": "America/Asuncion",
+    "DisplayName": "(UTC-04:00) Asuncion"
+  },
+  {
+    "Id": "2A6C6F51-D287-42D7-BFED-EFD953A43AB1",
+    "BaseUtcOffset": "-04:00:00",
+    "WindowsId": "Atlantic Standard Time",
+    "IanaId": "America/Halifax",
+    "DisplayName": "(UTC-04:00) Atlantic Time (Canada)"
+  },
+  {
+    "Id": "854C604C-7910-4921-82F7-FC1DF7C356B5",
+    "BaseUtcOffset": "-04:00:00",
+    "WindowsId": "Venezuela Standard Time",
+    "IanaId": "America/Caracas",
+    "DisplayName": "(UTC-04:00) Caracas"
+  },
+  {
+    "Id": "EF37A37B-31B2-4B7B-821F-598366959624",
+    "BaseUtcOffset": "-04:00:00",
+    "WindowsId": "Central Brazilian Standard Time",
+    "IanaId": "America/Cuiaba",
+    "DisplayName": "(UTC-04:00) Cuiaba"
+  },
+  {
+    "Id": "BE90BA3F-794B-4728-AE5F-66B2D77052CB",
+    "BaseUtcOffset": "-04:00:00",
+    "WindowsId": "SA Western Standard Time",
+    "IanaId": "America/La_Paz",
+    "DisplayName": "(UTC-04:00) Georgetown, La Paz, Manaus, San Juan"
+  },
+  {
+    "Id": "622C0109-71BB-42C0-B8BE-840228FB706C",
+    "BaseUtcOffset": "-04:00:00",
+    "WindowsId": "Pacific SA Standard Time",
+    "IanaId": "America/Santiago",
+    "DisplayName": "(UTC-04:00) Santiago"
+  },
+  {
+    "Id": "163066E7-9819-41B2-86F1-224D8DC9B92B",
+    "BaseUtcOffset": "-03:30:00",
+    "WindowsId": "Newfoundland Standard Time",
+    "IanaId": "America/St_Johns",
+    "DisplayName": "(UTC-03:30) Newfoundland"
+  },
+  {
+    "Id": "CADF14FC-1DAE-4ECF-8120-C6B110BEF671",
+    "BaseUtcOffset": "-03:00:00",
+    "WindowsId": "Tocantins Standard Time",
+    "IanaId": "America/Araguaina",
+    "DisplayName": "(UTC-03:00) Araguaina"
+  },
+  {
+    "Id": "AD65B333-846B-4838-8F29-D247036743DA",
+    "BaseUtcOffset": "-03:00:00",
+    "WindowsId": "E. South America Standard Time",
+    "IanaId": "America/Sao_Paulo",
+    "DisplayName": "(UTC-03:00) Brasilia"
+  },
+  {
+    "Id": "8D1CC7ED-E419-4CF9-84D6-8E38D3993879",
+    "BaseUtcOffset": "-03:00:00",
+    "WindowsId": "SA Eastern Standard Time",
+    "IanaId": "America/Cayenne",
+    "DisplayName": "(UTC-03:00) Cayenne, Fortaleza"
+  },
+  {
+    "Id": "83625CDD-1630-411D-9CAD-D88D22E4A21F",
+    "BaseUtcOffset": "-03:00:00",
+    "WindowsId": "Argentina Standard Time",
+    "IanaId": "America/Buenos_Aires",
+    "DisplayName": "(UTC-03:00) City of Buenos Aires"
+  },
+  {
+    "Id": "253F7D90-B794-4DB3-9EFC-2B1E0B1A2D49",
+    "BaseUtcOffset": "-03:00:00",
+    "WindowsId": "Greenland Standard Time",
+    "IanaId": "America/Godthab",
+    "DisplayName": "(UTC-03:00) Greenland"
+  },
+  {
+    "Id": "6B97E39E-D33E-4F83-B554-0584D657AC21",
+    "BaseUtcOffset": "-03:00:00",
+    "WindowsId": "Montevideo Standard Time",
+    "IanaId": "America/Montevideo",
+    "DisplayName": "(UTC-03:00) Montevideo"
+  },
+  {
+    "Id": "3E2CA9EF-2AD0-433B-A9A4-95737C072D3D",
+    "BaseUtcOffset": "-03:00:00",
+    "WindowsId": "Magallanes Standard Time",
+    "IanaId": "America/Punta_Arenas",
+    "DisplayName": "(UTC-03:00) Punta Arenas"
+  },
+  {
+    "Id": "9246EB56-EA42-4FFF-AE8F-28982A64DB61",
+    "BaseUtcOffset": "-03:00:00",
+    "WindowsId": "Saint Pierre Standard Time",
+    "IanaId": "America/Miquelon",
+    "DisplayName": "(UTC-03:00) Saint Pierre and Miquelon"
+  },
+  {
+    "Id": "5C6E6720-D712-42BA-AC49-8AA8C1DC37CD",
+    "BaseUtcOffset": "-03:00:00",
+    "WindowsId": "Bahia Standard Time",
+    "IanaId": "America/Bahia",
+    "DisplayName": "(UTC-03:00) Salvador"
+  },
+  {
+    "Id": "A29DEF12-433C-4E82-8714-676351E01580",
+    "BaseUtcOffset": "-02:00:00",
+    "WindowsId": "UTC-02",
+    "IanaId": "Etc/GMT+2",
+    "DisplayName": "(UTC-02:00) Coordinated Universal Time-02"
+  },
+  {
+    "Id": "87EEA5A8-CA31-4388-91D5-EBE0F18324AC",
+    "BaseUtcOffset": "-01:00:00",
+    "WindowsId": "Azores Standard Time",
+    "IanaId": "Atlantic/Azores",
+    "DisplayName": "(UTC-01:00) Azores"
+  },
+  {
+    "Id": "E69082B8-0002-4273-AE48-58DBCA96A126",
+    "BaseUtcOffset": "-01:00:00",
+    "WindowsId": "Cape Verde Standard Time",
+    "IanaId": "Atlantic/Cape_Verde",
+    "DisplayName": "(UTC-01:00) Cabo Verde Is."
+  },
+  {
+    "Id": "141F5CE5-ED5E-456E-B4D7-C3152F2FD4F2",
+    "BaseUtcOffset": "00:00:00",
+    "WindowsId": "UTC",
+    "IanaId": "Etc/UTC",
+    "DisplayName": "(UTC) Coordinated Universal Time"
+  },
+  {
+    "Id": "007813A9-E15D-4548-9811-51896A4A2E75",
+    "BaseUtcOffset": "00:00:00",
+    "WindowsId": "GMT Standard Time",
+    "IanaId": "Europe/London",
+    "DisplayName": "(UTC+00:00) Dublin, Edinburgh, Lisbon, London"
+  },
+  {
+    "Id": "F9785990-FD75-4EDD-8676-6B3E35DC7007",
+    "BaseUtcOffset": "00:00:00",
+    "WindowsId": "Greenwich Standard Time",
+    "IanaId": "Atlantic/Reykjavik",
+    "DisplayName": "(UTC+00:00) Monrovia, Reykjavik"
+  },
+  {
+    "Id": "96A91BDA-3D98-4FE8-891F-93FA607DBAE7",
+    "BaseUtcOffset": "00:00:00",
+    "WindowsId": "Sao Tome Standard Time",
+    "IanaId": "Africa/Sao_Tome",
+    "DisplayName": "(UTC+00:00) Sao Tome"
+  },
+  {
+    "Id": "31B544A3-6233-4FC2-9EC4-2A954933997E",
+    "BaseUtcOffset": "00:00:00",
+    "WindowsId": "Morocco Standard Time",
+    "IanaId": "Africa/Casablanca",
+    "DisplayName": "(UTC+01:00) Casablanca"
+  },
+  {
+    "Id": "DB6C344B-E03A-4282-954F-A3D1CA93715C",
+    "BaseUtcOffset": "01:00:00",
+    "WindowsId": "W. Europe Standard Time",
+    "IanaId": "Europe/Berlin",
+    "DisplayName": "(UTC+01:00) Amsterdam, Berlin, Bern, Rome, Stockholm, Vienna"
+  },
+  {
+    "Id": "6DBDBB8D-1183-4367-A2FC-5E5404F1C234",
+    "BaseUtcOffset": "01:00:00",
+    "WindowsId": "Central Europe Standard Time",
+    "IanaId": "Europe/Budapest",
+    "DisplayName": "(UTC+01:00) Belgrade, Bratislava, Budapest, Ljubljana, Prague"
+  },
+  {
+    "Id": "AD471D77-8BE7-4439-9526-AC4EE3785656",
+    "BaseUtcOffset": "01:00:00",
+    "WindowsId": "Romance Standard Time",
+    "IanaId": "Europe/Paris",
+    "DisplayName": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
+  },
+  {
+    "Id": "F9EED532-E0D0-4D17-8DBE-79492DF9C74F",
+    "BaseUtcOffset": "01:00:00",
+    "WindowsId": "Central European Standard Time",
+    "IanaId": "Europe/Warsaw",
+    "DisplayName": "(UTC+01:00) Sarajevo, Skopje, Warsaw, Zagreb"
+  },
+  {
+    "Id": "EE7BE104-E5DB-4DB5-940F-B456B565881D",
+    "BaseUtcOffset": "01:00:00",
+    "WindowsId": "W. Central Africa Standard Time",
+    "IanaId": "Africa/Lagos",
+    "DisplayName": "(UTC+01:00) West Central Africa"
+  },
+  {
+    "Id": "F957A249-568B-45BC-9CEC-619CBB14C849",
+    "BaseUtcOffset": "02:00:00",
+    "WindowsId": "GTB Standard Time",
+    "IanaId": "Europe/Bucharest",
+    "DisplayName": "(UTC+02:00) Athens, Bucharest"
+  },
+  {
+    "Id": "3E3027B8-F876-4384-A76A-44BB59847F46",
+    "BaseUtcOffset": "02:00:00",
+    "WindowsId": "Middle East Standard Time",
+    "IanaId": "Asia/Beirut",
+    "DisplayName": "(UTC+02:00) Beirut"
+  },
+  {
+    "Id": "6C54E8FD-A790-4BFD-98A5-D4077F3B4066",
+    "BaseUtcOffset": "02:00:00",
+    "WindowsId": "Egypt Standard Time",
+    "IanaId": "Africa/Cairo",
+    "DisplayName": "(UTC+02:00) Cairo"
+  },
+  {
+    "Id": "B5E23C84-B39C-42D7-8DDB-4A5F013A6089",
+    "BaseUtcOffset": "02:00:00",
+    "WindowsId": "E. Europe Standard Time",
+    "IanaId": "Europe/Chisinau",
+    "DisplayName": "(UTC+02:00) Chisinau"
+  },
+  {
+    "Id": "A5B5C5DF-1BB1-410C-A72C-6251755BB80D",
+    "BaseUtcOffset": "02:00:00",
+    "WindowsId": "Syria Standard Time",
+    "IanaId": "Asia/Damascus",
+    "DisplayName": "(UTC+02:00) Damascus"
+  },
+  {
+    "Id": "AB19B27F-C1E6-44DB-B228-9C3594E3F560",
+    "BaseUtcOffset": "02:00:00",
+    "WindowsId": "West Bank Standard Time",
+    "IanaId": "Asia/Hebron",
+    "DisplayName": "(UTC+02:00) Gaza, Hebron"
+  },
+  {
+    "Id": "C5B00460-81CB-420F-9B4F-814FAFF1A506",
+    "BaseUtcOffset": "02:00:00",
+    "WindowsId": "South Africa Standard Time",
+    "IanaId": "Africa/Johannesburg",
+    "DisplayName": "(UTC+02:00) Harare, Pretoria"
+  },
+  {
+    "Id": "125D4E10-39F7-4CF7-BB81-C1ECA6BA8B6C",
+    "BaseUtcOffset": "02:00:00",
+    "WindowsId": "FLE Standard Time",
+    "IanaId": "Europe/Kiev",
+    "DisplayName": "(UTC+02:00) Helsinki, Kyiv, Riga, Sofia, Tallinn, Vilnius"
+  },
+  {
+    "Id": "EA00D765-89CF-4E8E-BAF6-E8B6836EC3D7",
+    "BaseUtcOffset": "02:00:00",
+    "WindowsId": "Israel Standard Time",
+    "IanaId": "Asia/Jerusalem",
+    "DisplayName": "(UTC+02:00) Jerusalem"
+  },
+  {
+    "Id": "21406728-0680-49D1-8295-5C9BBCE633F0",
+    "BaseUtcOffset": "02:00:00",
+    "WindowsId": "South Sudan Standard Time",
+    "IanaId": "Africa/Juba",
+    "DisplayName": "(UTC+02:00) Juba"
+  },
+  {
+    "Id": "637F23B4-9A8F-4B88-A358-D596B7600416",
+    "BaseUtcOffset": "02:00:00",
+    "WindowsId": "Kaliningrad Standard Time",
+    "IanaId": "Europe/Kaliningrad",
+    "DisplayName": "(UTC+02:00) Kaliningrad"
+  },
+  {
+    "Id": "2C4ED340-CF23-4D9C-BEDD-658F3780A950",
+    "BaseUtcOffset": "02:00:00",
+    "WindowsId": "Sudan Standard Time",
+    "IanaId": "Africa/Khartoum",
+    "DisplayName": "(UTC+02:00) Khartoum"
+  },
+  {
+    "Id": "CA9D8582-6622-43D0-A10E-D5482C448033",
+    "BaseUtcOffset": "02:00:00",
+    "WindowsId": "Libya Standard Time",
+    "IanaId": "Africa/Tripoli",
+    "DisplayName": "(UTC+02:00) Tripoli"
+  },
+  {
+    "Id": "F85CE9B5-5190-4A78-88E7-79F2CD5A5B03",
+    "BaseUtcOffset": "02:00:00",
+    "WindowsId": "Namibia Standard Time",
+    "IanaId": "Africa/Windhoek",
+    "DisplayName": "(UTC+02:00) Windhoek"
+  },
+  {
+    "Id": "FE3FD6EE-6C44-4F33-9BE3-8EEA25140259",
+    "BaseUtcOffset": "03:00:00",
+    "WindowsId": "Jordan Standard Time",
+    "IanaId": "Asia/Amman",
+    "DisplayName": "(UTC+03:00) Amman"
+  },
+  {
+    "Id": "5A905A1F-CC5D-40A9-93E8-E64E2C66609C",
+    "BaseUtcOffset": "03:00:00",
+    "WindowsId": "Arabic Standard Time",
+    "IanaId": "Asia/Baghdad",
+    "DisplayName": "(UTC+03:00) Baghdad"
+  },
+  {
+    "Id": "76D7F9D2-E315-4A0C-89B1-507CA2E39BAB",
+    "BaseUtcOffset": "03:00:00",
+    "WindowsId": "Turkey Standard Time",
+    "IanaId": "Europe/Istanbul",
+    "DisplayName": "(UTC+03:00) Istanbul"
+  },
+  {
+    "Id": "E2A84CB1-30E3-46C1-A4FC-52498A38C31D",
+    "BaseUtcOffset": "03:00:00",
+    "WindowsId": "Arab Standard Time",
+    "IanaId": "Asia/Riyadh",
+    "DisplayName": "(UTC+03:00) Kuwait, Riyadh"
+  },
+  {
+    "Id": "6E6803CD-44DC-47D7-8027-4D65996B27C0",
+    "BaseUtcOffset": "03:00:00",
+    "WindowsId": "Belarus Standard Time",
+    "IanaId": "Europe/Minsk",
+    "DisplayName": "(UTC+03:00) Minsk"
+  },
+  {
+    "Id": "9F239596-DC03-4B70-A35F-4D7AAA5530AB",
+    "BaseUtcOffset": "03:00:00",
+    "WindowsId": "Russian Standard Time",
+    "IanaId": "Europe/Moscow",
+    "DisplayName": "(UTC+03:00) Moscow, St. Petersburg"
+  },
+  {
+    "Id": "FA9B9396-10EE-4DA1-BEB6-289B166309B4",
+    "BaseUtcOffset": "03:00:00",
+    "WindowsId": "E. Africa Standard Time",
+    "IanaId": "Africa/Nairobi",
+    "DisplayName": "(UTC+03:00) Nairobi"
+  },
+  {
+    "Id": "0F2A3216-96CE-4344-856F-43E06C6F2293",
+    "BaseUtcOffset": "03:00:00",
+    "WindowsId": "Volgograd Standard Time",
+    "IanaId": "Europe/Volgograd",
+    "DisplayName": "(UTC+03:00) Volgograd"
+  },
+  {
+    "Id": "86E5195D-1657-4517-91B2-C66863CD1C72",
+    "BaseUtcOffset": "03:30:00",
+    "WindowsId": "Iran Standard Time",
+    "IanaId": "Asia/Tehran",
+    "DisplayName": "(UTC+03:30) Tehran"
+  },
+  {
+    "Id": "F995CDB1-D078-45A7-ACE4-8CE6227684AF",
+    "BaseUtcOffset": "04:00:00",
+    "WindowsId": "Arabian Standard Time",
+    "IanaId": "Asia/Dubai",
+    "DisplayName": "(UTC+04:00) Abu Dhabi, Muscat"
+  },
+  {
+    "Id": "CFDF58DF-49A3-4FCF-B79A-DB96875843C4",
+    "BaseUtcOffset": "04:00:00",
+    "WindowsId": "Astrakhan Standard Time",
+    "IanaId": "Europe/Astrakhan",
+    "DisplayName": "(UTC+04:00) Astrakhan, Ulyanovsk"
+  },
+  {
+    "Id": "679E985C-BD2A-42BA-A8A0-516488445B9C",
+    "BaseUtcOffset": "04:00:00",
+    "WindowsId": "Azerbaijan Standard Time",
+    "IanaId": "Asia/Baku",
+    "DisplayName": "(UTC+04:00) Baku"
+  },
+  {
+    "Id": "C3EF6316-F425-4972-BC92-083D4606FD10",
+    "BaseUtcOffset": "04:00:00",
+    "WindowsId": "Russia Time Zone 3",
+    "IanaId": "Europe/Samara",
+    "DisplayName": "(UTC+04:00) Izhevsk, Samara"
+  },
+  {
+    "Id": "BAF24764-F982-457F-8EB6-2E20FA576C07",
+    "BaseUtcOffset": "04:00:00",
+    "WindowsId": "Mauritius Standard Time",
+    "IanaId": "Indian/Mauritius",
+    "DisplayName": "(UTC+04:00) Port Louis"
+  },
+  {
+    "Id": "55759250-3D43-4AAA-8E12-153769E376A3",
+    "BaseUtcOffset": "04:00:00",
+    "WindowsId": "Saratov Standard Time",
+    "IanaId": "Europe/Saratov",
+    "DisplayName": "(UTC+04:00) Saratov"
+  },
+  {
+    "Id": "B747BB8A-B604-4FB2-877E-02B8104EE7B0",
+    "BaseUtcOffset": "04:00:00",
+    "WindowsId": "Georgian Standard Time",
+    "IanaId": "Asia/Tbilisi",
+    "DisplayName": "(UTC+04:00) Tbilisi"
+  },
+  {
+    "Id": "C3080493-D8EA-4185-B372-3E90627D692D",
+    "BaseUtcOffset": "04:00:00",
+    "WindowsId": "Caucasus Standard Time",
+    "IanaId": "Asia/Yerevan",
+    "DisplayName": "(UTC+04:00) Yerevan"
+  },
+  {
+    "Id": "CEC43B69-5946-47F8-BAA1-E661E0177808",
+    "BaseUtcOffset": "04:30:00",
+    "WindowsId": "Afghanistan Standard Time",
+    "IanaId": "Asia/Kabul",
+    "DisplayName": "(UTC+04:30) Kabul"
+  },
+  {
+    "Id": "045A260A-68D5-4D71-A0B3-4109FAE5AD79",
+    "BaseUtcOffset": "05:00:00",
+    "WindowsId": "West Asia Standard Time",
+    "IanaId": "Asia/Tashkent",
+    "DisplayName": "(UTC+05:00) Ashgabat, Tashkent"
+  },
+  {
+    "Id": "1290B340-4504-4FA1-8B85-7C773C9A87F2",
+    "BaseUtcOffset": "05:00:00",
+    "WindowsId": "Ekaterinburg Standard Time",
+    "IanaId": "Asia/Yekaterinburg",
+    "DisplayName": "(UTC+05:00) Ekaterinburg"
+  },
+  {
+    "Id": "32C5F4DE-8666-4B46-A5B1-7A76083E7CCB",
+    "BaseUtcOffset": "05:00:00",
+    "WindowsId": "Pakistan Standard Time",
+    "IanaId": "Asia/Karachi",
+    "DisplayName": "(UTC+05:00) Islamabad, Karachi"
+  },
+  {
+    "Id": "5A255341-8558-4CA3-BCA0-D5044538340E",
+    "BaseUtcOffset": "05:00:00",
+    "WindowsId": "Qyzylorda Standard Time",
+    "IanaId": "Asia/Qyzylorda",
+    "DisplayName": "(UTC+05:00) Qyzylorda"
+  },
+  {
+    "Id": "CBDDB735-8DC8-446A-B387-596347EE7054",
+    "BaseUtcOffset": "05:30:00",
+    "WindowsId": "India Standard Time",
+    "IanaId": "Asia/Calcutta",
+    "DisplayName": "(UTC+05:30) Chennai, Kolkata, Mumbai, New Delhi"
+  },
+  {
+    "Id": "F580FB1E-B465-482D-8C67-7E9B75257647",
+    "BaseUtcOffset": "05:30:00",
+    "WindowsId": "Sri Lanka Standard Time",
+    "IanaId": "Asia/Colombo",
+    "DisplayName": "(UTC+05:30) Sri Jayawardenepura"
+  },
+  {
+    "Id": "AC5A5A91-FA74-432A-A0AF-AFFB6D40E39C",
+    "BaseUtcOffset": "05:45:00",
+    "WindowsId": "Nepal Standard Time",
+    "IanaId": "Asia/Katmandu",
+    "DisplayName": "(UTC+05:45) Kathmandu"
+  },
+  {
+    "Id": "26646238-5E3E-4EBB-9649-E0589C5AB1F8",
+    "BaseUtcOffset": "06:00:00",
+    "WindowsId": "Central Asia Standard Time",
+    "IanaId": "Asia/Almaty",
+    "DisplayName": "(UTC+06:00) Astana"
+  },
+  {
+    "Id": "3553C9EE-07B9-424B-85AA-477E29906B0E",
+    "BaseUtcOffset": "06:00:00",
+    "WindowsId": "Bangladesh Standard Time",
+    "IanaId": "Asia/Dhaka",
+    "DisplayName": "(UTC+06:00) Dhaka"
+  },
+  {
+    "Id": "1D9310DC-9721-4D8C-A247-5BB132178CE8",
+    "BaseUtcOffset": "06:00:00",
+    "WindowsId": "Omsk Standard Time",
+    "IanaId": "Asia/Omsk",
+    "DisplayName": "(UTC+06:00) Omsk"
+  },
+  {
+    "Id": "BFF8AE1B-3014-4CAB-AD10-0AE08DC3AAD6",
+    "BaseUtcOffset": "06:30:00",
+    "WindowsId": "Myanmar Standard Time",
+    "IanaId": "Asia/Rangoon",
+    "DisplayName": "(UTC+06:30) Yangon (Rangoon)"
+  },
+  {
+    "Id": "DCBBC367-1D6C-4B53-BE94-0E7BE59EB874",
+    "BaseUtcOffset": "07:00:00",
+    "WindowsId": "SE Asia Standard Time",
+    "IanaId": "Asia/Bangkok",
+    "DisplayName": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+  },
+  {
+    "Id": "02623761-4BFD-477A-83D0-394BFC9256B9",
+    "BaseUtcOffset": "07:00:00",
+    "WindowsId": "Altai Standard Time",
+    "IanaId": "Asia/Barnaul",
+    "DisplayName": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+  },
+  {
+    "Id": "1A4B86D9-5CBA-441F-AD7E-6A001D3DC415",
+    "BaseUtcOffset": "07:00:00",
+    "WindowsId": "W. Mongolia Standard Time",
+    "IanaId": "Asia/Hovd",
+    "DisplayName": "(UTC+07:00) Hovd"
+  },
+  {
+    "Id": "E5009023-7067-448D-879A-0B5756D4E64C",
+    "BaseUtcOffset": "07:00:00",
+    "WindowsId": "North Asia Standard Time",
+    "IanaId": "Asia/Krasnoyarsk",
+    "DisplayName": "(UTC+07:00) Krasnoyarsk"
+  },
+  {
+    "Id": "D18191AC-CE13-484D-BFDB-3C7173EE9013",
+    "BaseUtcOffset": "07:00:00",
+    "WindowsId": "N. Central Asia Standard Time",
+    "IanaId": "Asia/Novosibirsk",
+    "DisplayName": "(UTC+07:00) Novosibirsk"
+  },
+  {
+    "Id": "7065F74B-ABC8-4D3D-A029-5780FD722750",
+    "BaseUtcOffset": "07:00:00",
+    "WindowsId": "Tomsk Standard Time",
+    "IanaId": "Asia/Tomsk",
+    "DisplayName": "(UTC+07:00) Tomsk"
+  },
+  {
+    "Id": "239B72B9-3AF0-47C6-8DA8-F262BB95ABA5",
+    "BaseUtcOffset": "08:00:00",
+    "WindowsId": "China Standard Time",
+    "IanaId": "Asia/Shanghai",
+    "DisplayName": "(UTC+08:00) Beijing, Chongqing, Hong Kong, Urumqi"
+  },
+  {
+    "Id": "0F012B81-AD60-4C24-8068-9EA7C80702A9",
+    "BaseUtcOffset": "08:00:00",
+    "WindowsId": "North Asia East Standard Time",
+    "IanaId": "Asia/Irkutsk",
+    "DisplayName": "(UTC+08:00) Irkutsk"
+  },
+  {
+    "Id": "757C702A-B7B9-4EFA-A21F-76D302D61176",
+    "BaseUtcOffset": "08:00:00",
+    "WindowsId": "Singapore Standard Time",
+    "IanaId": "Asia/Singapore",
+    "DisplayName": "(UTC+08:00) Kuala Lumpur, Singapore"
+  },
+  {
+    "Id": "069C74AF-217A-446C-A390-2AF35E5D8E5C",
+    "BaseUtcOffset": "08:00:00",
+    "WindowsId": "W. Australia Standard Time",
+    "IanaId": "Australia/Perth",
+    "DisplayName": "(UTC+08:00) Perth"
+  },
+  {
+    "Id": "2A218F9B-5F83-4CA4-B3A6-83BA6B34A693",
+    "BaseUtcOffset": "08:00:00",
+    "WindowsId": "Taipei Standard Time",
+    "IanaId": "Asia/Taipei",
+    "DisplayName": "(UTC+08:00) Taipei"
+  },
+  {
+    "Id": "7F8C4739-64A4-4F56-96E2-387A6983E24E",
+    "BaseUtcOffset": "08:00:00",
+    "WindowsId": "Ulaanbaatar Standard Time",
+    "IanaId": "Asia/Ulaanbaatar",
+    "DisplayName": "(UTC+08:00) Ulaanbaatar"
+  },
+  {
+    "Id": "7E4690FA-DD22-4EDF-8805-A4CE5AED7441",
+    "BaseUtcOffset": "08:45:00",
+    "WindowsId": "Aus Central W. Standard Time",
+    "IanaId": "Australia/Eucla",
+    "DisplayName": "(UTC+08:45) Eucla"
+  },
+  {
+    "Id": "E9CB1387-9E8C-4B64-8590-6478F2C3F8FE",
+    "BaseUtcOffset": "09:00:00",
+    "WindowsId": "Transbaikal Standard Time",
+    "IanaId": "Asia/Chita",
+    "DisplayName": "(UTC+09:00) Chita"
+  },
+  {
+    "Id": "FF72FE1F-8C11-46CD-BE97-B97C02EDDE99",
+    "BaseUtcOffset": "09:00:00",
+    "WindowsId": "Tokyo Standard Time",
+    "IanaId": "Asia/Tokyo",
+    "DisplayName": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+  },
+  {
+    "Id": "E61D34AF-8219-47EF-86DD-77E1C763EBF1",
+    "BaseUtcOffset": "09:00:00",
+    "WindowsId": "North Korea Standard Time",
+    "IanaId": "Asia/Pyongyang",
+    "DisplayName": "(UTC+09:00) Pyongyang"
+  },
+  {
+    "Id": "2D24EFAE-5B6F-4C2A-B8A4-647C85A50482",
+    "BaseUtcOffset": "09:00:00",
+    "WindowsId": "Korea Standard Time",
+    "IanaId": "Asia/Seoul",
+    "DisplayName": "(UTC+09:00) Seoul"
+  },
+  {
+    "Id": "49B67F78-2990-4EC5-9C34-9A09354EC04E",
+    "BaseUtcOffset": "09:00:00",
+    "WindowsId": "Yakutsk Standard Time",
+    "IanaId": "Asia/Yakutsk",
+    "DisplayName": "(UTC+09:00) Yakutsk"
+  },
+  {
+    "Id": "E70DD56F-C6BE-40F7-8713-CF16D9C29996",
+    "BaseUtcOffset": "09:30:00",
+    "WindowsId": "Cen. Australia Standard Time",
+    "IanaId": "Australia/Adelaide",
+    "DisplayName": "(UTC+09:30) Adelaide"
+  },
+  {
+    "Id": "ACB5759C-8A1F-43F1-A43A-FA227E354D32",
+    "BaseUtcOffset": "09:30:00",
+    "WindowsId": "AUS Central Standard Time",
+    "IanaId": "Australia/Darwin",
+    "DisplayName": "(UTC+09:30) Darwin"
+  },
+  {
+    "Id": "07BC375F-0038-477E-BF3B-64F92A4049D2",
+    "BaseUtcOffset": "10:00:00",
+    "WindowsId": "E. Australia Standard Time",
+    "IanaId": "Australia/Brisbane",
+    "DisplayName": "(UTC+10:00) Brisbane"
+  },
+  {
+    "Id": "5B3AAD5E-4F5B-4603-8319-3F12E982DA7B",
+    "BaseUtcOffset": "10:00:00",
+    "WindowsId": "AUS Eastern Standard Time",
+    "IanaId": "Australia/Sydney",
+    "DisplayName": "(UTC+10:00) Canberra, Melbourne, Sydney"
+  },
+  {
+    "Id": "04F8DA47-5627-435E-A64C-C256800119DE",
+    "BaseUtcOffset": "10:00:00",
+    "WindowsId": "West Pacific Standard Time",
+    "IanaId": "Pacific/Port_Moresby",
+    "DisplayName": "(UTC+10:00) Guam, Port Moresby"
+  },
+  {
+    "Id": "AD0B37E9-3690-40FD-A561-26DC7A299810",
+    "BaseUtcOffset": "10:00:00",
+    "WindowsId": "Tasmania Standard Time",
+    "IanaId": "Australia/Hobart",
+    "DisplayName": "(UTC+10:00) Hobart"
+  },
+  {
+    "Id": "D39FCCFB-E29E-4C65-82C3-48DCFE9775DB",
+    "BaseUtcOffset": "10:00:00",
+    "WindowsId": "Vladivostok Standard Time",
+    "IanaId": "Asia/Vladivostok",
+    "DisplayName": "(UTC+10:00) Vladivostok"
+  },
+  {
+    "Id": "FF06D6E8-992F-4832-9538-B7C8F1775CDB",
+    "BaseUtcOffset": "10:30:00",
+    "WindowsId": "Lord Howe Standard Time",
+    "IanaId": "Australia/Lord_Howe",
+    "DisplayName": "(UTC+10:30) Lord Howe Island"
+  },
+  {
+    "Id": "95B85D4A-DEA8-4DE9-ADAF-91664F627775",
+    "BaseUtcOffset": "11:00:00",
+    "WindowsId": "Bougainville Standard Time",
+    "IanaId": "Pacific/Bougainville",
+    "DisplayName": "(UTC+11:00) Bougainville Island"
+  },
+  {
+    "Id": "F36B44AE-4FE1-44B9-8903-5C83E43E0C74",
+    "BaseUtcOffset": "11:00:00",
+    "WindowsId": "Russia Time Zone 10",
+    "IanaId": "Asia/Srednekolymsk",
+    "DisplayName": "(UTC+11:00) Chokurdakh"
+  },
+  {
+    "Id": "2E0655DF-32D9-408C-A44A-B24CB2B39B10",
+    "BaseUtcOffset": "11:00:00",
+    "WindowsId": "Magadan Standard Time",
+    "IanaId": "Asia/Magadan",
+    "DisplayName": "(UTC+11:00) Magadan"
+  },
+  {
+    "Id": "B2E5EFB8-582B-429A-BE0F-75ACEFCA65A8",
+    "BaseUtcOffset": "11:00:00",
+    "WindowsId": "Norfolk Standard Time",
+    "IanaId": "Pacific/Norfolk",
+    "DisplayName": "(UTC+11:00) Norfolk Island"
+  },
+  {
+    "Id": "49903103-1B8E-4A49-93E4-E153B3189F68",
+    "BaseUtcOffset": "11:00:00",
+    "WindowsId": "Sakhalin Standard Time",
+    "IanaId": "Asia/Sakhalin",
+    "DisplayName": "(UTC+11:00) Sakhalin"
+  },
+  {
+    "Id": "7B4F2AFC-C461-4A4A-82C3-943C6258DCC4",
+    "BaseUtcOffset": "11:00:00",
+    "WindowsId": "Central Pacific Standard Time",
+    "IanaId": "Pacific/Guadalcanal",
+    "DisplayName": "(UTC+11:00) Solomon Is., New Caledonia"
+  },
+  {
+    "Id": "F727B0C1-2DEB-4D9A-A6FE-E7462780481F",
+    "BaseUtcOffset": "12:00:00",
+    "WindowsId": "Russia Time Zone 11",
+    "IanaId": "Asia/Kamchatka",
+    "DisplayName": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+  },
+  {
+    "Id": "B8D18CBA-8603-43CF-8907-13DACD6B5085",
+    "BaseUtcOffset": "12:00:00",
+    "WindowsId": "New Zealand Standard Time",
+    "IanaId": "Pacific/Auckland",
+    "DisplayName": "(UTC+12:00) Auckland, Wellington"
+  },
+  {
+    "Id": "99693CD9-8917-4664-AF14-446668640489",
+    "BaseUtcOffset": "12:00:00",
+    "WindowsId": "UTC+12",
+    "IanaId": "Etc/GMT-12",
+    "DisplayName": "(UTC+12:00) Coordinated Universal Time+12"
+  },
+  {
+    "Id": "98C5930D-9E48-4342-A864-2810C24E2916",
+    "BaseUtcOffset": "12:00:00",
+    "WindowsId": "Fiji Standard Time",
+    "IanaId": "Pacific/Fiji",
+    "DisplayName": "(UTC+12:00) Fiji"
+  },
+  {
+    "Id": "99A9B80B-697F-4841-9DB3-57424E5EFEE7",
+    "BaseUtcOffset": "12:45:00",
+    "WindowsId": "Chatham Islands Standard Time",
+    "IanaId": "Pacific/Chatham",
+    "DisplayName": "(UTC+12:45) Chatham Islands"
+  },
+  {
+    "Id": "CA1C46D1-456C-4EDB-A9A9-D78F6AD0E0FD",
+    "BaseUtcOffset": "13:00:00",
+    "WindowsId": "UTC+13",
+    "IanaId": "Etc/GMT-13",
+    "DisplayName": "(UTC+13:00) Coordinated Universal Time+13"
+  },
+  {
+    "Id": "568D62E9-9F8F-4740-BC38-FE8B8FF61CEA",
+    "BaseUtcOffset": "13:00:00",
+    "WindowsId": "Tonga Standard Time",
+    "IanaId": "Pacific/Tongatapu",
+    "DisplayName": "(UTC+13:00) Nuku'alofa"
+  },
+  {
+    "Id": "A3F3F464-A47C-48E5-92B3-065CE4F2443B",
+    "BaseUtcOffset": "13:00:00",
+    "WindowsId": "Samoa Standard Time",
+    "IanaId": "Pacific/Apia",
+    "DisplayName": "(UTC+13:00) Samoa"
+  },
+  {
+    "Id": "48D8EBC4-D1BF-494C-93EE-7DAB510283EE",
+    "BaseUtcOffset": "14:00:00",
+    "WindowsId": "Line Islands Standard Time",
+    "IanaId": "Pacific/Kiritimati",
+    "DisplayName": "(UTC+14:00) Kiritimati Island"
+  }
+]

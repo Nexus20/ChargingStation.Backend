@@ -3,21 +3,25 @@ using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Models.Depots.Requests;
 using ChargingStation.Common.Models.Depots.Responses;
 using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.TimeZone;
 using ChargingStation.Depots.Models.Requests;
 using ChargingStation.Depots.Specifications;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
+using TimeZone = ChargingStation.Domain.Entities.TimeZone;
 
 namespace ChargingStation.Depots.Services;
 
 public class DepotService : IDepotService
 {
     private readonly IRepository<Depot> _depotRepository;
+    private readonly IRepository<TimeZone> _timeZoneRepository;
     private readonly IMapper _mapper;
 
-    public DepotService(IRepository<Depot> depotRepository, IMapper mapper)
+    public DepotService(IRepository<Depot> depotRepository, IRepository<TimeZone> timeZoneRepository, IMapper mapper)
     {
         _depotRepository = depotRepository;
+        _timeZoneRepository = timeZoneRepository;
         _mapper = mapper;
     }
 
@@ -36,7 +40,9 @@ public class DepotService : IDepotService
 
     public async Task<DepotResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var depot = await _depotRepository.GetByIdAsync(id, cancellationToken);
+        var specification = new GetDepotSpecification(id);
+
+        var depot = await _depotRepository.GetAsync(specification, cancellationToken);
         
         if(depot is null)
             throw new NotFoundException(nameof(Depot), id);
@@ -89,5 +95,18 @@ public class DepotService : IDepotService
 
         _depotRepository.Remove(depotToRemove);
         await _depotRepository.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<IPagedCollection<TimeZoneResponse>> GetTimeZoneAsync(GetTimeZoneRequest request, CancellationToken cancellationToken = default)
+    {
+        var specification = new GetTimeZonesSpecification(request);
+
+        var timeZones = await _timeZoneRepository.GetPagedCollectionAsync(specification, request.PagePredicate?.Page, request.PagePredicate?.PageSize, cancellationToken: cancellationToken);
+
+        if (!timeZones.Collection.Any())
+            return PagedCollection<TimeZoneResponse>.Empty;
+
+        var result = _mapper.Map<IPagedCollection<TimeZoneResponse>>(timeZones);
+        return result;
     }
 }
