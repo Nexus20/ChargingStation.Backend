@@ -102,7 +102,7 @@ public class DepotsAggregatorService : IDepotsAggregatorService
         
         var aggregatedResponse = _mapper.Map<DepotAggregatedDetailsResponse>(baseDepotResponse);
         
-        var energyConsumptionSettings = await _energyConsumptionHttpService.GetEnergyConsumptionSettingsByDepotAsync(id);
+        var energyConsumptionSettings = await _energyConsumptionHttpService.GetEnergyConsumptionSettingsByDepotAsync(id, cancellationToken);
         
         if (energyConsumptionSettings is not null)
             aggregatedResponse.EnergyConsumptionSettings = energyConsumptionSettings;

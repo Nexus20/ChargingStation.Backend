@@ -1,10 +1,12 @@
-﻿using ChargingStation.InternalCommunication.Services.ChargePoints;
+﻿using ChargingStation.InternalCommunication.GrpcClients;
+using ChargingStation.InternalCommunication.Services.ChargePoints;
 using ChargingStation.InternalCommunication.Services.Connectors;
 using ChargingStation.InternalCommunication.Services.Depots;
 using ChargingStation.InternalCommunication.Services.EnergyConsumption;
 using ChargingStation.InternalCommunication.Services.OcppTags;
 using ChargingStation.InternalCommunication.Services.Reservations;
 using ChargingStation.InternalCommunication.Services.Transactions;
+using Connectors.Grpc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,6 +14,16 @@ namespace ChargingStation.InternalCommunication.Extensions;
 
 public static class ServicesExtensions
 {
+    public static IServiceCollection AddConnectorsGrpcClient(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddGrpcClient<ConnectorsGrpc.ConnectorsGrpcClient>
+            (o => o.Address = new Uri(configuration["GrpcSettings:ConnectorServiceAddress"]!));
+        services.AddScoped<ConnectorsGrpcClientService>();
+        
+        return services;
+    }
+    
     public static IServiceCollection AddDepotsHttpClient(this IServiceCollection services,
         IConfiguration configuration)
     {

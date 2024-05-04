@@ -28,6 +28,8 @@ public static class ServicesExtensions
         services.AddOcppTagsHttpClient(configuration);
         services.AddEnergyConsumptionSettingsHttpClient(configuration);
         services.AddReservationsHttpClient(configuration);
+
+        services.AddConnectorsGrpcClient(configuration);
         
         services.AddMailingServices(configuration);
         

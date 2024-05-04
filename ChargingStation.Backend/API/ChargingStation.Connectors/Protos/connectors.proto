@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Connectors.Grpc";
+
+package connectors;
+
+// The greeting service definition.
+service ConnectorsGrpc {
+  // Sends a greeting
+  rpc GetById (GetConnectorByIdGrpcRequest) returns (ConnectorGrpcResponse);
+}
+
+// The request message containing the user's name.
+message GetConnectorByIdGrpcRequest {
+  string id = 1;
+}
+
+// The response message containing the connectorInfo.
+message ConnectorGrpcResponse {
+  string id = 1;
+  string charge_point_id = 2;
+  int32 connector_id = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  ConnectorStatusGrpcResponse current_status = 6;
+}
+
+message ConnectorStatusGrpcResponse {
+  string id = 1;
+  string connector_id = 2;
+  google.protobuf.StringValue current_status = 3;
+  google.protobuf.Timestamp status_updated_timestamp = 4;
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
+  google.protobuf.StringValue error_code = 7;
+  google.protobuf.StringValue info = 8;
+  google.protobuf.StringValue vendor_error_code = 9;
+  google.protobuf.StringValue vendor_id = 10;
+}

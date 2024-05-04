@@ -1,5 +1,6 @@
 using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Models.Transactions.Responses;
+using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.Transactions.Models.Requests;
 using ChargingStation.Transactions.Services.Transactions;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,12 @@ namespace ChargingStation.Transactions.Controllers;
 public class TransactionController : ControllerBase
 {
     private readonly ITransactionService _transactionService;
+    private readonly ConnectorsGrpcClientService _connectorsGrpcClientService;
     
-    public TransactionController(ITransactionService transactionService)
+    public TransactionController(ITransactionService transactionService, ConnectorsGrpcClientService connectorsGrpcClientService)
     {
         _transactionService = transactionService;
+        _connectorsGrpcClientService = connectorsGrpcClientService;
     }
 
     [HttpPost("getall")]
@@ -36,5 +39,12 @@ public class TransactionController : ControllerBase
         var transaction = await _transactionService.GetByIdAsync(id, cancellationToken);
 
         return Ok(transaction);
+    }
+    
+    [HttpGet("test/{id}")]
+    public async Task<IActionResult> Test(Guid id, CancellationToken cancellationToken = default)
+    {
+        var result = await _connectorsGrpcClientService.GetByIdAsync(id, cancellationToken);
+        return Ok(result);
     }
 }

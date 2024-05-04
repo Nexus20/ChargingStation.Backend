@@ -43,11 +43,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.ChargingPro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.CacheManager", "Infrastructure\ChargingStation.CacheManager\ChargingStation.CacheManager.csproj", "{38AD1F79-1843-4ADB-9CD9-EB1316D0C1BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Aggregator", "API\ChargingStation.Aggregator\ChargingStation.Aggregator.csproj", "{506F076A-5C67-4455-A1EC-DF5E13C0688F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Aggregator", "API\ChargingStation.Aggregator\ChargingStation.Aggregator.csproj", "{506F076A-5C67-4455-A1EC-DF5E13C0688F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.SignalR", "API\ChargingStation.SignalR\ChargingStation.SignalR.csproj", "{C462DE59-D1ED-44A2-A7C5-84323095F497}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.SignalR", "API\ChargingStation.SignalR\ChargingStation.SignalR.csproj", "{C462DE59-D1ED-44A2-A7C5-84323095F497}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Mailing", "Infrastructure\ChargingStation.Mailing\ChargingStation.Mailing.csproj", "{9ED6A707-4066-4F38-9108-AE0B1F655548}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Mailing", "Infrastructure\ChargingStation.Mailing\ChargingStation.Mailing.csproj", "{9ED6A707-4066-4F38-9108-AE0B1F655548}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
