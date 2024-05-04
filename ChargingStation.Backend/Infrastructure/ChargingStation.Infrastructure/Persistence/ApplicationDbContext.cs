@@ -3,6 +3,7 @@ using ChargingStation.Common.Models.Abstract;
 using ChargingStation.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using TimeZone = ChargingStation.Domain.Entities.TimeZone;
 
 namespace ChargingStation.Infrastructure.Persistence;
 
@@ -14,6 +15,7 @@ public class ApplicationDbContext : DbContext {
     public required DbSet<OcppTransaction> Transactions { get; set; }
     public required DbSet<Connector> Connectors { get; set; }
     public required DbSet<Reservation> Reservations { get; set; }
+    public required DbSet<TimeZone> TimeZones { get; set; }
     
     public ApplicationDbContext(DbContextOptions options) : base(options)
     {

@@ -10,6 +10,8 @@ internal class GetDepotsSpecification : Specification<Depot>
     public GetDepotsSpecification(GetDepotsRequest request)
     {
         AddFilters(request);
+
+        AddInclude(nameof(Depot.TimeZone)); 
         
         if(request.OrderPredicates.Count != 0)
             AddSorting(request.OrderPredicates);

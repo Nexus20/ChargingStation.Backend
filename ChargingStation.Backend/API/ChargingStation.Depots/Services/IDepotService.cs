@@ -1,6 +1,7 @@
 using ChargingStation.Common.Models.Depots.Requests;
 using ChargingStation.Common.Models.Depots.Responses;
 using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Models.TimeZone;
 using ChargingStation.Depots.Models.Requests;
 
 namespace ChargingStation.Depots.Services;
@@ -12,4 +13,5 @@ public interface IDepotService
     Task<DepotResponse> CreateAsync(CreateDepotRequest request, CancellationToken cancellationToken = default);
     Task<DepotResponse> UpdateAsync(UpdateDepotRequest request, CancellationToken cancellationToken = default);
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
+    Task<IPagedCollection<TimeZoneResponse>> GetTimeZoneAsync(GetTimeZoneRequest request, CancellationToken cancellationToken = default);
 }

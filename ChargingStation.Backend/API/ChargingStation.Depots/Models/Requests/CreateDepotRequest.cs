@@ -16,4 +16,6 @@ public class CreateDepotRequest
     public string? PhoneNumber { get; set; }
     public string? Email { get; set; }
     public string? Description { get; set; }
+
+    public required Guid TimeZoneId { get; set; }
 }
