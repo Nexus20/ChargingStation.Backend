@@ -43,7 +43,7 @@ public static class HostExtensions
 
     private static void SeedTimeZones(ApplicationDbContext context)
     {
-        var json = File.ReadAllText("time_zones.json");
+        var json = File.ReadAllText("Seeding/time_zones.json");
         var timeZones = JsonConvert.DeserializeObject<List<TimeZone>>(json);
 
         context.TimeZones.AddRange(timeZones!);

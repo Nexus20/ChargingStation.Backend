@@ -1,8 +1,5 @@
 using ChargingStation.Connectors.Extensions;
-using ChargingStation.Connectors.GrpcInterceptors;
-using ChargingStation.Connectors.GrpcServices;
 using ChargingStation.Connectors.Middlewares;
-using ChargingStation.Connectors.Services;
 using ChargingStation.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,11 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddConnectorServices(builder.Configuration);
 
-builder.Services.AddGrpc(options =>
-{
-    options.Interceptors.Add<GrpcExceptionInterceptor>();
-    options.EnableDetailedErrors = true;
-});
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
@@ -37,6 +29,5 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Local"))
 app.UseAuthorization();
 
 app.MapControllers();
-app.MapGrpcService<ConnectorGrpcService>();
 
 app.Run();

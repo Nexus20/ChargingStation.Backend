@@ -6,7 +6,7 @@ using ChargingStation.Common.Models.DepotEnergyConsumption;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
-using ChargingStation.InternalCommunication.Services.ChargePoints;
+using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.InternalCommunication.Services.Depots;
 
 namespace ChargingStation.ChargingProfiles.Services.EnergyConsumption;
@@ -14,15 +14,15 @@ namespace ChargingStation.ChargingProfiles.Services.EnergyConsumption;
 public class EnergyConsumptionSettingsService : IEnergyConsumptionSettingsService
 {
     private readonly IDepotHttpService _depotHttpService;
-    private readonly IChargePointHttpService _chargePointHttpService;
+    private readonly ChargePointGrpcClientService _chargePointGrpcClientService;
     private readonly IMapper _mapper;
     private readonly IRepository<DepotEnergyConsumptionSettings> _depotEnergyConsumptionSettingsRepository;
     private readonly ILogger<EnergyConsumptionSettingsService> _logger;
 
-    public EnergyConsumptionSettingsService(IDepotHttpService depotHttpService, IChargePointHttpService chargePointHttpService, IMapper mapper, IRepository<DepotEnergyConsumptionSettings> depotEnergyConsumptionSettingsRepository, ILogger<EnergyConsumptionSettingsService> logger)
+    public EnergyConsumptionSettingsService(IDepotHttpService depotHttpService, ChargePointGrpcClientService chargePointGrpcClientService, IMapper mapper, IRepository<DepotEnergyConsumptionSettings> depotEnergyConsumptionSettingsRepository, ILogger<EnergyConsumptionSettingsService> logger)
     {
         _depotHttpService = depotHttpService;
-        _chargePointHttpService = chargePointHttpService;
+        _chargePointGrpcClientService = chargePointGrpcClientService;
         _mapper = mapper;
         _depotEnergyConsumptionSettingsRepository = depotEnergyConsumptionSettingsRepository;
         _logger = logger;
@@ -38,7 +38,7 @@ public class EnergyConsumptionSettingsService : IEnergyConsumptionSettingsServic
         
         var chargePointsIds = request.ChargePointsLimits.Select(x => x.ChargePointId).ToList();
         
-        var chargePoints = await _chargePointHttpService.GetByIdAsync(chargePointsIds, cancellationToken);
+        var chargePoints = await _chargePointGrpcClientService.GetByIdsAsync(chargePointsIds, cancellationToken);
         
         if(chargePoints.IsNullOrEmpty() || chargePoints.Count != chargePointsIds.Count)
             throw new NotFoundException("Some charge points not found");

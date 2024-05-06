@@ -10,9 +10,7 @@ using ChargingStation.Common.Models.OcppTags.Responses;
 using ChargingStation.Common.Models.Reservations.Requests;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
-using ChargingStation.InternalCommunication.Services.ChargePoints;
-using ChargingStation.InternalCommunication.Services.Connectors;
-using ChargingStation.InternalCommunication.Services.OcppTags;
+using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.Reservations.Models.Requests;
 using ChargingStation.Reservations.Models.Responses;
 using ChargingStation.Reservations.Specifications;
@@ -24,25 +22,25 @@ namespace ChargingStation.Reservations.Services.Reservations;
 public class ReservationService : IReservationService
 {
     private readonly ILogger<ReservationService> _logger;
-    private readonly IOcppTagHttpService _ocppTagHttpService;
-    private readonly IChargePointHttpService _chargePointHttpService;
-    private readonly IConnectorHttpService _connectorHttpService;
+    private readonly OcppTagGrpcClientService _ocppTagGrpcClientService;
+    private readonly ChargePointGrpcClientService _chargePointGrpcClientService;
+    private readonly ConnectorGrpcClientService _connectorGrpcClientService;
     private readonly IRepository<Reservation> _reservationRepository;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IMapper _mapper;
 
     public ReservationService(ILogger<ReservationService> logger,
-                              IOcppTagHttpService ocppTagHttpService,
-                              IChargePointHttpService chargePointHttpService,
-                              IConnectorHttpService connectorHttpService,
+                              OcppTagGrpcClientService ocppTagGrpcClientService,
+                              ChargePointGrpcClientService chargePointGrpcClientService,
+                              ConnectorGrpcClientService connectorGrpcClientService,
                               IRepository<Reservation> reservationRepository,
                               IPublishEndpoint publishEndpoint, 
                               IMapper mapper)
     {
         _logger = logger;
-        _ocppTagHttpService = ocppTagHttpService;
-        _chargePointHttpService = chargePointHttpService;
-        _connectorHttpService = connectorHttpService;
+        _ocppTagGrpcClientService = ocppTagGrpcClientService;
+        _chargePointGrpcClientService = chargePointGrpcClientService;
+        _connectorGrpcClientService = connectorGrpcClientService;
         _reservationRepository = reservationRepository;
         _publishEndpoint = publishEndpoint;
         _mapper = mapper;
@@ -96,12 +94,12 @@ public class ReservationService : IReservationService
 
     public async Task CreateReservationAsync(CreateReservationRequest request, CancellationToken cancellationToken = default)
     {
-        var ocppTag = await _ocppTagHttpService.GetByIdAsync(request.OcppTagId, cancellationToken);
+        var ocppTag = await _ocppTagGrpcClientService.GetByIdAsync(request.OcppTagId, cancellationToken);
         
         if (ocppTag is null)
             throw new NotFoundException($"OcppTag with id {request.OcppTagId} not found");
         
-        var chargePoint = await _chargePointHttpService.GetByIdAsync(request.ChargePointId, cancellationToken);
+        var chargePoint = await _chargePointGrpcClientService.GetByIdAsync(request.ChargePointId, cancellationToken);
         
         if (chargePoint is null)
             throw new NotFoundException($"Charge point with id {request.ChargePointId} not found");
@@ -125,7 +123,7 @@ public class ReservationService : IReservationService
                 ChargePointId = request.ChargePointId,
                 ConnectorId = request.ConnectorId
             };
-            var connector = await _connectorHttpService.GetOrCreateConnectorAsync(getOrCreateConnectorRequest, cancellationToken);
+            var connector = await _connectorGrpcClientService.GetOrCreateConnectorAsync(getOrCreateConnectorRequest, cancellationToken);
             
             if (connector is null)
             {

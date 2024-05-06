@@ -2,7 +2,6 @@
 using ChargingStation.InternalCommunication.Extensions;
 using ChargingStation.Mailing.Extensions;
 using ChargingStation.Transactions.EventConsumers;
-using ChargingStation.Transactions.Repositories;
 using ChargingStation.Transactions.Repositories.ConnectorMeterValues;
 using ChargingStation.Transactions.Repositories.Transactions;
 using ChargingStation.Transactions.Services.MeterValues;
@@ -22,14 +21,9 @@ public static class ServicesExtensions
         
         services.AddScoped<ITransactionService, TransactionService>();
         services.AddScoped<IMeterValueService, MeterValueService>();
-
-        services.AddChargePointsHttpClient(configuration);
-        services.AddConnectorsHttpClient(configuration);
-        services.AddOcppTagsHttpClient(configuration);
+        
         services.AddEnergyConsumptionSettingsHttpClient(configuration);
         services.AddReservationsHttpClient(configuration);
-
-        services.AddConnectorsGrpcClient(configuration);
         
         services.AddMailingServices(configuration);
         

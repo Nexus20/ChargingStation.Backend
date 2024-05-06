@@ -99,6 +99,19 @@ public class ConnectorService : IConnectorService
         return createdConnectorResponse;
     }
 
+    public async Task<ConnectorResponse> GetByChargePointIdAsync(GetConnectorByChargePointIdRequest request, CancellationToken cancellationToken = default)
+    {
+        var specification = new GetConnectorsSpecification(request);
+        
+        var connector = await _connectorRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
+        
+        if (connector is null)
+            throw new NotFoundException($"Connector with ChargePointId: {request.ChargePointId} and ConnectorId: {request.ConnectorId} not found");
+        
+        var connectorResponse = _mapper.Map<ConnectorResponse>(connector);
+        return connectorResponse;
+    }
+
     public async Task<ConnectorResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var connector = await _connectorRepository.GetByIdAsync(id, cancellationToken);

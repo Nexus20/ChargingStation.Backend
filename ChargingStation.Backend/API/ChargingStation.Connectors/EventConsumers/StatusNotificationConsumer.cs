@@ -20,7 +20,7 @@ public class StatusNotificationConsumer : IConsumer<IntegrationOcppMessage<Statu
 
     public async Task Consume(ConsumeContext<IntegrationOcppMessage<StatusNotificationRequest>> context)
     {
-        _logger.LogInformation("Processing start transaction message...");
+        _logger.LogInformation("Processing status notification message...");
         
         var incomingRequest = context.Message.Payload;
         var chargePointId = context.Message.ChargePointId;
@@ -32,6 +32,6 @@ public class StatusNotificationConsumer : IConsumer<IntegrationOcppMessage<Statu
 
         await _publishEndpoint.Publish(integrationMessage, context.CancellationToken);
         
-        _logger.LogInformation("Start transaction message processed");
+        _logger.LogInformation("Status notification message processed");
     }
 }

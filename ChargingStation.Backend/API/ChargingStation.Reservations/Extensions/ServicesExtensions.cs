@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using ChargingStation.InternalCommunication.Extensions;
 using ChargingStation.Reservations.EventConsumers;
 using ChargingStation.Reservations.Services.Reservations;
 using Hangfire;
@@ -14,10 +13,6 @@ public static class ServicesExtensions
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
         services.AddScoped<IReservationService, ReservationService>();
-        
-        services.AddOcppTagsHttpClient(configuration);
-        services.AddChargePointsHttpClient(configuration);
-        services.AddConnectorsHttpClient(configuration);
         
         services.AddMassTransit(busConfigurator =>
         {

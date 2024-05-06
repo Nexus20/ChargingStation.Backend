@@ -4,27 +4,27 @@ using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Heartbeats.Models;
 using ChargingStation.Heartbeats.Models.Request;
 using ChargingStation.Infrastructure.AzureTableStorage;
-using ChargingStation.InternalCommunication.Services.ChargePoints;
+using ChargingStation.InternalCommunication.GrpcClients;
 
 namespace ChargingStation.Heartbeats.Services.Heartbeats;
 
 public class HeartbeatService : IHeartbeatService
 {
-    private readonly IChargePointHttpService _chargePointService;
+    private readonly ChargePointGrpcClientService _chargePointGrpcClientService;
     private readonly ITableManager<HeartbeatEntity> _tableManager;
     private readonly string _tableName;
 
-    public HeartbeatService(IChargePointHttpService chargePointService, ITableManager<HeartbeatEntity> tableManager,
+    public HeartbeatService(ChargePointGrpcClientService chargePointGrpcClientService, ITableManager<HeartbeatEntity> tableManager,
         IConfiguration configuration)
     {
-        _chargePointService = chargePointService;
+        _chargePointGrpcClientService = chargePointGrpcClientService;
         _tableManager = tableManager;
         _tableName = configuration.GetValue<string>("TablesConfiguration:HeartbeatTable")!;
     }
 
     public async Task AddHeartbeatAsync(HeartbeatEntity request, CancellationToken cancellationToken = default)
     {
-        var chargePoint = await _chargePointService.GetByIdAsync(Guid.Parse(request.PartitionKey), cancellationToken);
+        var chargePoint = await _chargePointGrpcClientService.GetByIdAsync(Guid.Parse(request.PartitionKey), cancellationToken);
 
         if (chargePoint is null)
         {

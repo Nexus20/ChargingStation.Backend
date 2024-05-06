@@ -394,17 +394,12 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.Property<Guid>("TimeZoneId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("TimeZoneId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
                     b.HasIndex("TimeZoneId");
-
-                    b.HasIndex("TimeZoneId1");
 
                     b.ToTable("Depots");
                 });
@@ -780,14 +775,11 @@ namespace ChargingStation.Infrastructure.Migrations
             modelBuilder.Entity("ChargingStation.Domain.Entities.Depot", b =>
                 {
                     b.HasOne("ChargingStation.Domain.Entities.TimeZone", "TimeZone")
-                        .WithMany()
-                        .HasForeignKey("TimeZoneId")
-                        .OnDelete(DeleteBehavior.ClientNoAction)
-                        .IsRequired();
-
-                    b.HasOne("ChargingStation.Domain.Entities.TimeZone", null)
                         .WithMany("Depots")
-                        .HasForeignKey("TimeZoneId1");
+                        .HasForeignKey("TimeZoneId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Depot_TimeZone");
 
                     b.Navigation("TimeZone");
                 });

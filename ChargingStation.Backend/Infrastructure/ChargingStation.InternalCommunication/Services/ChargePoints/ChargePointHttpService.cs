@@ -26,7 +26,7 @@ public class ChargePointHttpService : IChargePointHttpService
         return result ?? throw new InvalidOperationException();
     }
 
-    public async Task<List<ChargePointResponse>?> GetByIdAsync(List<Guid> chargePointsIds, CancellationToken cancellationToken = default)
+    public async Task<List<ChargePointResponse>?> GetByIdsAsync(List<Guid> chargePointsIds, CancellationToken cancellationToken = default)
     {
         const string requestUri = "api/ChargePoint/GetByIds";
         var requestContent = new StringContent(JsonConvert.SerializeObject(chargePointsIds), Encoding.UTF8, "application/json");

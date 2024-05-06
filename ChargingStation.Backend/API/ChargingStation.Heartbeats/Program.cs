@@ -1,9 +1,15 @@
 using ChargingStation.Heartbeats.Extensions;
 using ChargingStation.Heartbeats.Middlewares;
+using ChargingStation.Infrastructure;
+using ChargingStation.InternalCommunication.Extensions;
 
 // Add services to the container.
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddHeartbeatServices(builder.Configuration);
+builder.Services.AddChargePointsGrpcClient(builder.Configuration);
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
@@ -12,7 +18,6 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddHeartbeatServices(builder.Configuration);
 builder.Services.AddCors(o =>
     o.AddPolicy("AllowAll", b => b
         .WithOrigins("http://localhost:4200")

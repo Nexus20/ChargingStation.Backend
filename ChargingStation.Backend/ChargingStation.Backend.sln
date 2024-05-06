@@ -49,6 +49,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.SignalR", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Mailing", "Infrastructure\ChargingStation.Mailing\ChargingStation.Mailing.csproj", "{9ED6A707-4066-4F38-9108-AE0B1F655548}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GRPC", "GRPC", "{36325FD4-78A3-428A-BD59-5E1A80134B40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Connectors.Grpc", "GRPC\ChargingStation.Connectors.Grpc\ChargingStation.Connectors.Grpc.csproj", "{0A5D1E1B-5685-432E-B048-4C7BD615E0B5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.ChargePoints.Grpc", "GRPC\ChargingStation.ChargePoints.Grpc\ChargingStation.ChargePoints.Grpc.csproj", "{B53EA289-B41B-4DE7-933B-9AFE45D70755}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.OcppTags.Grpc", "GRPC\ChargingStation.OcppTags.Grpc\ChargingStation.OcppTags.Grpc.csproj", "{F7AE1D7F-0C91-4403-BC0C-644FC681B297}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -131,6 +139,18 @@ Global
 		{9ED6A707-4066-4F38-9108-AE0B1F655548}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9ED6A707-4066-4F38-9108-AE0B1F655548}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9ED6A707-4066-4F38-9108-AE0B1F655548}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0A5D1E1B-5685-432E-B048-4C7BD615E0B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0A5D1E1B-5685-432E-B048-4C7BD615E0B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0A5D1E1B-5685-432E-B048-4C7BD615E0B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0A5D1E1B-5685-432E-B048-4C7BD615E0B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B53EA289-B41B-4DE7-933B-9AFE45D70755}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B53EA289-B41B-4DE7-933B-9AFE45D70755}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B53EA289-B41B-4DE7-933B-9AFE45D70755}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B53EA289-B41B-4DE7-933B-9AFE45D70755}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F7AE1D7F-0C91-4403-BC0C-644FC681B297}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F7AE1D7F-0C91-4403-BC0C-644FC681B297}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F7AE1D7F-0C91-4403-BC0C-644FC681B297}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F7AE1D7F-0C91-4403-BC0C-644FC681B297}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -154,6 +174,9 @@ Global
 		{506F076A-5C67-4455-A1EC-DF5E13C0688F} = {6545E985-58B5-4590-B765-B7CD27628D0B}
 		{C462DE59-D1ED-44A2-A7C5-84323095F497} = {6545E985-58B5-4590-B765-B7CD27628D0B}
 		{9ED6A707-4066-4F38-9108-AE0B1F655548} = {9FDB02E9-D1A7-4632-A2D9-A4A91EE4D4A5}
+		{0A5D1E1B-5685-432E-B048-4C7BD615E0B5} = {36325FD4-78A3-428A-BD59-5E1A80134B40}
+		{B53EA289-B41B-4DE7-933B-9AFE45D70755} = {36325FD4-78A3-428A-BD59-5E1A80134B40}
+		{F7AE1D7F-0C91-4403-BC0C-644FC681B297} = {36325FD4-78A3-428A-BD59-5E1A80134B40}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A063F0C5-38BF-495E-8B72-2E7F00C1C4DE}

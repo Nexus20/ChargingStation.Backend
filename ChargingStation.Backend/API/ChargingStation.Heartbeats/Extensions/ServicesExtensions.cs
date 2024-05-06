@@ -1,7 +1,6 @@
 ﻿using ChargingStation.Heartbeats.EventConsumers;
 using ChargingStation.Heartbeats.Services.Heartbeats;
 using ChargingStation.Infrastructure.Extensions;
-using ChargingStation.InternalCommunication.Extensions;
 using MassTransit;
 
 namespace ChargingStation.Heartbeats.Extensions;
@@ -12,7 +11,6 @@ public static class ServicesExtensions
         IConfiguration configuration)
     {
         services.AddTableStorageServices(configuration);
-        services.AddChargePointsHttpClient(configuration);
         services.AddScoped<IHeartbeatService, HeartbeatService>();
 
         services.AddMassTransit(busConfigurator =>

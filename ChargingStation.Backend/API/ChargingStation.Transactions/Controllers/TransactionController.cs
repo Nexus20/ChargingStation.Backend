@@ -12,12 +12,12 @@ namespace ChargingStation.Transactions.Controllers;
 public class TransactionController : ControllerBase
 {
     private readonly ITransactionService _transactionService;
-    private readonly ConnectorsGrpcClientService _connectorsGrpcClientService;
+    private readonly ConnectorGrpcClientService _connectorGrpcClientService;
     
-    public TransactionController(ITransactionService transactionService, ConnectorsGrpcClientService connectorsGrpcClientService)
+    public TransactionController(ITransactionService transactionService, ConnectorGrpcClientService connectorGrpcClientService)
     {
         _transactionService = transactionService;
-        _connectorsGrpcClientService = connectorsGrpcClientService;
+        _connectorGrpcClientService = connectorGrpcClientService;
     }
 
     [HttpPost("getall")]
@@ -44,7 +44,7 @@ public class TransactionController : ControllerBase
     [HttpGet("test/{id}")]
     public async Task<IActionResult> Test(Guid id, CancellationToken cancellationToken = default)
     {
-        var result = await _connectorsGrpcClientService.GetByIdAsync(id, cancellationToken);
+        var result = await _connectorGrpcClientService.GetByIdAsync(id, cancellationToken);
         return Ok(result);
     }
 }

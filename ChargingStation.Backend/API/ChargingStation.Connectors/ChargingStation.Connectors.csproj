@@ -16,17 +16,12 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="AutoMapper" Version="13.0.1" />
-    <PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\ChargingStation.Domain\ChargingStation.Domain.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ChargingStation.Infrastructure\ChargingStation.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Infrastructure\ChargingStation.InternalCommunication\ChargingStation.InternalCommunication.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Protobuf Include="Protos\connectors.proto" GrpcServices="Server" />
   </ItemGroup>
 
 </Project>

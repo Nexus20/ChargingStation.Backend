@@ -12,7 +12,7 @@ using ChargingStation.Common.Messages_OCPP16.Responses.Enums;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
-using ChargingStation.InternalCommunication.Services.Connectors;
+using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.InternalCommunication.Services.Transactions;
 using MassTransit;
 using ChargingProfile = ChargingStation.Domain.Entities.ChargingProfile;
@@ -27,19 +27,19 @@ public class ChargingProfileService : IChargingProfileService
     private readonly ILogger<ChargingProfileService> _logger;
     private readonly IRepository<ConnectorChargingProfile> _connectorChargingProfileRepository;
     private readonly IRepository<ChargingProfile> _chargingProfileRepository;
-    private readonly IConnectorHttpService _connectorHttpService;
+    private readonly ConnectorGrpcClientService _connectorGrpcClientService;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly ICacheManager _cacheManager;
     private readonly ITransactionHttpService _transactionHttpService;
     private readonly IMapper _mapper;
 
-    public ChargingProfileService(ILogger<ChargingProfileService> logger, IRepository<ConnectorChargingProfile> connectorChargingProfileRepository, IRepository<ChargingProfile> chargingProfileRepository, IPublishEndpoint publishEndpoint, IConnectorHttpService connectorHttpService, ICacheManager cacheManager, ITransactionHttpService transactionHttpService, IMapper mapper)
+    public ChargingProfileService(ILogger<ChargingProfileService> logger, IRepository<ConnectorChargingProfile> connectorChargingProfileRepository, IRepository<ChargingProfile> chargingProfileRepository, IPublishEndpoint publishEndpoint, ConnectorGrpcClientService connectorGrpcClientService, ICacheManager cacheManager, ITransactionHttpService transactionHttpService, IMapper mapper)
     {
         _logger = logger;
         _connectorChargingProfileRepository = connectorChargingProfileRepository;
         _chargingProfileRepository = chargingProfileRepository;
         _publishEndpoint = publishEndpoint;
-        _connectorHttpService = connectorHttpService;
+        _connectorGrpcClientService = connectorGrpcClientService;
         _cacheManager = cacheManager;
         _transactionHttpService = transactionHttpService;
         _mapper = mapper;
@@ -63,7 +63,7 @@ public class ChargingProfileService : IChargingProfileService
             {
                 case SetChargingProfileResponseStatus.Accepted:
                 {
-                    var connector = await _connectorHttpService.GetAsync(chargePointId, pendingSetChargingProfileRequest.ConnectorId, cancellationToken);
+                    var connector = await _connectorGrpcClientService.GetByChargePointIdAsync(chargePointId, pendingSetChargingProfileRequest.ConnectorId, cancellationToken);
                 
                     if (connector == null)
                         throw new NotFoundException($"Connector of charge point {chargePointId} with id {pendingSetChargingProfileRequest.ConnectorId} not found");
@@ -113,7 +113,7 @@ public class ChargingProfileService : IChargingProfileService
             throw new NotFoundException(nameof(ChargingProfile), request.ChargingProfileId);
         }
         
-        var connector = await _connectorHttpService.GetByIdAsync(request.ConnectorId, cancellationToken);
+        var connector = await _connectorGrpcClientService.GetByIdAsync(request.ConnectorId, cancellationToken);
         
         if (connector == null)
         {

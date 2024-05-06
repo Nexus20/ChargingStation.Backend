@@ -1,9 +1,7 @@
 ﻿using System.Reflection;
-using ChargingStation.CacheManager.Extensions;
 using ChargingStation.ChargingProfiles.EventConsumers;
 using ChargingStation.ChargingProfiles.Services.ChargingProfiles;
 using ChargingStation.ChargingProfiles.Services.EnergyConsumption;
-using ChargingStation.Infrastructure;
 using ChargingStation.InternalCommunication.Extensions;
 using MassTransit;
 
@@ -16,12 +14,8 @@ public static class ServicesExtensions
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
-        services.AddInfrastructureServices(configuration);
-        services.AddCacheServices(configuration);
-        services.AddConnectorsHttpClient(configuration);
         services.AddTransactionsHttpClient(configuration);
         services.AddDepotsHttpClient(configuration);
-        services.AddChargePointsHttpClient(configuration);
         
         services.AddMassTransit(busConfigurator =>
         {

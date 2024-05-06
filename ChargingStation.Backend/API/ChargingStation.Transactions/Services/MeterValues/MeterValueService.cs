@@ -2,11 +2,10 @@
 using ChargingStation.Common.Messages_OCPP16.Enums;
 using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
-using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
-using ChargingStation.InternalCommunication.Services.Connectors;
+using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.InternalCommunication.Services.EnergyConsumption;
 using ChargingStation.InternalCommunication.SignalRModels;
 using ChargingStation.Mailing.Messages;
@@ -21,7 +20,7 @@ namespace ChargingStation.Transactions.Services.MeterValues;
 
 public class MeterValueService : IMeterValueService
 {
-    private readonly IConnectorHttpService _connectorHttpService;
+    private readonly ConnectorGrpcClientService _connectorGrpcClientService;
     private readonly IEnergyConsumptionHttpService _energyConsumptionHttpService;
     private readonly IRepository<OcppTransaction> _transactionRepository;
     private readonly IConnectorMeterValueRepository _connectorMeterValueRepository;
@@ -29,10 +28,10 @@ public class MeterValueService : IMeterValueService
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IEmailService _emailService;
 
-    public MeterValueService(ILogger<MeterValueService> logger, IConnectorHttpService connectorHttpService, IRepository<OcppTransaction> transactionRepository, IConnectorMeterValueRepository connectorMeterValueRepository, IPublishEndpoint publishEndpoint, IEnergyConsumptionHttpService energyConsumptionHttpService, IEmailService emailService)
+    public MeterValueService(ILogger<MeterValueService> logger, ConnectorGrpcClientService connectorGrpcClientService, IRepository<OcppTransaction> transactionRepository, IConnectorMeterValueRepository connectorMeterValueRepository, IPublishEndpoint publishEndpoint, IEnergyConsumptionHttpService energyConsumptionHttpService, IEmailService emailService)
     {
         _logger = logger;
-        _connectorHttpService = connectorHttpService;
+        _connectorGrpcClientService = connectorGrpcClientService;
         _transactionRepository = transactionRepository;
         _connectorMeterValueRepository = connectorMeterValueRepository;
         _publishEndpoint = publishEndpoint;
@@ -51,14 +50,8 @@ public class MeterValueService : IMeterValueService
         try
         {
             connectorId = request.ConnectorId;
-
-            var connectorRequest = new GetOrCreateConnectorRequest
-            {
-                ChargePointId = chargePointId,
-                ConnectorId = connectorId
-            };
-            // TODO: update to just get
-            var connector = await _connectorHttpService.GetOrCreateConnectorAsync(connectorRequest, cancellationToken);
+            
+            var connector = await _connectorGrpcClientService.GetByChargePointIdAsync(chargePointId, connectorId, cancellationToken);
             
             var getTransactionRequest = new GetTransactionsRequest
             {

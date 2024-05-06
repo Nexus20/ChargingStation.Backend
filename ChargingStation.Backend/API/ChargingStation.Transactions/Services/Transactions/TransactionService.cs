@@ -12,10 +12,8 @@ using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Models.Reservations.Requests;
 using ChargingStation.Common.Models.Transactions.Responses;
 using ChargingStation.Domain.Entities;
-using ChargingStation.InternalCommunication.Services.ChargePoints;
-using ChargingStation.InternalCommunication.Services.Connectors;
+using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.InternalCommunication.Services.EnergyConsumption;
-using ChargingStation.InternalCommunication.Services.OcppTags;
 using ChargingStation.InternalCommunication.Services.Reservations;
 using ChargingStation.InternalCommunication.SignalRModels;
 using ChargingStation.Mailing.Messages;
@@ -34,11 +32,12 @@ public class TransactionService : ITransactionService
     private readonly ITransactionRepository _transactionRepository;
     private readonly IConnectorMeterValueRepository _connectorMeterValueRepository;
     
-    private readonly IChargePointHttpService _chargePointHttpService;
-    private readonly IConnectorHttpService _connectorHttpService;
-    private readonly IOcppTagHttpService _ocppTagHttpService;
+    private readonly ChargePointGrpcClientService _chargePointGrpcClientService;
+    private readonly OcppTagGrpcClientService _ocppTagGrpcClientService;
     private readonly IEnergyConsumptionHttpService _energyConsumptionHttpService;
     private readonly IReservationHttpService _reservationHttpService;
+    
+    private readonly ConnectorGrpcClientService _connectorGrpcClientService;
     
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IEmailService _emailService;
@@ -49,22 +48,21 @@ public class TransactionService : ITransactionService
 
     public TransactionService(ITransactionRepository transactionRepository,
                               IConnectorMeterValueRepository connectorMeterValueRepository, 
-                              IChargePointHttpService chargePointHttpService,
-                              IConnectorHttpService connectorHttpService, 
-                              IOcppTagHttpService ocppTagHttpService,
+                              ChargePointGrpcClientService chargePointGrpcClientService, 
+                              OcppTagGrpcClientService ocppTagGrpcClientService,
                               IEnergyConsumptionHttpService energyConsumptionHttpService, 
                               IReservationHttpService reservationHttpService,
                               IPublishEndpoint publishEndpoint, 
                               IEmailService emailService, 
                               IConfiguration configuration, IMapper mapper,
-                              ILogger<TransactionService> logger)
+                              ILogger<TransactionService> logger, 
+                              ConnectorGrpcClientService connectorGrpcClientService)
     {
         _transactionRepository = transactionRepository;
         _connectorMeterValueRepository = connectorMeterValueRepository;
         
-        _chargePointHttpService = chargePointHttpService;
-        _connectorHttpService = connectorHttpService;
-        _ocppTagHttpService = ocppTagHttpService;
+        _chargePointGrpcClientService = chargePointGrpcClientService;
+        _ocppTagGrpcClientService = ocppTagGrpcClientService;
         _energyConsumptionHttpService = energyConsumptionHttpService;
         _reservationHttpService = reservationHttpService;
         
@@ -74,6 +72,7 @@ public class TransactionService : ITransactionService
         _configuration = configuration;
         _mapper = mapper;
         _logger = logger;
+        _connectorGrpcClientService = connectorGrpcClientService;
     }
 
     public async Task<IPagedCollection<TransactionResponse>> GetAsync(GetTransactionsRequest request,
@@ -164,7 +163,7 @@ public class TransactionService : ITransactionService
         {
             try
             {
-                var ocppTag = await _ocppTagHttpService.GetByOcppTagIdAsync(idTag, cancellationToken);
+                var ocppTag = await _ocppTagGrpcClientService.GetByTagIdAsync(idTag, cancellationToken);
 
                 if (ocppTag is null)
                 {
@@ -218,7 +217,7 @@ public class TransactionService : ITransactionService
                     ChargePointId = chargePointId,
                     ConnectorId = connectorId
                 };
-                var connector = await _connectorHttpService.GetOrCreateConnectorAsync(connectorRequest, cancellationToken);
+                var connector = await _connectorGrpcClientService.GetOrCreateConnectorAsync(connectorRequest, cancellationToken);
                 
                 var updateStatusRequest = new UpdateConnectorStatusRequest()
                 {
@@ -228,7 +227,7 @@ public class TransactionService : ITransactionService
                     StatusTimestamp = request.Timestamp.UtcDateTime,
                 };
         
-                await _connectorHttpService.UpdateConnectorStatusAsync(updateStatusRequest, cancellationToken);
+                await _connectorGrpcClientService.UpdateConnectorStatusAsync(updateStatusRequest, cancellationToken);
                 
                 var transactionToCreate = new OcppTransaction
                 {
@@ -299,7 +298,7 @@ public class TransactionService : ITransactionService
 
             try
             {
-                var ocppTag = await _ocppTagHttpService.GetByOcppTagIdAsync(idTag, cancellationToken);
+                var ocppTag = await _ocppTagGrpcClientService.GetByTagIdAsync(idTag, cancellationToken);
 
                 if (ocppTag != null)
                 {
@@ -348,7 +347,7 @@ public class TransactionService : ITransactionService
 
                 if (transaction is not null)
                 {
-                    var connector = await _connectorHttpService.GetByIdAsync(transaction.ConnectorId, cancellationToken);
+                    var connector = await _connectorGrpcClientService.GetByIdAsync(transaction.ConnectorId, cancellationToken);
                     
                     if (connector.ChargePointId == chargePointId && !transaction.StopTime.HasValue) {
                         
@@ -359,7 +358,7 @@ public class TransactionService : ITransactionService
                             Status = "Available",
                             StatusTimestamp = request.Timestamp.UtcDateTime,
                         };
-                        await _connectorHttpService.UpdateConnectorStatusAsync(updateStatusRequest, cancellationToken);
+                        await _connectorGrpcClientService.UpdateConnectorStatusAsync(updateStatusRequest, cancellationToken);
 
                         // check current tag against start tag
                         bool valid = true;
@@ -367,7 +366,7 @@ public class TransactionService : ITransactionService
                         {
                             // tags are different => same group?
                             var startTag =
-                                await _ocppTagHttpService.GetByOcppTagIdAsync(transaction.StartTagId,
+                                await _ocppTagGrpcClientService.GetByTagIdAsync(transaction.StartTagId,
                                     cancellationToken);
 
                             if (startTag != null)
@@ -463,7 +462,7 @@ public class TransactionService : ITransactionService
                 AvailabilityType = ChangeAvailabilityRequestType.Inoperative
             };
             
-            await _chargePointHttpService.ChangeAvailabilityAsync(disableChargePointRequest, cancellationToken);
+            await _chargePointGrpcClientService.ChangeAvailabilityAsync(disableChargePointRequest, cancellationToken);
             
             var warningEmailMessage = new ChargePointAutomaticDisableEmailMessage(energyConsumptionSettings.DepotId, chargePointId);
             await _emailService.SendMessageAsync(warningEmailMessage, cancellationToken: cancellationToken);

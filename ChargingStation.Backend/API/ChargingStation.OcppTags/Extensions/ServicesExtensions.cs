@@ -11,7 +11,7 @@ public static class ServicesExtensions
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddScoped<IOcppTagService, OcppTagService>();
-
+        
         services.AddMassTransit(busConfigurator =>
         {
             busConfigurator.SetKebabCaseEndpointNameFormatter();

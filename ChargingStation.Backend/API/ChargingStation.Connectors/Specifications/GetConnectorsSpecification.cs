@@ -17,4 +17,10 @@ public class GetConnectorsSpecification : Specification<Connector>
         AddFilter(x => x.ChargePointId == request.ChargePointId);
         AddFilter(x => x.ConnectorId == request.ConnectorId);
     }
+
+    public GetConnectorsSpecification(GetConnectorByChargePointIdRequest request)
+    {
+        AddFilter(x => x.ChargePointId == request.ChargePointId);
+        AddFilter(x => x.ConnectorId == request.ConnectorId);
+    }
 }

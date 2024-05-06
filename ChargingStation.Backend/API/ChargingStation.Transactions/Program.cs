@@ -1,4 +1,5 @@
 using ChargingStation.Infrastructure;
+using ChargingStation.InternalCommunication.Extensions;
 using ChargingStation.Transactions.Extensions;
 using ChargingStation.Transactions.Middlewares;
 
@@ -7,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddTransactionServices(builder.Configuration);
+builder.Services.AddChargePointsGrpcClient(builder.Configuration);
+builder.Services.AddOcppTagsGrpcClient(builder.Configuration);
+builder.Services.AddConnectorsGrpcClient(builder.Configuration);
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {

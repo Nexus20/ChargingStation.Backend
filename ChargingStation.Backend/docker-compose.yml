@@ -31,17 +31,35 @@ services:
       context: .
       dockerfile: API/ChargingStation.ChargePoints/Dockerfile
       
+  chargepoints.grpc:
+    image: ${DOCKER_REGISTRY-}chargepointsgrpc
+    build:
+      context: .
+      dockerfile: GRPC/ChargingStation.ChargePoints.Grpc/Dockerfile
+      
   ocpptags.api:
     image: ${DOCKER_REGISTRY-}ocpptagsapi
     build:
       context: .
       dockerfile: API/ChargingStation.OcppTags/Dockerfile
       
+  ocpptags.grpc:
+    image: ${DOCKER_REGISTRY-}ocpptagsgrpc
+    build:
+      context: .
+      dockerfile: GRPC/ChargingStation.OcppTags.Grpc/Dockerfile
+      
   connectors.api:
     image: ${DOCKER_REGISTRY-}connectorsapi
     build:
       context: .
       dockerfile: API/ChargingStation.Connectors/Dockerfile
+      
+  connectors.grpc:
+    image: ${DOCKER_REGISTRY-}connectorsgrpc
+    build:
+      context: .
+      dockerfile: GRPC/ChargingStation.Connectors.Grpc/Dockerfile
       
   transactions.api:
     image: ${DOCKER_REGISTRY-}transactionsapi

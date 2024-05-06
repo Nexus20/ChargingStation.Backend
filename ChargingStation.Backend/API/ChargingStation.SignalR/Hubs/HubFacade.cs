@@ -1,5 +1,4 @@
 ﻿using ChargingStation.InternalCommunication.SignalRModels;
-using ChargingStation.SignalR.Constants;
 using Microsoft.AspNetCore.SignalR;
 
 namespace ChargingStation.SignalR.Hubs;

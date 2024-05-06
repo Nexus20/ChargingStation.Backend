@@ -1,4 +1,5 @@
-﻿using ChargingStation.InternalCommunication.GrpcClients;
+﻿using ChargePoints.Grpc;
+using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.InternalCommunication.Services.ChargePoints;
 using ChargingStation.InternalCommunication.Services.Connectors;
 using ChargingStation.InternalCommunication.Services.Depots;
@@ -9,17 +10,38 @@ using ChargingStation.InternalCommunication.Services.Transactions;
 using Connectors.Grpc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using OcppTags.Grpc;
 
 namespace ChargingStation.InternalCommunication.Extensions;
 
 public static class ServicesExtensions
 {
+    public static IServiceCollection AddOcppTagsGrpcClient(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddGrpcClient<OcppTagsGrpc.OcppTagsGrpcClient>
+            (o => o.Address = new Uri(configuration["GrpcSettings:OcppTagServiceAddress"]!));
+        services.AddScoped<OcppTagGrpcClientService>();
+        
+        return services;
+    }
+    
     public static IServiceCollection AddConnectorsGrpcClient(this IServiceCollection services,
         IConfiguration configuration)
     {
         services.AddGrpcClient<ConnectorsGrpc.ConnectorsGrpcClient>
             (o => o.Address = new Uri(configuration["GrpcSettings:ConnectorServiceAddress"]!));
-        services.AddScoped<ConnectorsGrpcClientService>();
+        services.AddScoped<ConnectorGrpcClientService>();
+        
+        return services;
+    }
+    
+    public static IServiceCollection AddChargePointsGrpcClient(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddGrpcClient<ChargePointsGrpc.ChargePointsGrpcClient>
+            (o => o.Address = new Uri(configuration["GrpcSettings:ChargePointServiceAddress"]!));
+        services.AddScoped<ChargePointGrpcClientService>();
         
         return services;
     }
