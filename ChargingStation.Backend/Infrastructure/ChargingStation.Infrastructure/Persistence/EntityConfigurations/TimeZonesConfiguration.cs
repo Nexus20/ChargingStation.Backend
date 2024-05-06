@@ -1,5 +1,4 @@
-﻿using ChargingStation.Domain.Entities;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,10 +23,5 @@ public class TimeZonesConfiguration : IEntityTypeConfiguration<Domain.Entities.T
         builder.Property(e => e.DisplayName)
             .HasMaxLength(128)
             .IsRequired();
-
-        builder.HasMany<Depot>()
-            .WithOne(d => d.TimeZone)
-            .HasForeignKey(d => d.TimeZoneId)
-            .OnDelete(DeleteBehavior.ClientNoAction);
     }
 }
