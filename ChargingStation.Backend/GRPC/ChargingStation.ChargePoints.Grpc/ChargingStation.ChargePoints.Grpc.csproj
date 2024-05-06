@@ -9,14 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Protobuf Include="Protos\chargepoints.proto">
-      <GrpcServices>Server</GrpcServices>
-      <Access>Public</Access>
-      <ProtoCompile>True</ProtoCompile>
-      <CompileOutputs>True</CompileOutputs>
-      <OutputDir>obj\Debug\net8.0\</OutputDir>
-      <Generator>MSBuild:Compile</Generator>
-    </Protobuf>
+    <Protobuf Include="Protos\chargepoints.proto" GrpcServices="Server" />
   </ItemGroup>
   
   <ItemGroup>
