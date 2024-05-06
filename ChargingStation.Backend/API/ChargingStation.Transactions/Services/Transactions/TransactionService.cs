@@ -14,7 +14,6 @@ using ChargingStation.Common.Models.Transactions.Responses;
 using ChargingStation.Domain.Entities;
 using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.InternalCommunication.Services.EnergyConsumption;
-using ChargingStation.InternalCommunication.Services.Reservations;
 using ChargingStation.InternalCommunication.SignalRModels;
 using ChargingStation.Mailing.Messages;
 using ChargingStation.Mailing.Services;
@@ -35,7 +34,7 @@ public class TransactionService : ITransactionService
     private readonly ChargePointGrpcClientService _chargePointGrpcClientService;
     private readonly OcppTagGrpcClientService _ocppTagGrpcClientService;
     private readonly IEnergyConsumptionHttpService _energyConsumptionHttpService;
-    private readonly IReservationHttpService _reservationHttpService;
+    private readonly ReservationGrpcClientService _reservationGrpcClientService;
     
     private readonly ConnectorGrpcClientService _connectorGrpcClientService;
     
@@ -51,7 +50,7 @@ public class TransactionService : ITransactionService
                               ChargePointGrpcClientService chargePointGrpcClientService, 
                               OcppTagGrpcClientService ocppTagGrpcClientService,
                               IEnergyConsumptionHttpService energyConsumptionHttpService, 
-                              IReservationHttpService reservationHttpService,
+                              ReservationGrpcClientService reservationGrpcClientService,
                               IPublishEndpoint publishEndpoint, 
                               IEmailService emailService, 
                               IConfiguration configuration, IMapper mapper,
@@ -64,7 +63,7 @@ public class TransactionService : ITransactionService
         _chargePointGrpcClientService = chargePointGrpcClientService;
         _ocppTagGrpcClientService = ocppTagGrpcClientService;
         _energyConsumptionHttpService = energyConsumptionHttpService;
-        _reservationHttpService = reservationHttpService;
+        _reservationGrpcClientService = reservationGrpcClientService;
         
         _publishEndpoint = publishEndpoint;
         _emailService = emailService;
@@ -262,7 +261,7 @@ public class TransactionService : ITransactionService
                         ReservationId = request.ReservationId.Value
                     };
                     
-                    await _reservationHttpService.UseReservationAsync(useReservationRequest, cancellationToken);
+                    await _reservationGrpcClientService.UseReservationAsync(useReservationRequest, cancellationToken);
                 }
             }
             catch (Exception exp)

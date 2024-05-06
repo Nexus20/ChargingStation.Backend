@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "Reservations.Grpc";
+
+package reservations;
+
+service ReservationsGrpc {
+  rpc UseReservation (UseReservationGrpcRequest) returns (google.protobuf.Empty);
+}
+
+message UseReservationGrpcRequest {
+  string charge_point_id = 1;
+  string connector_id = 2;
+  int32 reservation_id = 3;
+}

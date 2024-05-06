@@ -51,11 +51,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Mailing", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GRPC", "GRPC", "{36325FD4-78A3-428A-BD59-5E1A80134B40}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Connectors.Grpc", "GRPC\ChargingStation.Connectors.Grpc\ChargingStation.Connectors.Grpc.csproj", "{0A5D1E1B-5685-432E-B048-4C7BD615E0B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Connectors.Grpc", "GRPC\ChargingStation.Connectors.Grpc\ChargingStation.Connectors.Grpc.csproj", "{0A5D1E1B-5685-432E-B048-4C7BD615E0B5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.ChargePoints.Grpc", "GRPC\ChargingStation.ChargePoints.Grpc\ChargingStation.ChargePoints.Grpc.csproj", "{B53EA289-B41B-4DE7-933B-9AFE45D70755}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.ChargePoints.Grpc", "GRPC\ChargingStation.ChargePoints.Grpc\ChargingStation.ChargePoints.Grpc.csproj", "{B53EA289-B41B-4DE7-933B-9AFE45D70755}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.OcppTags.Grpc", "GRPC\ChargingStation.OcppTags.Grpc\ChargingStation.OcppTags.Grpc.csproj", "{F7AE1D7F-0C91-4403-BC0C-644FC681B297}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.OcppTags.Grpc", "GRPC\ChargingStation.OcppTags.Grpc\ChargingStation.OcppTags.Grpc.csproj", "{F7AE1D7F-0C91-4403-BC0C-644FC681B297}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Reservations.Grpc", "GRPC\ChargingStation.Reservations.Grpc\ChargingStation.Reservations.Grpc.csproj", "{1B68EC5F-87EC-4E1B-A058-7840BC03AEDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -151,6 +153,10 @@ Global
 		{F7AE1D7F-0C91-4403-BC0C-644FC681B297}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F7AE1D7F-0C91-4403-BC0C-644FC681B297}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F7AE1D7F-0C91-4403-BC0C-644FC681B297}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B68EC5F-87EC-4E1B-A058-7840BC03AEDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B68EC5F-87EC-4E1B-A058-7840BC03AEDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B68EC5F-87EC-4E1B-A058-7840BC03AEDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B68EC5F-87EC-4E1B-A058-7840BC03AEDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -177,6 +183,7 @@ Global
 		{0A5D1E1B-5685-432E-B048-4C7BD615E0B5} = {36325FD4-78A3-428A-BD59-5E1A80134B40}
 		{B53EA289-B41B-4DE7-933B-9AFE45D70755} = {36325FD4-78A3-428A-BD59-5E1A80134B40}
 		{F7AE1D7F-0C91-4403-BC0C-644FC681B297} = {36325FD4-78A3-428A-BD59-5E1A80134B40}
+		{1B68EC5F-87EC-4E1B-A058-7840BC03AEDF} = {36325FD4-78A3-428A-BD59-5E1A80134B40}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A063F0C5-38BF-495E-8B72-2E7F00C1C4DE}

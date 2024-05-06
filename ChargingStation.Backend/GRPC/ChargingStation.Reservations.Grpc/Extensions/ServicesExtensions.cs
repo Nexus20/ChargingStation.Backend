@@ -1,21 +1,21 @@
-﻿using System.Reflection;
-using ChargingStation.InternalCommunication.Extensions;
-using ChargingStation.Reservations.EventConsumers;
+﻿using ChargingStation.InternalCommunication.Extensions;
 using ChargingStation.Reservations.Services.Reservations;
 using Hangfire;
 using MassTransit;
 
-namespace ChargingStation.Reservations.Extensions;
+namespace ChargingStation.Reservations.Grpc.Extensions;
 
 public static class ServicesExtensions
 {
     public static IServiceCollection AddReservationServices(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddGrpc();
+        
         services.AddChargePointsGrpcClient(configuration);
         services.AddOcppTagsGrpcClient(configuration);
         services.AddConnectorsGrpcClient(configuration);
         
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
+        services.AddAutoMapper(typeof(IReservationService).Assembly);
 
         services.AddScoped<IReservationService, ReservationService>();
         
@@ -23,20 +23,9 @@ public static class ServicesExtensions
         {
             busConfigurator.SetKebabCaseEndpointNameFormatter();
             
-            busConfigurator.AddConsumer<ReserveNowResponseConsumer>();
-            busConfigurator.AddConsumer<CancelReservationResponseConsumer>();
-            
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
                 cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
-                
-                cfg.ReceiveEndpoint("reserve-now-response-queue-1_6", c => {
-                    c.ConfigureConsumer<ReserveNowResponseConsumer>(ctx);
-                });
-                
-                cfg.ReceiveEndpoint("cancel-reservation-response-queue-1_6", c => {
-                    c.ConfigureConsumer<CancelReservationResponseConsumer>(ctx);
-                });
             });
         });
 

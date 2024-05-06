@@ -25,6 +25,9 @@
         <Protobuf Include="..\..\GRPC\ChargingStation.OcppTags.Grpc\Protos\ocpptags.proto" GrpcServices="Client">
             <Link>Protos\ocpptags.proto</Link>
         </Protobuf>
+        <Protobuf Include="..\..\GRPC\ChargingStation.Reservations.Grpc\Protos\reservations.proto" GrpcServices="Client">
+            <Link>Protos\reservations.proto</Link>
+        </Protobuf>
     </ItemGroup>
 
 </Project>

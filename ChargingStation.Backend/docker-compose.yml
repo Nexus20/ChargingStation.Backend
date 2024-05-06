@@ -79,6 +79,12 @@ services:
       context: .
       dockerfile: API/ChargingStation.Reservations/Dockerfile
       
+  reservations.grpc:
+    image: ${DOCKER_REGISTRY-}reservationsgrpc
+    build:
+      context: .
+      dockerfile: GRPC/ChargingStation.Reservations.Grpc/Dockerfile
+      
   chargingprofiles.api:
     image: ${DOCKER_REGISTRY-}chargingprofilesapi
     build:

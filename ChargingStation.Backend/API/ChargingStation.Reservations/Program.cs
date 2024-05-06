@@ -9,9 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddReservationServices(builder.Configuration);
-builder.Services.AddChargePointsGrpcClient(builder.Configuration);
-builder.Services.AddOcppTagsGrpcClient(builder.Configuration);
-builder.Services.AddConnectorsGrpcClient(builder.Configuration);
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
