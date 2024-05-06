@@ -12,7 +12,8 @@ COPY ["API/ChargingStation.ChargePoints/ChargingStation.ChargePoints.csproj", "A
 COPY ["Domain/ChargingStation.Common/ChargingStation.Common.csproj", "Domain/ChargingStation.Common/"]
 COPY ["Infrastructure/ChargingStation.Infrastructure/ChargingStation.Infrastructure.csproj", "Infrastructure/ChargingStation.Infrastructure/"]
 COPY ["Domain/ChargingStation.Domain/ChargingStation.Domain.csproj", "Domain/ChargingStation.Domain/"]
-RUN dotnet restore "./API/ChargingStation.ChargePoints/./ChargingStation.ChargePoints.csproj"
+COPY ["Infrastructure/ChargingStation.InternalCommunication/ChargingStation.InternalCommunication.csproj", "Infrastructure/ChargingStation.InternalCommunication/"]
+RUN dotnet restore "./API/ChargingStation.ChargePoints/ChargingStation.ChargePoints.csproj"
 COPY . .
 WORKDIR "/src/API/ChargingStation.ChargePoints"
 RUN dotnet build "./ChargingStation.ChargePoints.csproj" -c $BUILD_CONFIGURATION -o /app/build

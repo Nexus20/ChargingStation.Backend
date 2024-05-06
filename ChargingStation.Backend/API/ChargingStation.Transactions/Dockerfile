@@ -13,6 +13,7 @@ COPY ["Domain/ChargingStation.Common/ChargingStation.Common.csproj", "Domain/Cha
 COPY ["Domain/ChargingStation.Domain/ChargingStation.Domain.csproj", "Domain/ChargingStation.Domain/"]
 COPY ["Infrastructure/ChargingStation.Infrastructure/ChargingStation.Infrastructure.csproj", "Infrastructure/ChargingStation.Infrastructure/"]
 COPY ["Infrastructure/ChargingStation.InternalCommunication/ChargingStation.InternalCommunication.csproj", "Infrastructure/ChargingStation.InternalCommunication/"]
+COPY ["Infrastructure/ChargingStation.Mailing/ChargingStation.Mailing.csproj", "Infrastructure/ChargingStation.Mailing/"]
 RUN dotnet restore "./API/ChargingStation.Transactions/ChargingStation.Transactions.csproj"
 COPY . .
 WORKDIR "/src/API/ChargingStation.Transactions"

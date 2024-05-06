@@ -11,8 +11,8 @@ WORKDIR /src
 COPY ["API/ChargingStation.Reservations/ChargingStation.Reservations.csproj", "API/ChargingStation.Reservations/"]
 COPY ["Domain/ChargingStation.Common/ChargingStation.Common.csproj", "Domain/ChargingStation.Common/"]
 COPY ["Domain/ChargingStation.Domain/ChargingStation.Domain.csproj", "Domain/ChargingStation.Domain/"]
-COPY ["Infrastructure/ChargingStation.InternalCommunication/ChargingStation.InternalCommunication.csproj", "Infrastructure/ChargingStation.InternalCommunication/"]
 COPY ["Infrastructure/ChargingStation.Infrastructure/ChargingStation.Infrastructure.csproj", "Infrastructure/ChargingStation.Infrastructure/"]
+COPY ["Infrastructure/ChargingStation.InternalCommunication/ChargingStation.InternalCommunication.csproj", "Infrastructure/ChargingStation.InternalCommunication/"]
 RUN dotnet restore "./API/ChargingStation.Reservations/ChargingStation.Reservations.csproj"
 COPY . .
 WORKDIR "/src/API/ChargingStation.Reservations"
