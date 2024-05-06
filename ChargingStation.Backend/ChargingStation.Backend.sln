@@ -59,6 +59,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.OcppTags.Gr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Reservations.Grpc", "GRPC\ChargingStation.Reservations.Grpc\ChargingStation.Reservations.Grpc.csproj", "{1B68EC5F-87EC-4E1B-A058-7840BC03AEDF}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Transactions.Grpc", "GRPC\ChargingStation.Transactions.Grpc\ChargingStation.Transactions.Grpc.csproj", "{DDF21910-CBE1-414A-8E71-E3ECB91B129A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -157,6 +159,10 @@ Global
 		{1B68EC5F-87EC-4E1B-A058-7840BC03AEDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B68EC5F-87EC-4E1B-A058-7840BC03AEDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B68EC5F-87EC-4E1B-A058-7840BC03AEDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDF21910-CBE1-414A-8E71-E3ECB91B129A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDF21910-CBE1-414A-8E71-E3ECB91B129A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDF21910-CBE1-414A-8E71-E3ECB91B129A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDF21910-CBE1-414A-8E71-E3ECB91B129A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -184,6 +190,7 @@ Global
 		{B53EA289-B41B-4DE7-933B-9AFE45D70755} = {36325FD4-78A3-428A-BD59-5E1A80134B40}
 		{F7AE1D7F-0C91-4403-BC0C-644FC681B297} = {36325FD4-78A3-428A-BD59-5E1A80134B40}
 		{1B68EC5F-87EC-4E1B-A058-7840BC03AEDF} = {36325FD4-78A3-428A-BD59-5E1A80134B40}
+		{DDF21910-CBE1-414A-8E71-E3ECB91B129A} = {36325FD4-78A3-428A-BD59-5E1A80134B40}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A063F0C5-38BF-495E-8B72-2E7F00C1C4DE}

@@ -2,13 +2,23 @@
 using ChargingStation.Common.Models.ChargePoints.Responses;
 using ChargingStation.Common.Models.Connectors.Responses;
 using ChargingStation.Common.Models.OcppTags.Responses;
+using ChargingStation.Common.Models.Transactions.Responses;
 using Connectors.Grpc;
 using OcppTags.Grpc;
+using Transactions.Grpc;
 
 namespace ChargingStation.InternalCommunication.Extensions;
 
 public static class GrpcResponseExtensions
 {
+    public static TransactionResponse ToResponse(this TransactionGrpcResponse grpcResponse)
+    {
+        return new TransactionResponse
+        {
+            TransactionId = grpcResponse.TransactionId
+        };
+    }
+    
     public static OcppTagResponse ToResponse(this OcppTagGrpcResponse grpcResponse)
     {
         return new OcppTagResponse

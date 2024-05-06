@@ -67,6 +67,12 @@ services:
       context: .
       dockerfile: API/ChargingStation.Transactions/Dockerfile
       
+  transactions.grpc:
+    image: ${DOCKER_REGISTRY-}transactionsgrpc
+    build:
+      context: .
+      dockerfile: GRPC/ChargingStation.Transactions.Grpc/Dockerfile
+      
   heartbeats.api:
     image: ${DOCKER_REGISTRY-}heartbeatsapi
     build:

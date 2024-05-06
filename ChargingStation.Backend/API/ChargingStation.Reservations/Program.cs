@@ -1,5 +1,4 @@
 using ChargingStation.Infrastructure;
-using ChargingStation.InternalCommunication.Extensions;
 using ChargingStation.Reservations.Extensions;
 using ChargingStation.Reservations.Middlewares;
 using Hangfire;

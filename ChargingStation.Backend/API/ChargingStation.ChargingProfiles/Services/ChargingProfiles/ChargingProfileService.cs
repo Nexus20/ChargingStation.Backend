@@ -13,7 +13,6 @@ using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.GrpcClients;
-using ChargingStation.InternalCommunication.Services.Transactions;
 using MassTransit;
 using ChargingProfile = ChargingStation.Domain.Entities.ChargingProfile;
 using ChargingScheduleChargingRateUnit = ChargingStation.Common.Messages_OCPP16.Responses.Enums.ChargingScheduleChargingRateUnit;
@@ -30,10 +29,10 @@ public class ChargingProfileService : IChargingProfileService
     private readonly ConnectorGrpcClientService _connectorGrpcClientService;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly ICacheManager _cacheManager;
-    private readonly ITransactionHttpService _transactionHttpService;
+    private readonly TransactionGrpcClientService _transactionGrpcClientService;
     private readonly IMapper _mapper;
 
-    public ChargingProfileService(ILogger<ChargingProfileService> logger, IRepository<ConnectorChargingProfile> connectorChargingProfileRepository, IRepository<ChargingProfile> chargingProfileRepository, IPublishEndpoint publishEndpoint, ConnectorGrpcClientService connectorGrpcClientService, ICacheManager cacheManager, ITransactionHttpService transactionHttpService, IMapper mapper)
+    public ChargingProfileService(ILogger<ChargingProfileService> logger, IRepository<ConnectorChargingProfile> connectorChargingProfileRepository, IRepository<ChargingProfile> chargingProfileRepository, IPublishEndpoint publishEndpoint, ConnectorGrpcClientService connectorGrpcClientService, ICacheManager cacheManager, TransactionGrpcClientService transactionGrpcClientService, IMapper mapper)
     {
         _logger = logger;
         _connectorChargingProfileRepository = connectorChargingProfileRepository;
@@ -41,7 +40,7 @@ public class ChargingProfileService : IChargingProfileService
         _publishEndpoint = publishEndpoint;
         _connectorGrpcClientService = connectorGrpcClientService;
         _cacheManager = cacheManager;
-        _transactionHttpService = transactionHttpService;
+        _transactionGrpcClientService = transactionGrpcClientService;
         _mapper = mapper;
     }
 
@@ -130,7 +129,7 @@ public class ChargingProfileService : IChargingProfileService
         
         if (request.TransactionId.HasValue)
         {
-            var transaction = await _transactionHttpService.GetByIdAsync(request.TransactionId.Value, cancellationToken);
+            var transaction = await _transactionGrpcClientService.GetByIdAsync(request.TransactionId.Value, cancellationToken);
             
             if (transaction == null)
                 throw new NotFoundException(nameof(OcppTransaction), request.TransactionId.Value);

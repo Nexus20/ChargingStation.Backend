@@ -1,17 +1,12 @@
-using ChargingStation.CacheManager.Extensions;
 using ChargingStation.ChargingProfiles.Extensions;
 using ChargingStation.ChargingProfiles.Middlewares;
 using ChargingStation.Infrastructure;
-using ChargingStation.InternalCommunication.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddCacheServices(builder.Configuration);
 builder.Services.AddChargingProfilesServices(builder.Configuration);
-builder.Services.AddChargePointsGrpcClient(builder.Configuration);
-builder.Services.AddConnectorsGrpcClient(builder.Configuration);
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {

@@ -7,7 +7,7 @@ namespace ChargingStation.Reservations.Grpc.Extensions;
 
 public static class ServicesExtensions
 {
-    public static IServiceCollection AddReservationServices(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddReservationGrpcServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddGrpc();
         

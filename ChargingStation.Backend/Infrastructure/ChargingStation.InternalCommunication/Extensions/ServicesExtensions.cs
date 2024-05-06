@@ -2,17 +2,27 @@
 using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.InternalCommunication.Services.Depots;
 using ChargingStation.InternalCommunication.Services.EnergyConsumption;
-using ChargingStation.InternalCommunication.Services.Transactions;
 using Connectors.Grpc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OcppTags.Grpc;
 using Reservations.Grpc;
+using Transactions.Grpc;
 
 namespace ChargingStation.InternalCommunication.Extensions;
 
 public static class ServicesExtensions
 {
+    public static IServiceCollection AddTransactionsGrpcClient(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddGrpcClient<TransactionsGrpc.TransactionsGrpcClient>
+            (o => o.Address = new Uri(configuration["GrpcSettings:TransactionServiceAddress"]!));
+        services.AddScoped<TransactionGrpcClientService>();
+        
+        return services;
+    }
+    
     public static IServiceCollection AddReservationsGrpcClient(this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -59,17 +69,6 @@ public static class ServicesExtensions
         services.AddHttpClient<IDepotHttpService, DepotHttpService>(c =>
         {
             c.BaseAddress = new Uri(configuration["ApiSettings:DepotServiceAddress"]!);
-        });
-
-        return services;
-    }
-
-    public static IServiceCollection AddTransactionsHttpClient(this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        services.AddHttpClient<ITransactionHttpService, TransactionHttpService>(c =>
-        {
-            c.BaseAddress = new Uri(configuration["ApiSettings:TransactionServiceAddress"]!);
         });
 
         return services;

@@ -6,7 +6,7 @@ namespace ChargingStation.OcppTags.Grpc.Extensions;
 
 public static class ResponseExtensions
 {
-    public static OcppTagGrpcResponse ToGrpcResponse(this OcppTagResponse? response)
+    public static OcppTagGrpcResponse ToGrpcResponse(this OcppTagResponse response)
     {
         return new OcppTagGrpcResponse
         {

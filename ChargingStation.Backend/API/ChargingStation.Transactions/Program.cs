@@ -1,5 +1,4 @@
 using ChargingStation.Infrastructure;
-using ChargingStation.InternalCommunication.Extensions;
 using ChargingStation.Transactions.Extensions;
 using ChargingStation.Transactions.Middlewares;
 

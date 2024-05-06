@@ -28,6 +28,9 @@
         <Protobuf Include="..\..\GRPC\ChargingStation.Reservations.Grpc\Protos\reservations.proto" GrpcServices="Client">
             <Link>Protos\reservations.proto</Link>
         </Protobuf>
+        <Protobuf Include="..\..\GRPC\ChargingStation.Transactions.Grpc\Protos\transactions.proto" GrpcServices="Client">
+            <Link>Protos\transactions.proto</Link>
+        </Protobuf>
     </ItemGroup>
 
 </Project>
