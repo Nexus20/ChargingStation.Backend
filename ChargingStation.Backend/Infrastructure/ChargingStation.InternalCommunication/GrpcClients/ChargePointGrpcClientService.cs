@@ -1,4 +1,4 @@
-﻿using ChargePoints.Grpc;
+﻿using ChargingStation.ChargePoints.Grpc.Protos;
 using ChargingStation.Common.Models.ChargePoints.Requests;
 using ChargingStation.Common.Models.ChargePoints.Responses;
 using ChargingStation.InternalCommunication.Extensions;

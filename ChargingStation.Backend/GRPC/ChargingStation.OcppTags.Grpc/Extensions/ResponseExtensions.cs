@@ -1,6 +1,6 @@
 ﻿using ChargingStation.Common.Models.OcppTags.Responses;
+using ChargingStation.OcppTags.Grpc.Protos;
 using Google.Protobuf.WellKnownTypes;
-using OcppTags.Grpc;
 
 namespace ChargingStation.OcppTags.Grpc.Extensions;
 

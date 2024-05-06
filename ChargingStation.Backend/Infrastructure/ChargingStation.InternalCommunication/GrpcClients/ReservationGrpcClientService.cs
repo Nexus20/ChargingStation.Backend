@@ -1,5 +1,5 @@
 ﻿using ChargingStation.Common.Models.Reservations.Requests;
-using Reservations.Grpc;
+using ChargingStation.Reservations.Grpc.Protos;
 
 namespace ChargingStation.InternalCommunication.GrpcClients;
 

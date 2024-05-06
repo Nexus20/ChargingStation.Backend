@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "Transactions.Grpc";
+option csharp_namespace = "ChargingStation.Transactions.Grpc.Protos";
 
 package transactions;
 

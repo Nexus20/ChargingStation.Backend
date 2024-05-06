@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 
-option csharp_namespace = "OcppTags.Grpc";
+option csharp_namespace = "ChargingStation.OcppTags.Grpc.Protos";
 
 package ocppTags;
 

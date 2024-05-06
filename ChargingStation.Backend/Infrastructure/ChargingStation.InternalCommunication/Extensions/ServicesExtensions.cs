@@ -1,13 +1,13 @@
-﻿using ChargePoints.Grpc;
+﻿using ChargingStation.ChargePoints.Grpc.Protos;
+using ChargingStation.Connectors.Grpc.Protos;
 using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.InternalCommunication.Services.Depots;
 using ChargingStation.InternalCommunication.Services.EnergyConsumption;
-using Connectors.Grpc;
+using ChargingStation.OcppTags.Grpc.Protos;
+using ChargingStation.Reservations.Grpc.Protos;
+using ChargingStation.Transactions.Grpc.Protos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using OcppTags.Grpc;
-using Reservations.Grpc;
-using Transactions.Grpc;
 
 namespace ChargingStation.InternalCommunication.Extensions;
 

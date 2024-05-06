@@ -4,7 +4,7 @@ import "google/protobuf/timestamp.proto";
 import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
 
-option csharp_namespace = "Connectors.Grpc";
+option csharp_namespace = "ChargingStation.Connectors.Grpc.Protos";
 
 package connectors;
 

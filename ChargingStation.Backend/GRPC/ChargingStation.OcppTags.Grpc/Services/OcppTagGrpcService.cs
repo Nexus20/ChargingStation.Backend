@@ -1,7 +1,7 @@
 using ChargingStation.OcppTags.Grpc.Extensions;
+using ChargingStation.OcppTags.Grpc.Protos;
 using ChargingStation.OcppTags.Services;
 using Grpc.Core;
-using OcppTags.Grpc;
 
 namespace ChargingStation.OcppTags.Grpc.Services;
 

@@ -1,7 +1,7 @@
 ﻿using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Common.Models.Connectors.Responses;
+using ChargingStation.Connectors.Grpc.Protos;
 using ChargingStation.InternalCommunication.Extensions;
-using Connectors.Grpc;
 using Google.Protobuf.WellKnownTypes;
 
 namespace ChargingStation.InternalCommunication.GrpcClients;
