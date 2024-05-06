@@ -16,7 +16,6 @@ public class DepotProfile : Profile
             .ForMember(dest => dest.BaseUtcOffset, opt => opt.MapFrom(src => src.TimeZone.BaseUtcOffset))
             .ForMember(dest => dest.IanaId, opt => opt.MapFrom(src => src.TimeZone.IanaId));
         CreateMap(typeof(IPagedCollection<>), typeof(PagedCollection<>));
-        CreateMap(typeof(IPagedCollection<>), typeof(PagedCollection<>));
         CreateMap(typeof(IPagedCollection<>), typeof(IPagedCollection<>))
             .As(typeof(PagedCollection<>));
     }
