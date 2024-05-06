@@ -78,7 +78,7 @@ public class DepotController : ControllerBase
     [ProducesResponseType(typeof(IPagedCollection<TimeZoneResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetTimeZone([FromBody] GetTimeZoneRequest request, CancellationToken cancellationToken = default)
     {
-        var depots = await _depotService.GetTimeZoneAsync(request, cancellationToken);
+        var depots = await _depotService.GetTimeZonesAsync(request, cancellationToken);
 
         return Ok(depots);
     }

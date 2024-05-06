@@ -97,7 +97,7 @@ public class DepotService : IDepotService
         await _depotRepository.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<IPagedCollection<TimeZoneResponse>> GetTimeZoneAsync(GetTimeZoneRequest request, CancellationToken cancellationToken = default)
+    public async Task<IPagedCollection<TimeZoneResponse>> GetTimeZonesAsync(GetTimeZoneRequest request, CancellationToken cancellationToken = default)
     {
         var specification = new GetTimeZonesSpecification(request);
 
