@@ -1,0 +1,54 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "ChargePoints.Grpc.Protos";
+
+package chargepoints;
+
+service ChargePointsGrpc {
+  rpc GetById (GetChargePointByIdGrpcRequest) returns (ChargePointGrpcResponse);
+  rpc GetByIds (GetChargePointByIdsGrpcRequest) returns (ChargePointGrpcResponses);
+  rpc ChangeAvailability (ChangeChargePointAvailabilityGrpcRequest) returns (google.protobuf.Empty);
+}
+
+message GetChargePointByIdGrpcRequest {
+  string id = 1;
+}
+
+message GetChargePointByIdsGrpcRequest {
+  repeated string ids = 1;
+}
+
+message ChangeChargePointAvailabilityGrpcRequest {
+  string charge_point_id = 1;
+  int32 availability_type = 2;
+}
+
+message ChargePointGrpcResponses {
+  repeated ChargePointGrpcResponse charge_points = 1;
+}
+
+message ChargePointGrpcResponse {
+  string id = 1;
+  string depot_id = 2;
+  string ocpp_protocol = 3;
+  string registration_status = 4;
+  google.protobuf.StringValue charge_point_vendor = 5;
+  google.protobuf.StringValue charge_point_model = 6;
+  google.protobuf.StringValue charge_point_serial_number = 7;
+  google.protobuf.StringValue charge_box_serial_number = 8;
+  google.protobuf.StringValue firmware_version = 9;
+  google.protobuf.Timestamp firmware_update_timestamp = 10;
+  google.protobuf.StringValue iccid = 11;
+  google.protobuf.StringValue imsi = 12;
+  google.protobuf.StringValue meter_type = 13;
+  google.protobuf.StringValue meter_serial_number = 14;
+  google.protobuf.Timestamp diagnostics_timestamp = 15;
+  google.protobuf.Timestamp last_heartbeat = 16;
+  google.protobuf.StringValue description = 17;
+  google.protobuf.Timestamp created_at = 18;
+  google.protobuf.Timestamp updated_at = 19;
+}

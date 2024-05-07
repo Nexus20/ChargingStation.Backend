@@ -1,6 +1,6 @@
 ﻿using ChargingStation.Common.Models.OcppTags.Responses;
 using ChargingStation.InternalCommunication.Extensions;
-using ChargingStation.OcppTags.Grpc.Protos;
+using OcppTags.Grpc.Protos;
 
 namespace ChargingStation.InternalCommunication.GrpcClients;
 

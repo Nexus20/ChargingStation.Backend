@@ -29,49 +29,49 @@ services:
     image: ${DOCKER_REGISTRY-}chargepointsapi
     build:
       context: .
-      dockerfile: API/ChargingStation.ChargePoints/Dockerfile
+      dockerfile: Services/ChargePoints/ChargePoints.Api/Dockerfile
       
   chargepoints.grpc:
     image: ${DOCKER_REGISTRY-}chargepointsgrpc
     build:
       context: .
-      dockerfile: GRPC/ChargingStation.ChargePoints.Grpc/Dockerfile
+      dockerfile: Services/ChargePoints/ChargePoints.Grpc/Dockerfile
       
   ocpptags.api:
     image: ${DOCKER_REGISTRY-}ocpptagsapi
     build:
       context: .
-      dockerfile: API/ChargingStation.OcppTags/Dockerfile
+      dockerfile: Services/OcppTags/OcppTags.Api/Dockerfile
       
   ocpptags.grpc:
     image: ${DOCKER_REGISTRY-}ocpptagsgrpc
     build:
       context: .
-      dockerfile: GRPC/ChargingStation.OcppTags.Grpc/Dockerfile
+      dockerfile: Services/OcppTags/OcppTags.Grpc/Dockerfile
       
   connectors.api:
     image: ${DOCKER_REGISTRY-}connectorsapi
     build:
       context: .
-      dockerfile: API/ChargingStation.Connectors/Dockerfile
+      dockerfile: Services/Connectors/Connectors.Api/Dockerfile
       
   connectors.grpc:
     image: ${DOCKER_REGISTRY-}connectorsgrpc
     build:
       context: .
-      dockerfile: GRPC/ChargingStation.Connectors.Grpc/Dockerfile
+      dockerfile: Services/Connectors/Connectors.Grpc/Dockerfile
       
   transactions.api:
     image: ${DOCKER_REGISTRY-}transactionsapi
     build:
       context: .
-      dockerfile: API/ChargingStation.Transactions/Dockerfile
+      dockerfile: Services/Transactions/Transactions.Api/Dockerfile
       
   transactions.grpc:
     image: ${DOCKER_REGISTRY-}transactionsgrpc
     build:
       context: .
-      dockerfile: GRPC/ChargingStation.Transactions.Grpc/Dockerfile
+      dockerfile: Services/Transactions/Transactions.Grpc/Dockerfile
       
   heartbeats.api:
     image: ${DOCKER_REGISTRY-}heartbeatsapi
@@ -83,13 +83,13 @@ services:
     image: ${DOCKER_REGISTRY-}reservationsapi
     build:
       context: .
-      dockerfile: API/ChargingStation.Reservations/Dockerfile
+      dockerfile: Services/Reservations/Reservations.Api/Dockerfile
       
   reservations.grpc:
     image: ${DOCKER_REGISTRY-}reservationsgrpc
     build:
       context: .
-      dockerfile: GRPC/ChargingStation.Reservations.Grpc/Dockerfile
+      dockerfile: Services/Reservations/Reservations.Grpc/Dockerfile
       
   chargingprofiles.api:
     image: ${DOCKER_REGISTRY-}chargingprofilesapi

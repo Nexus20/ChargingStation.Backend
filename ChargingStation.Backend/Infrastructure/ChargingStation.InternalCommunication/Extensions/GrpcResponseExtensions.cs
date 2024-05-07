@@ -1,11 +1,11 @@
-﻿using ChargingStation.ChargePoints.Grpc.Protos;
+﻿using ChargePoints.Grpc.Protos;
 using ChargingStation.Common.Models.ChargePoints.Responses;
 using ChargingStation.Common.Models.Connectors.Responses;
 using ChargingStation.Common.Models.OcppTags.Responses;
 using ChargingStation.Common.Models.Transactions.Responses;
-using ChargingStation.Connectors.Grpc.Protos;
-using ChargingStation.OcppTags.Grpc.Protos;
-using ChargingStation.Transactions.Grpc.Protos;
+using Connectors.Grpc.Protos;
+using OcppTags.Grpc.Protos;
+using Transactions.Grpc.Protos;
 
 namespace ChargingStation.InternalCommunication.Extensions;
 

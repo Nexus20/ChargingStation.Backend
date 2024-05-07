@@ -1,6 +1,6 @@
 ﻿using ChargingStation.Common.Models.Transactions.Responses;
 using ChargingStation.InternalCommunication.Extensions;
-using ChargingStation.Transactions.Grpc.Protos;
+using Transactions.Grpc.Protos;
 
 namespace ChargingStation.InternalCommunication.GrpcClients;
 

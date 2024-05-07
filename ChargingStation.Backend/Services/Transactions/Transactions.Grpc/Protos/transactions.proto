@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option csharp_namespace = "Transactions.Grpc.Protos";
+
+package transactions;
+
+service TransactionsGrpc {
+  rpc GetById (GetTransactionByIdGrpcRequest) returns (TransactionGrpcResponse);
+}
+
+message GetTransactionByIdGrpcRequest {
+  string id = 1;
+}
+
+message TransactionGrpcResponse {
+  int32 transaction_id = 1;
+}
