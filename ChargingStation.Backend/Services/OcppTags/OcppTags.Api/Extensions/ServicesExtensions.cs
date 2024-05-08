@@ -1,7 +1,6 @@
-﻿using System.Reflection;
-using MassTransit;
+﻿using MassTransit;
 using OcppTags.Api.EventConsumers;
-using OcppTags.Application.Services;
+using OcppTags.Application.Extensions;
 
 namespace OcppTags.Api.Extensions;
 
@@ -9,8 +8,7 @@ public static class ServicesExtensions
 {
     public static IServiceCollection AddOcppTagServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddAutoMapper(Assembly.GetExecutingAssembly());
-        services.AddScoped<IOcppTagService, OcppTagService>();
+        services.AddOcppTagApplicationServices();
         
         services.AddMassTransit(busConfigurator =>
         {
