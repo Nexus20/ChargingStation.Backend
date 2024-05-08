@@ -42,7 +42,7 @@ public class DepotService : IDepotService
     {
         var specification = new GetDepotSpecification(id);
 
-        var depot = await _depotRepository.GetAsync(specification, cancellationToken);
+        var depot = await _depotRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
         
         if(depot is null)
             throw new NotFoundException(nameof(Depot), id);
