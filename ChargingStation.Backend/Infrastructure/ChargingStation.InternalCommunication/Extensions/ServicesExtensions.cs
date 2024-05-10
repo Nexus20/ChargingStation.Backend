@@ -3,6 +3,7 @@ using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.InternalCommunication.Services.Depots;
 using ChargingStation.InternalCommunication.Services.EnergyConsumption;
 using Connectors.Grpc.Protos;
+using EnergyConsumption.Grpc.Protos;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OcppTags.Grpc.Protos;
@@ -13,6 +14,16 @@ namespace ChargingStation.InternalCommunication.Extensions;
 
 public static class ServicesExtensions
 {
+    public static IServiceCollection AddEnergyConsumptionSettingsGrpcClient(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddGrpcClient<EnergyConsumptionSettingsGrpc.EnergyConsumptionSettingsGrpcClient>
+            (o => o.Address = new Uri(configuration["GrpcSettings:EnergyConsumptionSettingsServiceAddress"]!));
+        services.AddScoped<EnergyConsumptionSettingsGrpcClientService>();
+        
+        return services;
+    }
+    
     public static IServiceCollection AddTransactionsGrpcClient(this IServiceCollection services,
         IConfiguration configuration)
     {
@@ -79,7 +90,7 @@ public static class ServicesExtensions
     {
         services.AddHttpClient<IEnergyConsumptionHttpService, EnergyConsumptionHttpService>(c =>
         {
-            c.BaseAddress = new Uri(configuration["ApiSettings:EnergyConsumptionServiceAddress"]!);
+            c.BaseAddress = new Uri(configuration["ApiSettings:EnergyConsumptionSettingsServiceAddress"]!);
         });
 
         return services;

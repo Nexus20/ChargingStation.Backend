@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+import "google/protobuf/empty.proto";
+
+option csharp_namespace = "EnergyConsumption.Grpc.Protos";
+
+package energyconsumption;
+
+// The greeting service definition.
+service EnergyConsumptionSettingsGrpc {
+  // Sends a greeting
+  rpc GetEnergyConsumptionSettingsByDepotId (GetByDepotIdGrpcRequest) returns (DepotEnergyConsumptionSettingsGrpcResponse);
+  rpc GetEnergyConsumptionSettingsByChargePointId (GetByChargePointIdGrpcRequest) returns (DepotEnergyConsumptionSettingsGrpcResponse);
+}
+
+message GetByDepotIdGrpcRequest {
+  string depot_id = 1;
+}
+
+message GetByChargePointIdGrpcRequest {
+  string charge_point_id = 1;
+}
+
+// The response message containing the greetings.
+message DepotEnergyConsumptionSettingsGrpcResponse {
+  string id = 1;
+  string depot_id = 2;
+  double depot_energy_limit = 3;
+  google.protobuf.Timestamp valid_from = 4;
+  google.protobuf.Timestamp valid_to = 5;
+  repeated ChargePointEnergyConsumptionSettingsGrpcMessage charge_points_limits = 6;
+  repeated EnergyConsumptionIntervalSettingsGrpcMessage intervals = 7;
+  google.protobuf.Timestamp created_at = 8;
+  google.protobuf.Timestamp updated_at = 9;
+}
+
+message ChargePointEnergyConsumptionSettingsGrpcMessage {
+  string charge_point_id = 1;
+  double charge_point_energy_limit = 2;
+}
+
+message EnergyConsumptionIntervalSettingsGrpcMessage {
+  double energy_limit = 1;
+  google.protobuf.Timestamp start_time = 2;
+  google.protobuf.Timestamp end_time = 3;
+}

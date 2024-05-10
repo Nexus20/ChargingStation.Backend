@@ -13,7 +13,6 @@ using ChargingStation.Common.Models.Reservations.Requests;
 using ChargingStation.Common.Models.Transactions.Responses;
 using ChargingStation.Domain.Entities;
 using ChargingStation.InternalCommunication.GrpcClients;
-using ChargingStation.InternalCommunication.Services.EnergyConsumption;
 using ChargingStation.InternalCommunication.SignalRModels;
 using ChargingStation.Mailing.Messages;
 using ChargingStation.Mailing.Services;
@@ -35,7 +34,7 @@ public class TransactionService : ITransactionService
     
     private readonly ChargePointGrpcClientService _chargePointGrpcClientService;
     private readonly OcppTagGrpcClientService _ocppTagGrpcClientService;
-    private readonly IEnergyConsumptionHttpService _energyConsumptionHttpService;
+    private readonly EnergyConsumptionSettingsGrpcClientService _energyConsumptionSettingsGrpcClientService;
     private readonly ReservationGrpcClientService _reservationGrpcClientService;
     
     private readonly ConnectorGrpcClientService _connectorGrpcClientService;
@@ -51,7 +50,7 @@ public class TransactionService : ITransactionService
                               IConnectorMeterValueRepository connectorMeterValueRepository, 
                               ChargePointGrpcClientService chargePointGrpcClientService, 
                               OcppTagGrpcClientService ocppTagGrpcClientService,
-                              IEnergyConsumptionHttpService energyConsumptionHttpService, 
+                              EnergyConsumptionSettingsGrpcClientService energyConsumptionSettingsGrpcClientService, 
                               ReservationGrpcClientService reservationGrpcClientService,
                               IPublishEndpoint publishEndpoint, 
                               IEmailService emailService, 
@@ -64,7 +63,7 @@ public class TransactionService : ITransactionService
         
         _chargePointGrpcClientService = chargePointGrpcClientService;
         _ocppTagGrpcClientService = ocppTagGrpcClientService;
-        _energyConsumptionHttpService = energyConsumptionHttpService;
+        _energyConsumptionSettingsGrpcClientService = energyConsumptionSettingsGrpcClientService;
         _reservationGrpcClientService = reservationGrpcClientService;
         
         _publishEndpoint = publishEndpoint;
@@ -437,7 +436,7 @@ public class TransactionService : ITransactionService
 
     private async Task ChangeAvailabilityIfEnergyConsumptionLimitReachedAsync(Guid chargePointId, CancellationToken cancellationToken)
     {
-        var energyConsumptionSettings = await _energyConsumptionHttpService.GetByChargingStationIdAsync(chargePointId, cancellationToken);
+        var energyConsumptionSettings = await _energyConsumptionSettingsGrpcClientService.GetByChargingStationIdAsync(chargePointId, cancellationToken);
 
         if (energyConsumptionSettings is null)
             return;

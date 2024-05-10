@@ -31,6 +31,9 @@
         <Protobuf Include="..\..\Services\Transactions\Transactions.Grpc\Protos\transactions.proto" GrpcServices="Client">
             <Link>Protos\transactions.proto</Link>
         </Protobuf>
+        <Protobuf Include="..\..\Services\EnergyConsumption\EnergyConsumption.Grpc\Protos\energyConsumption.proto" GrpcServices="Client">
+            <Link>Protos\energyconsumption.proto</Link>
+        </Protobuf>
     </ItemGroup>
 
 </Project>

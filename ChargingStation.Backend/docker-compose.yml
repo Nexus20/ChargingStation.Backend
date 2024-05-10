@@ -11,19 +11,19 @@ services:
     image: ${DOCKER_REGISTRY-}aggregator
     build:
       context: .
-      dockerfile: API/ChargingStation.Aggregator/Dockerfile
+      dockerfile: Services/Aggregator/Aggregator/Dockerfile
 
   chargingstation.gateway:
     image: ${DOCKER_REGISTRY-}gateway
     build:
       context: .
-      dockerfile: ChargingStation.Gateway/Dockerfile
+      dockerfile: Services/Gateway/ChargingStation.Gateway/Dockerfile
   
   depots.api:
     image: ${DOCKER_REGISTRY-}depotsapi
     build:
       context: .
-      dockerfile: API/ChargingStation.Depots/Dockerfile
+      dockerfile: Services/Depots/ChargingStation.Depots/Dockerfile
       
   chargepoints.api:
     image: ${DOCKER_REGISTRY-}chargepointsapi
@@ -77,7 +77,7 @@ services:
     image: ${DOCKER_REGISTRY-}heartbeatsapi
     build:
       context: .
-      dockerfile: API/ChargingStation.Heartbeats/Dockerfile
+      dockerfile: Services/Heartbeats/ChargingStation.Heartbeats/Dockerfile
       
   reservations.api:
     image: ${DOCKER_REGISTRY-}reservationsapi
@@ -95,16 +95,28 @@ services:
     image: ${DOCKER_REGISTRY-}chargingprofilesapi
     build:
       context: .
-      dockerfile: API/ChargingStation.ChargingProfiles/Dockerfile
+      dockerfile: Services/ChargingProfiles/ChargingStation.ChargingProfiles/Dockerfile
+      
+  energyconsumptionsettings.api:
+    image: ${DOCKER_REGISTRY-}energyconsumptionsettingsapi
+    build:
+      context: .
+      dockerfile: Services/EnergyConsumption/EnergyConsumption.Api/Dockerfile
+      
+  energyconsumptionsettings.grpc:
+    image: ${DOCKER_REGISTRY-}energyconsumptionsettingsgrpc
+    build:
+      context: .
+      dockerfile: Services/EnergyConsumption/EnergyConsumption.Grpc/Dockerfile
       
   chargingstation.websockets:
     image: ${DOCKER_REGISTRY-}chargingstationwebsockets
     build:
       context: .
-      dockerfile: API/ChargingStation.WebSockets/Dockerfile
+      dockerfile: Services/WebSockets/ChargingStation.WebSockets/Dockerfile
 
   chargingstation.signalr:
     image: ${DOCKER_REGISTRY-}signalr
     build:
       context: .
-      dockerfile: API/ChargingStation.SignalR/Dockerfile
+      dockerfile: Services/SignalR/ChargingStation.SignalR/Dockerfile
