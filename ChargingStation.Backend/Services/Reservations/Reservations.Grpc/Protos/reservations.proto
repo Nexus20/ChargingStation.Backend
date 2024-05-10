@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-import "google/protobuf/timestamp.proto";
-import "google/protobuf/wrappers.proto";
 import "google/protobuf/empty.proto";
 
 option csharp_namespace = "Reservations.Grpc.Protos";
