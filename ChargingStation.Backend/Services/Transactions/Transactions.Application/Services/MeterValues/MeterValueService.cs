@@ -6,7 +6,6 @@ using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.GrpcClients;
-using ChargingStation.InternalCommunication.Services.EnergyConsumption;
 using ChargingStation.InternalCommunication.SignalRModels;
 using ChargingStation.Mailing.Messages;
 using ChargingStation.Mailing.Services;
@@ -22,21 +21,21 @@ namespace Transactions.Application.Services.MeterValues;
 public class MeterValueService : IMeterValueService
 {
     private readonly ConnectorGrpcClientService _connectorGrpcClientService;
-    private readonly IEnergyConsumptionHttpService _energyConsumptionHttpService;
+    private readonly EnergyConsumptionSettingsGrpcClientService _energyConsumptionSettingsGrpcClientService;
     private readonly IRepository<OcppTransaction> _transactionRepository;
     private readonly IConnectorMeterValueRepository _connectorMeterValueRepository;
     private readonly ILogger<MeterValueService> _logger;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IEmailService _emailService;
 
-    public MeterValueService(ILogger<MeterValueService> logger, ConnectorGrpcClientService connectorGrpcClientService, IRepository<OcppTransaction> transactionRepository, IConnectorMeterValueRepository connectorMeterValueRepository, IPublishEndpoint publishEndpoint, IEnergyConsumptionHttpService energyConsumptionHttpService, IEmailService emailService)
+    public MeterValueService(ILogger<MeterValueService> logger, ConnectorGrpcClientService connectorGrpcClientService, IRepository<OcppTransaction> transactionRepository, IConnectorMeterValueRepository connectorMeterValueRepository, IPublishEndpoint publishEndpoint, EnergyConsumptionSettingsGrpcClientService energyConsumptionSettingsGrpcClientService, IEmailService emailService)
     {
         _logger = logger;
         _connectorGrpcClientService = connectorGrpcClientService;
         _transactionRepository = transactionRepository;
         _connectorMeterValueRepository = connectorMeterValueRepository;
         _publishEndpoint = publishEndpoint;
-        _energyConsumptionHttpService = energyConsumptionHttpService;
+        _energyConsumptionSettingsGrpcClientService = energyConsumptionSettingsGrpcClientService;
         _emailService = emailService;
     }
 
@@ -186,7 +185,7 @@ public class MeterValueService : IMeterValueService
         CancellationToken cancellationToken = default)
     {
         var energyConsumptionSettings =
-            await _energyConsumptionHttpService.GetByChargingStationIdAsync(chargePointId, cancellationToken);
+            await _energyConsumptionSettingsGrpcClientService.GetByChargingStationIdAsync(chargePointId, cancellationToken);
 
         if (energyConsumptionSettings is null)
             return;
