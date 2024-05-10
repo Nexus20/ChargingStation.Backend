@@ -25,11 +25,13 @@ services:
       - "ApiSettings:DepotServiceAddress=http://depots.api:8080"
       - "ApiSettings:ChargePointsServiceAddress=http://chargepoints.api:8080"
       - "ApiSettings:ConnectorsServiceAddress=http://connectors.api:8080"
-      - "ApiSettings:WebsocketsServiceAddress=http://chargingstation.websockets:8080"
       - "ApiSettings:EnergyConsumptionSettingsServiceAddress=http://energyconsumptionsettings.api:8080/api/EnergyConsumptionSettings/"
+      - "ApiSettings:WebsocketsServiceAddress=http://chargingstation.websockets:8080"
     depends_on:
       - depots.api
       - chargepoints.api
+      - connectors.api
+      - energyconsumptionsettings.api
       - chargingstation.websockets
   
   chargingstation.gateway:
