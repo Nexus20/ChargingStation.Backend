@@ -193,7 +193,6 @@ services:
       - "GrpcSettings:ConnectorServiceAddress=http://connectors.grpc:8080"
     depends_on:
       - chargingstation_rabbitmq
-      - depots.api
   
   reservations.grpc:
     container_name: reservations.grpc
@@ -241,8 +240,6 @@ services:
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
     depends_on:
       - chargingstation_rabbitmq
-      - depots.api
-      - chargingstation_redis
   
   energyconsumptionsettings.grpc:
     container_name: energyconsumptionsettings.grpc
@@ -256,8 +253,6 @@ services:
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
     depends_on:
       - chargingstation_rabbitmq
-      - depots.api
-      - chargingstation_redis
   
   chargingstation.websockets:
     container_name: chargingstation.websockets
@@ -283,8 +278,3 @@ services:
       - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
     depends_on:
       - chargingstation_rabbitmq
-      - depots.api
-      - chargingstation.websockets
-      - chargepoints.api 
-      - connectors.api
-      - transactions.api
