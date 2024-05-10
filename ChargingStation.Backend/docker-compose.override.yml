@@ -1,6 +1,6 @@
 version: '3.4'
 
-services:  
+services:
   chargingstation_rabbitmq:
     container_name: chargingstation_rabbitmq
     restart: always
@@ -26,7 +26,7 @@ services:
       - "ApiSettings:ChargePointsServiceAddress=http://chargepoints.api:8080"
       - "ApiSettings:ConnectorsServiceAddress=http://connectors.api:8080"
       - "ApiSettings:WebsocketsServiceAddress=http://chargingstation.websockets:8080"
-      - "ApiSettings:EnergyConsumptionServiceAddress=http://chargingprofiles.api:8080/api/EnergyConsumptionSettings/"
+      - "ApiSettings:EnergyConsumptionSettingsServiceAddress=http://energyconsumptionsettings.api:8080/api/EnergyConsumptionSettings/"
     depends_on:
       - depots.api
       - chargepoints.api
@@ -62,7 +62,20 @@ services:
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
-        
+      
+  chargepoints.grpc:
+    container_name: chargepoints.grpc
+    ports:
+      - "8052:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+    depends_on:
+      - chargingstation_rabbitmq
+      - depots.api
+  
   ocpptags.api:
     container_name: ocpptags.api
     ports:
@@ -75,7 +88,20 @@ services:
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
-        
+  
+  ocpptags.grpc:
+    container_name: ocpptags.grpc
+    ports:
+      - "8053:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+    depends_on:
+        - chargingstation_rabbitmq
+        - depots.api
+  
   connectors.api:
     container_name: connectors.api
     ports:
@@ -88,7 +114,20 @@ services:
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
-        
+  
+  connectors.grpc:
+    container_name: connectors.grpc
+    ports:
+      - "8054:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+    depends_on:
+      - chargingstation_rabbitmq
+      - depots.api
+  
   transactions.api:
     container_name: transactions.api
     ports:
@@ -98,15 +137,33 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
-      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api:8080"
-      - "ApiSettings:ConnectorServiceAddress=http://connectors.api:8080"
-      - "ApiSettings:OcppTagServiceAddress=http://ocpptags.api:8080"
-      - "ApiSettings:ReservationServiceAddress=http://reservations.api:8080"
-      - "ApiSettings:EnergyConsumptionServiceAddress=http://chargingprofiles.api:8080/api/EnergyConsumptionSettings/"
+      - "ApiSettings:EnergyConsumptionSettingsServiceAddress=http://chargingprofiles.api:8080/api/EnergyConsumptionSettings/"
+      - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
+      - "GrpcSettings:OcppTagServiceAddress=http://ocpptags.grpc:8080"
+      - "GrpcSettings:ConnectorServiceAddress=http://connectors.grpc:8080"
+      - "GrpcSettings:ReservationServiceAddress=http://reservations.grpc:8080"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
-        
+  
+  transactions.grpc:
+    container_name: transactions.grpc
+    ports:
+      - "8055:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "GrpcSettings:EnergyConsumptionSettingsServiceAddress=http://energyconsumptionsettings.grpc:8080"
+      - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
+      - "GrpcSettings:OcppTagServiceAddress=http://ocpptags.grpc:8080"
+      - "GrpcSettings:ConnectorServiceAddress=http://connectors.grpc:8080"
+      - "GrpcSettings:ReservationServiceAddress=http://reservations.grpc:8080"
+    depends_on:
+      - chargingstation_rabbitmq
+      - depots.api
+  
   heartbeats.api:
     container_name: heartbeats.api
     ports:
@@ -116,7 +173,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
-      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api:8080"
+      - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
@@ -131,13 +188,27 @@ services:
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ConnectionStrings:HangfireConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-hangfire-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
-      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api:8080"
-      - "ApiSettings:ConnectorServiceAddress=http://connectors.api:8080"
-      - "ApiSettings:OcppTagServiceAddress=http://ocpptags.api:8080"
+      - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
+      - "GrpcSettings:OcppTagServiceAddress=http://ocpptags.grpc:8080"
+      - "GrpcSettings:ConnectorServiceAddress=http://connectors.grpc:8080"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
-        
+  
+  reservations.grpc:
+    container_name: reservations.grpc
+    ports:
+      - "8057:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:HangfireConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-hangfire-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
+      - "GrpcSettings:OcppTagServiceAddress=http://ocpptags.grpc:8080"
+      - "GrpcSettings:ConnectorServiceAddress=http://connectors.grpc:8080"
+  
   chargingprofiles.api:
     container_name: chargingprofiles.api
     ports:
@@ -151,11 +222,43 @@ services:
       - "ApiSettings:TransactionServiceAddress=http://transactions.api:8080"
       - "ApiSettings:DepotServiceAddress=http://depots.api:8080"
       - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api:8080"
+      - "GrpcSettings:ConnectorServiceAddress=http://connectors.grpc:8080"
+      - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
       - chargingstation_redis
-        
+  
+  energyconsumptionsettings.api:
+    container_name: energyconsumptionsettings.api
+    ports:
+      - "8009:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ApiSettings:DepotServiceAddress=http://depots.api:8080"
+      - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
+    depends_on:
+      - chargingstation_rabbitmq
+      - depots.api
+      - chargingstation_redis
+  
+  energyconsumptionsettings.grpc:
+    container_name: energyconsumptionsettings.grpc
+    ports:
+      - "8089:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms-yechu.database.windows.net,1433;Initial Catalog=db-csms-yechu;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ApiSettings:DepotServiceAddress=http://depots.api:8080"
+      - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
+    depends_on:
+      - chargingstation_rabbitmq
+      - depots.api
+      - chargingstation_redis
+  
   chargingstation.websockets:
     container_name: chargingstation.websockets
     ports:

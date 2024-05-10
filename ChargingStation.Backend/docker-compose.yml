@@ -11,70 +11,112 @@ services:
     image: ${DOCKER_REGISTRY-}aggregator
     build:
       context: .
-      dockerfile: API/ChargingStation.Aggregator/Dockerfile
+      dockerfile: Services/Aggregator/Aggregator/Dockerfile
 
   chargingstation.gateway:
     image: ${DOCKER_REGISTRY-}gateway
     build:
       context: .
-      dockerfile: ChargingStation.Gateway/Dockerfile
+      dockerfile: Services/Gateway/ChargingStation.Gateway/Dockerfile
   
   depots.api:
     image: ${DOCKER_REGISTRY-}depotsapi
     build:
       context: .
-      dockerfile: API/ChargingStation.Depots/Dockerfile
+      dockerfile: Services/Depots/ChargingStation.Depots/Dockerfile
       
   chargepoints.api:
     image: ${DOCKER_REGISTRY-}chargepointsapi
     build:
       context: .
-      dockerfile: API/ChargingStation.ChargePoints/Dockerfile
+      dockerfile: Services/ChargePoints/ChargePoints.Api/Dockerfile
+      
+  chargepoints.grpc:
+    image: ${DOCKER_REGISTRY-}chargepointsgrpc
+    build:
+      context: .
+      dockerfile: Services/ChargePoints/ChargePoints.Grpc/Dockerfile
       
   ocpptags.api:
     image: ${DOCKER_REGISTRY-}ocpptagsapi
     build:
       context: .
-      dockerfile: API/ChargingStation.OcppTags/Dockerfile
+      dockerfile: Services/OcppTags/OcppTags.Api/Dockerfile
+      
+  ocpptags.grpc:
+    image: ${DOCKER_REGISTRY-}ocpptagsgrpc
+    build:
+      context: .
+      dockerfile: Services/OcppTags/OcppTags.Grpc/Dockerfile
       
   connectors.api:
     image: ${DOCKER_REGISTRY-}connectorsapi
     build:
       context: .
-      dockerfile: API/ChargingStation.Connectors/Dockerfile
+      dockerfile: Services/Connectors/Connectors.Api/Dockerfile
+      
+  connectors.grpc:
+    image: ${DOCKER_REGISTRY-}connectorsgrpc
+    build:
+      context: .
+      dockerfile: Services/Connectors/Connectors.Grpc/Dockerfile
       
   transactions.api:
     image: ${DOCKER_REGISTRY-}transactionsapi
     build:
       context: .
-      dockerfile: API/ChargingStation.Transactions/Dockerfile
+      dockerfile: Services/Transactions/Transactions.Api/Dockerfile
+      
+  transactions.grpc:
+    image: ${DOCKER_REGISTRY-}transactionsgrpc
+    build:
+      context: .
+      dockerfile: Services/Transactions/Transactions.Grpc/Dockerfile
       
   heartbeats.api:
     image: ${DOCKER_REGISTRY-}heartbeatsapi
     build:
       context: .
-      dockerfile: API/ChargingStation.Heartbeats/Dockerfile
+      dockerfile: Services/Heartbeats/ChargingStation.Heartbeats/Dockerfile
       
   reservations.api:
     image: ${DOCKER_REGISTRY-}reservationsapi
     build:
       context: .
-      dockerfile: API/ChargingStation.Reservations/Dockerfile
+      dockerfile: Services/Reservations/Reservations.Api/Dockerfile
+      
+  reservations.grpc:
+    image: ${DOCKER_REGISTRY-}reservationsgrpc
+    build:
+      context: .
+      dockerfile: Services/Reservations/Reservations.Grpc/Dockerfile
       
   chargingprofiles.api:
     image: ${DOCKER_REGISTRY-}chargingprofilesapi
     build:
       context: .
-      dockerfile: API/ChargingStation.ChargingProfiles/Dockerfile
+      dockerfile: Services/ChargingProfiles/ChargingStation.ChargingProfiles/Dockerfile
+      
+  energyconsumptionsettings.api:
+    image: ${DOCKER_REGISTRY-}energyconsumptionsettingsapi
+    build:
+      context: .
+      dockerfile: Services/EnergyConsumption/EnergyConsumption.Api/Dockerfile
+      
+  energyconsumptionsettings.grpc:
+    image: ${DOCKER_REGISTRY-}energyconsumptionsettingsgrpc
+    build:
+      context: .
+      dockerfile: Services/EnergyConsumption/EnergyConsumption.Grpc/Dockerfile
       
   chargingstation.websockets:
     image: ${DOCKER_REGISTRY-}chargingstationwebsockets
     build:
       context: .
-      dockerfile: API/ChargingStation.WebSockets/Dockerfile
+      dockerfile: Services/WebSockets/ChargingStation.WebSockets/Dockerfile
 
   chargingstation.signalr:
     image: ${DOCKER_REGISTRY-}signalr
     build:
       context: .
-      dockerfile: API/ChargingStation.SignalR/Dockerfile
+      dockerfile: Services/SignalR/ChargingStation.SignalR/Dockerfile

@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "OcppTags.Grpc.Protos";
+
+package ocppTags;
+
+service OcppTagsGrpc {
+  rpc GetByTagId (GetOcppTagByOcppTagIdGrpcRequest) returns (OcppTagGrpcResponse);
+  rpc GetById (GetOcppTagByIdGrpcRequest) returns (OcppTagGrpcResponse);
+}
+
+message GetOcppTagByOcppTagIdGrpcRequest {
+  string ocppTagId = 1;
+}
+
+message GetOcppTagByIdGrpcRequest {
+  string id = 1;
+}
+
+message OcppTagGrpcResponse {
+  string id = 1;
+  string tag_id = 2;
+  google.protobuf.StringValue parent_tag_id = 3;
+  google.protobuf.Timestamp expiry_date = 4;
+  google.protobuf.BoolValue blocked = 5;
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Timestamp updated_at = 7;
+}

@@ -7,11 +7,33 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0"/>
+        <PackageReference Include="Grpc.AspNetCore" Version="2.57.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\Domain\ChargingStation.Common\ChargingStation.Common.csproj" />
+        <ProjectReference Include="..\..\Domain\ChargingStation.Common\ChargingStation.Common.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Protobuf Include="..\..\Services\ChargePoints\ChargePoints.Grpc\Protos\chargepoints.proto" GrpcServices="Client">
+            <Link>Protos\chargepoints.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\..\Services\OcppTags\OcppTags.Grpc\Protos\ocpptags.proto" GrpcServices="Client">
+            <Link>Protos\ocpptags.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\..\Services\Connectors\Connectors.Grpc\Protos\connectors.proto" GrpcServices="Client">
+            <Link>Protos\connectors.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\..\Services\Reservations\Reservations.Grpc\Protos\reservations.proto" GrpcServices="Client">
+            <Link>Protos\reservations.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\..\Services\Transactions\Transactions.Grpc\Protos\transactions.proto" GrpcServices="Client">
+            <Link>Protos\transactions.proto</Link>
+        </Protobuf>
+        <Protobuf Include="..\..\Services\EnergyConsumption\EnergyConsumption.Grpc\Protos\energyConsumption.proto" GrpcServices="Client">
+            <Link>Protos\energyconsumption.proto</Link>
+        </Protobuf>
     </ItemGroup>
 
 </Project>
