@@ -44,7 +44,7 @@ stages:
         displayName: Build and push an image to container registry
         inputs:
           command: buildAndPush
-          repository: $(imageRepository)
+          repository: ${{ project.imageName }}
           dockerfile: ${{ project.path }}/Dockerfile
           containerRegistry: $(dockerRegistryServiceConnection)
           buildContext: $(dockerBuildContext)
