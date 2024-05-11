@@ -8,6 +8,13 @@ trigger:
 resources:
 - repo: self
 
+parameters:
+- name: 'projectsToBuild'
+  type: object
+  default:
+    - path: "$(Build.SourcesDirectory)/ChargingStation.Backend/Services/Depots/ChargingStation.Depots"
+      imageName: "depotsapi"
+
 variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '71b76521-feff-48e9-aef4-f0dd85171cdf'
@@ -16,26 +23,26 @@ variables:
   dockerBuildContext: '$(Build.SourcesDirectory)/ChargingStation.Backend'
   dockerfilePath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Services/Depots/ChargingStation.Depots/Dockerfile'
   tag: '$(Build.BuildId)'
-
   # Agent VM image name
-  vmImageName: 'ubuntu-latest'
+  vmImageName: 'ubuntu-latest'    
 
 stages:
 - stage: Build
   displayName: Build and push stage
   jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-    - task: Docker@2
-      displayName: Build and push an image to container registry
-      inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        buildContext: $(dockerBuildContext)
-        tags: |
-          $(tag)
+  - ${{ each project in parameters.projectsToBuild }}:
+    - job: 'Build_${{ project.imageName }}'
+      displayName: Build and push image into ACR
+      pool:
+        vmImage: $(vmImageName)
+      steps:
+      - task: Docker@2
+        displayName: Build and push an image to container registry
+        inputs:
+          command: buildAndPush
+          repository: $(imageRepository)
+          dockerfile: ${{ project.path }}/Dockerfile
+          containerRegistry: $(dockerRegistryServiceConnection)
+          buildContext: $(dockerBuildContext)
+          tags: |
+            $(tag)
