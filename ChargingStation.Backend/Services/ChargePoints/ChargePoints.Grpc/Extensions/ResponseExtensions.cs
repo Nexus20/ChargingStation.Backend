@@ -8,27 +8,26 @@ public static class ResponseExtensions
 {
     public static ChargePointGrpcResponse ToGrpcResponse(this ChargePointResponse response)
     {
-        return new ChargePointGrpcResponse
-        {
-            Id = response.Id.ToString(),
-            DepotId = response.DepotId.ToString(),
-            Description = response.Description,
-            Iccid = response.Iccid,
-            Imsi = response.Imsi,
-            FirmwareVersion = response.FirmwareVersion,
-            FirmwareUpdateTimestamp = response.FirmwareUpdateTimestamp.HasValue ? Timestamp.FromDateTime(DateTime.SpecifyKind(response.FirmwareUpdateTimestamp.Value, DateTimeKind.Utc)) : null,
-            ChargePointVendor = response.ChargePointVendor,
-            ChargePointModel = response.ChargePointModel,
-            ChargePointSerialNumber = response.ChargePointSerialNumber,
-            ChargeBoxSerialNumber = response.ChargeBoxSerialNumber,
-            MeterType = response.MeterType,
-            MeterSerialNumber = response.MeterSerialNumber,
-            RegistrationStatus = response.RegistrationStatus,
-            OcppProtocol = response.OcppProtocol,
-            DiagnosticsTimestamp = response.DiagnosticsTimestamp.HasValue ? Timestamp.FromDateTime(DateTime.SpecifyKind(response.DiagnosticsTimestamp.Value, DateTimeKind.Utc)) : null,
-            LastHeartbeat = response.LastHeartbeat.HasValue ? Timestamp.FromDateTime(DateTime.SpecifyKind(response.LastHeartbeat.Value, DateTimeKind.Utc)) : null,
-            CreatedAt = Timestamp.FromDateTime(DateTime.SpecifyKind(response.CreatedAt, DateTimeKind.Utc)),
-            UpdatedAt = response.UpdatedAt.HasValue ? Timestamp.FromDateTime(DateTime.SpecifyKind(response.UpdatedAt.Value, DateTimeKind.Utc)) : null
-        };
+        var grpcResponse = new ChargePointGrpcResponse();
+        grpcResponse.Id = response.Id.ToString();
+        grpcResponse.DepotId = response.DepotId.ToString();
+        grpcResponse.Description = response.Description;
+        grpcResponse.Iccid = response.Iccid;
+        grpcResponse.Imsi = response.Imsi;
+        grpcResponse.FirmwareVersion = response.FirmwareVersion;
+        grpcResponse.FirmwareUpdateTimestamp = response.FirmwareUpdateTimestamp.HasValue ? Timestamp.FromDateTime(DateTime.SpecifyKind(response.FirmwareUpdateTimestamp.Value, DateTimeKind.Utc)) : null;
+        grpcResponse.ChargePointVendor = response.ChargePointVendor;
+        grpcResponse.ChargePointModel = response.ChargePointModel;
+        grpcResponse.ChargePointSerialNumber = response.ChargePointSerialNumber;
+        grpcResponse.ChargeBoxSerialNumber = response.ChargeBoxSerialNumber;
+        grpcResponse.MeterType = response.MeterType;
+        grpcResponse.MeterSerialNumber = response.MeterSerialNumber;
+        grpcResponse.RegistrationStatus = response.RegistrationStatus;
+        grpcResponse.OcppProtocol = response.OcppProtocol;
+        grpcResponse.DiagnosticsTimestamp = response.DiagnosticsTimestamp.HasValue ? Timestamp.FromDateTime(DateTime.SpecifyKind(response.DiagnosticsTimestamp.Value, DateTimeKind.Utc)) : null;
+        grpcResponse.LastHeartbeat = response.LastHeartbeat.HasValue ? Timestamp.FromDateTime(DateTime.SpecifyKind(response.LastHeartbeat.Value, DateTimeKind.Utc)) : null;
+        grpcResponse.CreatedAt = Timestamp.FromDateTime(DateTime.SpecifyKind(response.CreatedAt, DateTimeKind.Utc));
+        grpcResponse.UpdatedAt = response.UpdatedAt.HasValue ? Timestamp.FromDateTime(DateTime.SpecifyKind(response.UpdatedAt.Value, DateTimeKind.Utc)) : null;
+        return grpcResponse;
     }
 }
