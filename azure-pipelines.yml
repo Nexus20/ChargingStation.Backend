@@ -67,13 +67,14 @@ stages:
           else
             echo "No changes detected in ${{ project.imageName }}, image build will be skipped..."
           fi
+        name: '${{ project.imageName }}_Changes'
 
     - job: 'Build_${{ project.imageName }}'
       displayName: 'Build and push image ${{ project.imageName }} into ACR'
 
       ${{ if not(parameters.forceBuild) }}:
         dependsOn: 'Build_preconditions_${{ project.imageName }}'
-        condition: eq(dependencies.Build_preconditions_${{ project.imageName }}.outputs['Build_preconditions_${{ project.imageName }}.microserviceProjectChanged'], 'true')
+        condition: eq(dependencies.Build_preconditions_${{ project.imageName }}.outputs['${{ project.imageName }}_Changes.microserviceProjectChanged'], 'true')
       
       steps:
 
