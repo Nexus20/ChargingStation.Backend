@@ -34,8 +34,8 @@ message ChargePointGrpcResponses {
 message ChargePointGrpcResponse {
   string id = 1;
   string depot_id = 2;
-  string ocpp_protocol = 3;
-  string registration_status = 4;
+  google.protobuf.StringValue ocpp_protocol = 3;
+  google.protobuf.StringValue registration_status = 4;
   google.protobuf.StringValue charge_point_vendor = 5;
   google.protobuf.StringValue charge_point_model = 6;
   google.protobuf.StringValue charge_point_serial_number = 7;
