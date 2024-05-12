@@ -76,7 +76,7 @@ stages:
       displayName: 'Build and push image ${{ project.imageName }} into ACR'
 
       ${{ if not(parameters.forceBuild) }}:
-        dependsOn: 'Build_preconditions_${{ project.imageName }}'
+        dependsOn: 'DetectChanges'
         condition: eq(dependencies.DetectChanges.outputs['MicroserviceChanges.MicroserviceProjectChanged'], 'true')
       
       steps:
