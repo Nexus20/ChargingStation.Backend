@@ -54,6 +54,10 @@ stages:
       pool:
         vmImage: $(vmImageName)
       steps:
+
+      - checkout: self
+        fetchDepth: 2
+
       - bash: |
           # Get microservice project changes
           microserviceProjectChanges=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ project.path }}")
