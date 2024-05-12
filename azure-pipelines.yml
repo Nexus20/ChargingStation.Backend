@@ -42,7 +42,9 @@ variables:
   dockerBuildContext: '$(Build.SourcesDirectory)/ChargingStation.Backend'
   tag: '$(Build.BuildId)'
   # Agent VM image name
-  vmImageName: 'ubuntu-latest'    
+  vmImageName: 'ubuntu-latest'
+  infrastructureProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Infrastructure'
+  domainProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Domain'
 
 pool:
   vmImage: $(vmImageName)
@@ -71,13 +73,29 @@ stages:
             echo "No changes detected in ${{ project.imageName }}, image build will be skipped..."
           fi
         name: 'MicroserviceChanges'
+        displayName: 'Detecting changes in ${{ project.imageName }}'
+
+      - bash: |
+          # Get common projects changes
+          InfrastructurePorjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ infrastructureProjectsPath }}")
+          DomainProjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ domainProjectsPath }}")
+
+          if [ ! -z "$InfrastructurePorjectsChanged" ] || [ ! -z "$DomainProjectsChanged" ]; then
+            echo "##vso[task.setvariable variable=CommonProjectsChanged;isOutput=true]true"
+            echo "Changes detected in common projects, ${{ project.imageName }} image will be built..."
+          else
+            echo "##vso[task.setvariable variable=CommonProjectsChanged;isOutput=true]false"
+            echo "No changes detected in common projects, ${{ project.imageName }} image build will be skipped..."
+          fi
+        name: 'CommonProjectsChanges'
+        displayName: 'Detecting changes in common projects'
 
     - job: 'Build_${{ project.imageName }}'
       displayName: 'Build and push image ${{ project.imageName }} into ACR'
 
       ${{ if not(parameters.forceBuild) }}:
         dependsOn: 'DetectChanges'
-        condition: eq(dependencies.DetectChanges.outputs['MicroserviceChanges.MicroserviceProjectChanged'], 'true')
+        condition: or(eq(dependencies.DetectChanges.outputs['MicroserviceChanges.MicroserviceProjectChanged'], 'true'), eq(dependencies.DetectChanges.outputs['CommonProjectsChanges.CommonProjectsChanged'], 'true'))
       
       steps:
 
