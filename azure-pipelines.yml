@@ -49,8 +49,8 @@ stages:
   displayName: Build and push stage
   jobs:
   - ${{ each project in parameters.projectsToBuild }}:
-    - job: 'Build_${{ project.imageName }}'
-      displayName: 'Build and push image ${{ project.imageName }} into ACR'
+    - job: 'Build_preconditions_${{ project.imageName }}'
+      displayName: 'Build preconditions for ${{ project.imageName }}'
       pool:
         vmImage: $(vmImageName)
       steps:
@@ -67,6 +67,19 @@ stages:
           else
             echo "No changes detected in ${{ project.imageName }}, image build will be skipped..."
           fi
+
+    - job: 'Build_${{ project.imageName }}'
+      displayName: 'Build and push image ${{ project.imageName }} into ACR'
+
+      ${{ if not(parameters.forceBuild) }}:
+        dependsOn: 'Build_preconditions_${{ project.imageName }}'
+        condition: eq(dependencies.Build_preconditions_${{ project.imageName }}.outputs['Build_preconditions_${{ project.imageName }}.microserviceProjectChanged'], 'true')
+      
+      steps:
+
+      - checkout: self
+        fetchDepth: 2
+
       - task: Docker@2
         displayName: Build and push an image to container registry
         condition: eq(variables['microserviceProjectChanged'], $true)
