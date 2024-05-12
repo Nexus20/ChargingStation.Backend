@@ -9,6 +9,9 @@ resources:
 - repo: self
 
 parameters:
+- name: 'forceBuild'
+  type: boolean
+  default: false
 - name: 'projectsToBuild'
   type: object
   default:
