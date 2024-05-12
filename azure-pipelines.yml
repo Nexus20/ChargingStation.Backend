@@ -12,12 +12,24 @@ parameters:
 - name: 'projectsToBuild'
   type: object
   default:
-    - path: "$(Build.SourcesDirectory)/ChargingStation.Backend/Services/Depots/ChargingStation.Depots"
+    - path: "Services/Depots/ChargingStation.Depots"
       imageName: "depotsapi"
-    - path: "$(Build.SourcesDirectory)/ChargingStation.Backend/Services/Aggregator/Aggregator"
+    - path: "Services/Aggregator/Aggregator"
       imageName: "aggregator"
-    - path: "$(Build.SourcesDirectory)/ChargingStation.Backend/Services/Gateway/ChargingStation.Gateway"
+    - path: "Services/Gateway/ChargingStation.Gateway"
       imageName: "gateway"
+    - path: "Services/ChargePoints/ChargePoints.Api"
+      imageName: "chargepointsapi"
+    - path: "Services/ChargePoints/ChargePoints.Grpc"
+      imageName: "chargepointsgrpc"
+    - path: "Services/Connectors/Connectors.Api"
+      imageName: "connectorsapi"
+    - path: "Services/Connectors/Connectors.Grpc"
+      imageName: "connectorsgrpc"
+    - path: "Services/EnergyConsumption/EnergyConsumption.Api"
+      imageName: "energyconsumptionapi"
+    - path: "Services/EnergyConsumption/EnergyConsumption.Grpc"
+      imageName: "energyconsumptiongrpc"
 
 variables:
   # Container registry service connection established during pipeline creation
@@ -25,7 +37,6 @@ variables:
   imageRepository: 'depotsapi'
   containerRegistry: 'yechuacr2508.azurecr.io'
   dockerBuildContext: '$(Build.SourcesDirectory)/ChargingStation.Backend'
-  dockerfilePath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Services/Depots/ChargingStation.Depots/Dockerfile'
   tag: '$(Build.BuildId)'
   # Agent VM image name
   vmImageName: 'ubuntu-latest'    
@@ -45,7 +56,7 @@ stages:
         inputs:
           command: buildAndPush
           repository: ${{ project.imageName }}
-          dockerfile: ${{ project.path }}/Dockerfile
+          dockerfile: "$(Build.SourcesDirectory)/ChargingStation.Backend/${{ project.path }}/Dockerfile
           containerRegistry: $(dockerRegistryServiceConnection)
           buildContext: $(dockerBuildContext)
           tags: |
