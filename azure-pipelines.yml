@@ -56,7 +56,7 @@ stages:
         inputs:
           command: buildAndPush
           repository: ${{ project.imageName }}
-          dockerfile: "$(Build.SourcesDirectory)/ChargingStation.Backend/${{ project.path }}/Dockerfile
+          dockerfile: $(Build.SourcesDirectory)/ChargingStation.Backend/${{ project.path }}/Dockerfile
           containerRegistry: $(dockerRegistryServiceConnection)
           buildContext: $(dockerBuildContext)
           tags: |
