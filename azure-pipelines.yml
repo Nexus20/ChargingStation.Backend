@@ -47,10 +47,19 @@ stages:
   jobs:
   - ${{ each project in parameters.projectsToBuild }}:
     - job: 'Build_${{ project.imageName }}'
-      displayName: Build and push image into ACR
+      displayName: 'Build and push image ${{ project.imageName }} into ACR'
       pool:
         vmImage: $(vmImageName)
       steps:
+      - bash: |
+          # Get microservice project changes
+          microserviceProjectChanges=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ project.path }}")
+          if [ ! -z "$microserviceProjectChanges" ]; then
+            echo "Changes detected in ${{ project.imageName }}, building image..."
+            # Здесь команды для сборки и пуша Docker образа
+          else
+            echo "No changes detected in ${{ project.imageName }}, skipping..."
+          fi
       - task: Docker@2
         displayName: Build and push an image to container registry
         inputs:
