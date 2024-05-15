@@ -5,6 +5,7 @@ namespace ChargingStation.Common.Models.ChargePoints.Responses;
 public class ChargePointResponse : BaseResponse, ITimeMarkable
 {
     public required Guid DepotId { get; set; }
+    public required string Name { get; set; }
     public string? OcppProtocol { get; set; }
     public string? RegistrationStatus { get; set; }
     public string? ChargePointVendor { get; set; }

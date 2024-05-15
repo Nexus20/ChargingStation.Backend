@@ -3,6 +3,7 @@ namespace ChargePoints.Application.Models.Requests;
 public class UpdateChargePointRequest
 {
     public Guid Id { get; set; }
+    public required string Name { get; set; }
     public required Guid DepotId { get; set; }
     public required string OcppProtocol { get; set; }
     public string RegistrationStatus { get; set; } = "Accepted";

@@ -10,6 +10,7 @@ public static class ResponseExtensions
     {
         var grpcResponse = new ChargePointGrpcResponse();
         grpcResponse.Id = response.Id.ToString();
+        grpcResponse.Name = response.Name;
         grpcResponse.DepotId = response.DepotId.ToString();
         grpcResponse.Description = response.Description;
         grpcResponse.Iccid = response.Iccid;
