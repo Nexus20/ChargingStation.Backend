@@ -47,6 +47,7 @@ public class BootNotificationConsumer : IConsumer<IntegrationOcppMessage<BootNot
             MeterType = incomingRequest.MeterType,
             MeterSerialNumber = incomingRequest.MeterSerialNumber,
             ChargePointSerialNumber = incomingRequest.ChargePointSerialNumber,
+            Name = string.IsNullOrEmpty(chargePoint.Name) ? $"chargePoint{chargePoint.Id}" : chargePoint.Name
         };
         
         await _chargePointService.UpdateAsync(updateRequest);

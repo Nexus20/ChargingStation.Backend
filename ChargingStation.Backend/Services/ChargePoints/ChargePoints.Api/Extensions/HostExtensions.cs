@@ -20,7 +20,7 @@ public static class HostExtensions
         Randomizer.Seed = new Random(123);
         
         var chargePoints = new Faker<ChargePoint>()
-            .RuleFor(cp => cp.Name, f => $"CP {f.IndexVariable}")
+            .RuleFor(cp => cp.Name, f => $"CP {f.IndexGlobal}")
             .RuleFor(d => d.DepotId, f => f.PickRandom(depotsIds))
             .RuleFor(d => d.CreatedAt, f => DateTime.Now)
             .RuleFor(d => d.UpdatedAt, f => null)

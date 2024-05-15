@@ -59,6 +59,7 @@ public static class GrpcResponseExtensions
         return new ChargePointResponse
         {
             Id = Guid.Parse(grpcResponse.Id),
+            Name = grpcResponse.Name,
             DepotId = Guid.Parse(grpcResponse.DepotId),
             Description = grpcResponse.Description,
             Iccid = grpcResponse.Iccid,
@@ -76,7 +77,7 @@ public static class GrpcResponseExtensions
             DiagnosticsTimestamp = grpcResponse.DiagnosticsTimestamp?.ToDateTime(),
             LastHeartbeat = grpcResponse.LastHeartbeat?.ToDateTime(),
             CreatedAt = grpcResponse.CreatedAt.ToDateTime(),
-            UpdatedAt = grpcResponse.UpdatedAt?.ToDateTime()
+            UpdatedAt = grpcResponse.UpdatedAt?.ToDateTime(),
         };
     }
     

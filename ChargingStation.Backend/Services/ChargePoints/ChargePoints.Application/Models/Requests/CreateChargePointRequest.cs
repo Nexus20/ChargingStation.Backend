@@ -3,6 +3,7 @@
 public class CreateChargePointRequest
 {
     public required Guid DepotId { get; set; }
+    public required string Name { get; set; }
     public string? OcppProtocol { get; set; }
     public string? ChargePointVendor { get; set; }
     public string? ChargePointModel { get; set; }
