@@ -8,34 +8,108 @@ trigger:
 resources:
 - repo: self
 
+parameters:
+- name: 'forceBuild'
+  type: boolean
+  default: false
+- name: 'projectsToBuild'
+  type: object
+  default:
+    - path: "Services/Depots/ChargingStation.Depots"
+      imageName: "depotsapi"
+    - path: "Services/Aggregator/Aggregator"
+      imageName: "aggregator"
+    - path: "Services/Gateway/ChargingStation.Gateway"
+      imageName: "gateway"
+    - path: "Services/ChargePoints/ChargePoints.Api"
+      imageName: "chargepointsapi"
+    - path: "Services/ChargePoints/ChargePoints.Grpc"
+      imageName: "chargepointsgrpc"
+    - path: "Services/Connectors/Connectors.Api"
+      imageName: "connectorsapi"
+    - path: "Services/Connectors/Connectors.Grpc"
+      imageName: "connectorsgrpc"
+    - path: "Services/EnergyConsumption/EnergyConsumption.Api"
+      imageName: "energyconsumptionapi"
+    - path: "Services/EnergyConsumption/EnergyConsumption.Grpc"
+      imageName: "energyconsumptiongrpc"
+
 variables:
   # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '71b76521-feff-48e9-aef4-f0dd85171cdf'
   imageRepository: 'depotsapi'
   containerRegistry: 'yechuacr2508.azurecr.io'
   dockerBuildContext: '$(Build.SourcesDirectory)/ChargingStation.Backend'
-  dockerfilePath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Services/Depots/ChargingStation.Depots/Dockerfile'
   tag: '$(Build.BuildId)'
-
   # Agent VM image name
   vmImageName: 'ubuntu-latest'
+  infrastructureProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Infrastructure'
+  domainProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Domain'
+
+pool:
+  vmImage: $(vmImageName)
 
 stages:
-- stage: Build
-  displayName: Build and push stage
-  jobs:
-  - job: Build
-    displayName: Build
-    pool:
-      vmImage: $(vmImageName)
-    steps:
-    - task: Docker@2
-      displayName: Build and push an image to container registry
-      inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
-        containerRegistry: $(dockerRegistryServiceConnection)
-        buildContext: $(dockerBuildContext)
-        tags: |
-          $(tag)
+- ${{ each project in parameters.projectsToBuild }}:
+  - stage: 'Build_${{project.imageName}}'
+    displayName: 'Build and push ${{project.imageName}}'
+    jobs:
+    - job: 'DetectChanges'
+      displayName: 'Detecting changes for ${{ project.imageName }}'
+      
+      steps:
+
+      - checkout: self
+        fetchDepth: 2
+
+      - bash: |
+          # Get microservice project changes
+          MicroserviceProjectChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ project.path }}")
+          if [ ! -z "$MicroserviceProjectChanged" ]; then
+            echo "##vso[task.setvariable variable=MicroserviceProjectChanged;isOutput=true]true"
+            echo "Changes detected in ${{ project.imageName }}, image will be built..."
+          else
+            echo "##vso[task.setvariable variable=MicroserviceProjectChanged;isOutput=true]false"
+            echo "No changes detected in ${{ project.imageName }}, image build will be skipped..."
+          fi
+        name: 'MicroserviceChanges'
+        displayName: 'Detecting changes in ${{ project.imageName }}'
+
+      - bash: |
+          # Get common projects changes
+          InfrastructurePorjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ infrastructureProjectsPath }}")
+          DomainProjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ domainProjectsPath }}")
+
+          if [ ! -z "$InfrastructurePorjectsChanged" ] || [ ! -z "$DomainProjectsChanged" ]; then
+            echo "##vso[task.setvariable variable=CommonProjectsChanged;isOutput=true]true"
+            echo "Changes detected in common projects, ${{ project.imageName }} image will be built..."
+          else
+            echo "##vso[task.setvariable variable=CommonProjectsChanged;isOutput=true]false"
+            echo "No changes detected in common projects, ${{ project.imageName }} image build will be skipped..."
+          fi
+        name: 'CommonProjectsChanges'
+        displayName: 'Detecting changes in common projects'
+
+    - job: 'Build_${{ project.imageName }}'
+      displayName: 'Build and push image ${{ project.imageName }} into ACR'
+
+      ${{ if not(parameters.forceBuild) }}:
+        dependsOn: 'DetectChanges'
+        condition: or(eq(dependencies.DetectChanges.outputs['MicroserviceChanges.MicroserviceProjectChanged'], 'true'), eq(dependencies.DetectChanges.outputs['CommonProjectsChanges.CommonProjectsChanged'], 'true'))
+      
+      steps:
+
+      - checkout: self
+        fetchDepth: 2
+
+      - task: Docker@2
+        displayName: Build and push an image to container registry
+        inputs:
+          command: buildAndPush
+          repository: ${{ project.imageName }}
+          dockerfile: $(Build.SourcesDirectory)/ChargingStation.Backend/${{ project.path }}/Dockerfile
+          containerRegistry: $(dockerRegistryServiceConnection)
+          buildContext: $(dockerBuildContext)
+          tags: |
+            $(tag)
+    
