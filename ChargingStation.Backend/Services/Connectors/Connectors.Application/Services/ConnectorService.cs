@@ -160,6 +160,9 @@ public class ConnectorService : IConnectorService
             
             var lastStatus = x.ConnectorStatuses.OrderByDescending(cs => cs.StatusUpdatedTimestamp).First();
             response.CurrentStatus = _mapper.Map<ConnectorStatusResponse>(lastStatus);
+            
+            if(x.ConnectorChargingProfiles is not null && x.ConnectorChargingProfiles.Count > 0)
+                response.ChargingProfilesIds = x.ConnectorChargingProfiles.Select(cp => cp.Id).ToList();
 
             return response;
         }).ToList();
