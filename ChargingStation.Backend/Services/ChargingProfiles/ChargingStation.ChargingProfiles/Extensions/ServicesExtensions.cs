@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using ChargingStation.CacheManager.Extensions;
 using ChargingStation.ChargingProfiles.EventConsumers;
-using ChargingStation.ChargingProfiles.Services.ChargingProfiles;
+using ChargingStation.ChargingProfiles.Services;
 using ChargingStation.InternalCommunication.Extensions;
 using MassTransit;
 

@@ -1,6 +1,6 @@
 ﻿using ChargingStation.ChargingProfiles.Models.Requests;
 using ChargingStation.ChargingProfiles.Models.Responses;
-using ChargingStation.ChargingProfiles.Services.ChargingProfiles;
+using ChargingStation.ChargingProfiles.Services;
 using ChargingStation.Common.Models.General;
 using Microsoft.AspNetCore.Mvc;
 
