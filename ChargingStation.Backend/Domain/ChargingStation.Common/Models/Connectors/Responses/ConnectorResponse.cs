@@ -10,4 +10,5 @@ public class ConnectorResponse : ITimeMarkable
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public ConnectorStatusResponse? CurrentStatus { get; set; }
+    public List<Guid>? ChargingProfilesIds { get; set; } 
 }
