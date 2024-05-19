@@ -1,19 +1,21 @@
+using ChargingStation.Infrastructure;
 using UserManagement.API.Extensions;
 
 // Add services to the container.
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddUserManagementServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddUserManagementServices();
 
 // Configure the HTTP request pipeline.
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Local"))
 {
     app.UseSwagger();
     app.UseSwaggerUI();
@@ -25,5 +27,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.SeedDatabase();
+await app.SeedDatabaseAsync();
 app.Run();

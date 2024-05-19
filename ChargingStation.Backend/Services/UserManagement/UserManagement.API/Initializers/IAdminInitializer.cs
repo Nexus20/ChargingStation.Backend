@@ -2,6 +2,6 @@
 
 public interface IAdminInitializer
 {
-    Task Initialize();
+    Task InitializeAsync();
 }
 

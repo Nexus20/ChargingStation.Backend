@@ -19,18 +19,32 @@ public class AdminInitializer : IAdminInitializer
         _roleManager = roleManager;
     }
 
-    public async Task Initialize()
+    public async Task InitializeAsync()
     {
-        if (!_roleManager.RoleExistsAsync(CustomRoles.SuperAdministrator).GetAwaiter().GetResult())
+        if (!await _roleManager.RoleExistsAsync(CustomRoles.SuperAdministrator))
         {
-            await _roleManager.CreateAsync(new InfrastructureRole(CustomRoles.SuperAdministrator));
-            await _roleManager.CreateAsync(new InfrastructureRole(CustomRoles.Administrator));
+            await InitializeRolesAsync();
         }
-        else
-        {
+        
+        if(await _userManager.FindByEmailAsync("admin@gmail.com") is not null)
             return;
-        }
 
+        await using var transaction = await _db.Database.BeginTransactionAsync();
+        
+        try
+        {
+            await InitializeAdminAsync();
+            await transaction.CommitAsync();
+        }
+        catch (Exception e)
+        {
+            await transaction.RollbackAsync();
+            throw new Exception(e.Message);
+        }
+    }
+    
+    private async Task InitializeAdminAsync()
+    {
         var id = Guid.NewGuid();
         await _db.Users.AddAsync(new ApplicationUser()
         {
@@ -42,6 +56,7 @@ public class AdminInitializer : IAdminInitializer
 
         await _userManager.CreateAsync(new InfrastructureUser
         {
+            Id = id.ToString(),
             ApplicationUserId = id,
             UserName = "admin@gmail.com",
             Email = "admin@gmail.com",
@@ -54,8 +69,25 @@ public class AdminInitializer : IAdminInitializer
             CustomRoles.SuperAdministrator,
             CustomRoles.Administrator
         });
+    }
+    
+    private async Task InitializeRolesAsync()
+    {
+        var roles = new List<InfrastructureRole>
+        {
+            new(CustomRoles.SuperAdministrator),
+            new(CustomRoles.Administrator),
+            new(CustomRoles.Employee),
+            new(CustomRoles.Driver)
+        };
 
-        await _db.SaveChangesAsync();
+        foreach (var role in roles)
+        {
+            if (await _roleManager.RoleExistsAsync(role.Name!))
+                continue;
+
+            await _roleManager.CreateAsync(role);
+        }
     }
 }
 
