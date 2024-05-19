@@ -6,6 +6,8 @@ namespace ChargingStation.Domain.Entities;
 
 public class ChargingProfile : Entity, ITimeMarkable
 {
+    public required string Name { get; set; }
+    
     public int ChargingProfileId { get; set; }
 
     public int StackLevel { get; set; }

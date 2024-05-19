@@ -5,6 +5,7 @@ namespace ChargingStation.ChargingProfiles.Models.Responses;
 
 public class ChargingProfileResponse : BaseResponse, ITimeMarkable
 {
+    public required string Name { get; set; }
     public int ChargingProfileId { get; set; }
 
     public int StackLevel { get; set; }

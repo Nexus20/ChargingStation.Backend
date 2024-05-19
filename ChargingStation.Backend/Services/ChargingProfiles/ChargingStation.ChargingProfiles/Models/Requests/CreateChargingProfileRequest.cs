@@ -4,6 +4,7 @@ namespace ChargingStation.ChargingProfiles.Models.Requests;
 
 public class CreateChargingProfileRequest
 {
+    public required string Name { get; set; }
     public int StackLevel { get; set; }
     
     public DateTime ValidFrom { get; set; }

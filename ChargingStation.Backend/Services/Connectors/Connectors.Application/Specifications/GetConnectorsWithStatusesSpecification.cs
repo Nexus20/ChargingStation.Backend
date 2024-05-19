@@ -8,6 +8,7 @@ public class GetConnectorsWithStatusesSpecification : Specification<Connector>
     public GetConnectorsWithStatusesSpecification()
     {
         AddInclude(nameof(Connector.ConnectorStatuses));
+        AddInclude(nameof(Connector.ConnectorChargingProfiles));
     }
     
     public GetConnectorsWithStatusesSpecification(ICollection<Guid> chargePointsIds) : this()

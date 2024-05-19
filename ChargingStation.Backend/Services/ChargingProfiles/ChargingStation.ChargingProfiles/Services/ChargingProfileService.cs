@@ -19,7 +19,7 @@ using ChargingScheduleChargingRateUnit = ChargingStation.Common.Messages_OCPP16.
 using ChargingSchedulePeriod = ChargingStation.Common.Messages_OCPP16.Responses.Enums.ChargingSchedulePeriod;
 using SetChargingProfileRequest = ChargingStation.Common.Messages_OCPP16.Requests.SetChargingProfileRequest;
 
-namespace ChargingStation.ChargingProfiles.Services.ChargingProfiles;
+namespace ChargingStation.ChargingProfiles.Services;
 
 public class ChargingProfileService : IChargingProfileService
 {
