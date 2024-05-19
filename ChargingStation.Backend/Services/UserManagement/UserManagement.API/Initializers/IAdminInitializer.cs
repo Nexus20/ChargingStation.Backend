@@ -1,4 +1,4 @@
-﻿namespace UserManagement.API.Initializer;
+﻿namespace UserManagement.API.Initializers;
 
 public interface IAdminInitializer
 {

@@ -12,6 +12,12 @@ public class InfrastructureUserConfiguration : IEntityTypeConfiguration<Infrastr
             .WithOne(x => x.User)
             .HasForeignKey(x => x.UserId)
             .IsRequired();
+        
+        builder.HasOne(x => x.ApplicationUser)
+            .WithOne()
+            .HasForeignKey<InfrastructureUser>(x => x.ApplicationUserId)
+            .IsRequired()
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }
 

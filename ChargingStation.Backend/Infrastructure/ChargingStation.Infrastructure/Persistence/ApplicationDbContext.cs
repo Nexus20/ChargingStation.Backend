@@ -2,6 +2,7 @@
 using ChargingStation.Common.Models.Abstract;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -9,7 +10,8 @@ using TimeZone = ChargingStation.Domain.Entities.TimeZone;
 
 namespace ChargingStation.Infrastructure.Persistence;
 
-public class ApplicationDbContext : IdentityDbContext<InfrastructureUser, InfrastructureRole, string> {
+public class ApplicationDbContext : IdentityDbContext<InfrastructureUser, InfrastructureRole, string, IdentityUserClaim<string>, InfrastructureUserRole,
+    IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>> {
 
     public required DbSet<Depot> Depots { get; set; } 
     public required DbSet<ChargePoint> ChargePoints { get; set; }

@@ -2,7 +2,7 @@
 using ChargingStation.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 
-namespace UserManagement.API.Initializer;
+namespace UserManagement.API.Initializers;
 
 public class RoleInitializer : IRoleInitializer
 {

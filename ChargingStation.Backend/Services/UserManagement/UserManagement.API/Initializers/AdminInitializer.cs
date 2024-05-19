@@ -4,7 +4,7 @@ using ChargingStation.Infrastructure.Identity;
 using ChargingStation.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Identity;
 
-namespace UserManagement.API.Initializer;
+namespace UserManagement.API.Initializers;
 
 public class AdminInitializer : IAdminInitializer
 {

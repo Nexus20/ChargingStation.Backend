@@ -1,4 +1,4 @@
-﻿using UserManagement.API.Initializer;
+﻿using UserManagement.API.Initializers;
 
 namespace UserManagement.API.Extensions;
 
