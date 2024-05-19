@@ -6,6 +6,7 @@ using ChargingStation.InternalCommunication.Extensions;
 // Add services to the container.
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddHeartbeatServices(builder.Configuration);

@@ -1,0 +1,72 @@
+﻿@page "/chargepoints"
+@using ChargingStation.Common.Models.ChargePoints.Responses
+@using ChargingStation.Common.Models.General
+@using ChargePointEmulator.Application.Services
+@using ChargePointEmulator.Application.Models
+@using ChargingStation.Common.Models.General.Requests
+
+@inject IChargePointService ChargePointService
+
+<PageTitle>Charge points</PageTitle>
+
+<h1>Charge points</h1>
+
+@if (!_chargePoints.Collection.Any())
+{
+    
+}
+else
+{
+    <div class="row">
+        <div class="col-12">
+            <input type="number" value="@_elementsCount" @onchange="OnElementsCountChangeAsync">
+        </div>
+    </div>
+    
+    <div class="row">
+    @foreach (var chargePoint in _chargePoints.Collection)
+    {
+        <div class="col-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@chargePoint.Id</h5>
+                    <p class="card-text">@chargePoint.CreatedAt</p>
+                    <p class="card-text">@chargePoint.UpdatedAt</p>
+                    <div>
+                        <a href="/chargepoint/@chargePoint.Id" class="btn btn-primary">Details</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    </div>
+}
+
+@code {
+    private IPagedCollection<ChargePointSimulatorResponse> _chargePoints = new PagedCollection<ChargePointSimulatorResponse>();
+    private int _elementsCount;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _chargePoints = await ChargePointService.GetAsync(new GetChargePointRequest());
+        _elementsCount = _chargePoints.PageSize;
+    }
+
+    private async Task OnElementsCountChangeAsync(ChangeEventArgs arg)
+    {
+        if (arg.Value == null || !int.TryParse(arg.Value.ToString(), out var value))
+            return;
+
+        _elementsCount = value;
+
+        var request = new GetChargePointRequest()
+        {
+            PagePredicate = new PagePredicate()
+            {
+                PageSize = _elementsCount
+            }
+        };
+        
+        _chargePoints = await ChargePointService.GetAsync(request);
+    }
+}

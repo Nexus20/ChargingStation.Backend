@@ -3,6 +3,7 @@ using Connectors.Grpc.Services;
 using ChargingStation.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddConnectorGrpcServices(builder.Configuration);

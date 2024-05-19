@@ -3,6 +3,7 @@ using Connectors.Api.Middlewares;
 using ChargingStation.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 // Add services to the container.
 builder.Services.AddInfrastructureServices(builder.Configuration);

@@ -3,6 +3,7 @@ using OcppTags.Grpc.Extensions;
 using OcppTags.Grpc.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddOcppTagGrpcServices(builder.Configuration);

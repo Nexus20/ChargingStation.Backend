@@ -120,3 +120,12 @@ services:
     build:
       context: .
       dockerfile: Services/SignalR/ChargingStation.SignalR/Dockerfile
+  
+  emulator_db:
+    image: mongo
+  
+  chargingstation_emulator:
+    image: ${DOCKER_REGISTRY-}emulator
+    build:
+      context: .
+      dockerfile: Emulator/ChargePointEmulator.UI/Dockerfile

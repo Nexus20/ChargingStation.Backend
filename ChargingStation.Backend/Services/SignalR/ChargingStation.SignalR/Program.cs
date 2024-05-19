@@ -4,6 +4,7 @@ using ChargingStation.SignalR.Middlewares;
 
 // Add services to the container.
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddControllers();
 

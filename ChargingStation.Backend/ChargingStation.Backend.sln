@@ -103,6 +103,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserManagement", "UserManag
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.API", "Services\UserManagement\UserManagement.API\UserManagement.API.csproj", "{7C5F99C5-8516-45D4-A134-98AE87AC5769}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Emulator", "Emulator", "{1CF7F656-7CEA-456F-A32B-30A9F6E8A493}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargePointEmulator.UI", "Emulator\ChargePointEmulator.UI\ChargePointEmulator.UI.csproj", "{D7366FC9-ACD5-4C21-A673-8F285553987F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargePointEmulator.Application", "Emulator\ChargePointEmulator.Application\ChargePointEmulator.Application.csproj", "{B4D01F89-67A8-4C0F-903A-AB6AE0D0D873}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargePointEmulator.Persistence", "Emulator\ChargePointEmulator.Persistence\ChargePointEmulator.Persistence.csproj", "{7C823C69-2FCD-4E28-B4FD-EE5256153866}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -241,6 +249,18 @@ Global
 		{7C5F99C5-8516-45D4-A134-98AE87AC5769}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C5F99C5-8516-45D4-A134-98AE87AC5769}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C5F99C5-8516-45D4-A134-98AE87AC5769}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7366FC9-ACD5-4C21-A673-8F285553987F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7366FC9-ACD5-4C21-A673-8F285553987F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7366FC9-ACD5-4C21-A673-8F285553987F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7366FC9-ACD5-4C21-A673-8F285553987F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4D01F89-67A8-4C0F-903A-AB6AE0D0D873}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4D01F89-67A8-4C0F-903A-AB6AE0D0D873}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4D01F89-67A8-4C0F-903A-AB6AE0D0D873}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4D01F89-67A8-4C0F-903A-AB6AE0D0D873}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C823C69-2FCD-4E28-B4FD-EE5256153866}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C823C69-2FCD-4E28-B4FD-EE5256153866}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C823C69-2FCD-4E28-B4FD-EE5256153866}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C823C69-2FCD-4E28-B4FD-EE5256153866}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -292,6 +312,9 @@ Global
 		{1E418331-1DF0-4F57-88CE-2F1F422BFFFD} = {177A1249-ACE4-42C7-9206-0D1BF1EC2E56}
 		{AB93801C-4341-413B-ACC2-87CF9B82A962} = {9668FC35-A0EA-4BCC-8ACB-E99021CBDEB3}
 		{7C5F99C5-8516-45D4-A134-98AE87AC5769} = {AB93801C-4341-413B-ACC2-87CF9B82A962}
+		{D7366FC9-ACD5-4C21-A673-8F285553987F} = {1CF7F656-7CEA-456F-A32B-30A9F6E8A493}
+		{B4D01F89-67A8-4C0F-903A-AB6AE0D0D873} = {1CF7F656-7CEA-456F-A32B-30A9F6E8A493}
+		{7C823C69-2FCD-4E28-B4FD-EE5256153866} = {1CF7F656-7CEA-456F-A32B-30A9F6E8A493}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A063F0C5-38BF-495E-8B72-2E7F00C1C4DE}
