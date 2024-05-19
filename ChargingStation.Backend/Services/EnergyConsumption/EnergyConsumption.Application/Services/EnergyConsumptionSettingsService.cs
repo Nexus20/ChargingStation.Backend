@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using ChargingStation.ChargingProfiles.Models.Requests.ConsumptionSettings;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Models.DepotEnergyConsumption;
 using ChargingStation.Common.Models.General;
@@ -7,6 +6,7 @@ using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.InternalCommunication.Services.Depots;
+using EnergyConsumption.Application.Models.Requests;
 using EnergyConsumption.Application.Specifications;
 using Microsoft.Extensions.Logging;
 

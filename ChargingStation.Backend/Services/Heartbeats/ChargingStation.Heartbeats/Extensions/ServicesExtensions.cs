@@ -1,4 +1,5 @@
-﻿using ChargingStation.Heartbeats.EventConsumers;
+﻿using ChargingStation.Common.Configurations;
+using ChargingStation.Heartbeats.EventConsumers;
 using ChargingStation.Heartbeats.Services.Heartbeats;
 using ChargingStation.Infrastructure.Extensions;
 using MassTransit;
@@ -21,7 +22,8 @@ public static class ServicesExtensions
 
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
-                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
+                var connectionString = configuration.GetSection(MessageBrokerConfiguration.SectionName).Get<MessageBrokerConfiguration>()!.GetConnectionString();
+                cfg.Host(connectionString);
 
                 cfg.ReceiveEndpoint("heartbeat-queue", c => { c.ConfigureConsumer<HeartbeatConsumer>(ctx); });
             });

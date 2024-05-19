@@ -1,4 +1,5 @@
-﻿using MassTransit;
+﻿using ChargingStation.Common.Configurations;
+using MassTransit;
 using Transactions.Api.EventConsumers;
 using Transactions.Application.Extensions;
 
@@ -20,7 +21,8 @@ public static class ServicesExtensions
             
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
-                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
+                var connectionString = configuration.GetSection(MessageBrokerConfiguration.SectionName).Get<MessageBrokerConfiguration>()!.GetConnectionString();
+                cfg.Host(connectionString);
                 
                 cfg.ReceiveEndpoint("start-transaction-queue-1_6", c => {
                     c.ConfigureConsumer<StartTransactionConsumer>(ctx);

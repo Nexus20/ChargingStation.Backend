@@ -2,6 +2,7 @@
 using ChargingStation.CacheManager.Extensions;
 using ChargingStation.ChargingProfiles.EventConsumers;
 using ChargingStation.ChargingProfiles.Services;
+using ChargingStation.Common.Configurations;
 using ChargingStation.InternalCommunication.Extensions;
 using MassTransit;
 
@@ -28,7 +29,8 @@ public static class ServicesExtensions
             busConfigurator.AddConsumer<SetChargingProfileResponseConsumer>();
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
-                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
+                var connectionString = configuration.GetSection(MessageBrokerConfiguration.SectionName).Get<MessageBrokerConfiguration>()!.GetConnectionString();
+                cfg.Host(connectionString);
                 
                 cfg.ReceiveEndpoint("set-charging-profile-response-queue-1_6", c => {
                     c.ConfigureConsumer<SetChargingProfileResponseConsumer>(ctx);

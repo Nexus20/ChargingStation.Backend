@@ -1,4 +1,5 @@
-﻿using Hangfire;
+﻿using ChargingStation.Common.Configurations;
+using Hangfire;
 using MassTransit;
 using Reservations.Application.Extensions;
 
@@ -18,7 +19,8 @@ public static class ServicesExtensions
             
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
-                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
+                var connectionString = configuration.GetSection(MessageBrokerConfiguration.SectionName).Get<MessageBrokerConfiguration>()!.GetConnectionString();
+                cfg.Host(connectionString);
             });
         });
 

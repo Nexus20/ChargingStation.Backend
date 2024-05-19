@@ -1,4 +1,5 @@
 ﻿using ChargePoints.Application.Extensions.DependencyInjection;
+using ChargingStation.Common.Configurations;
 using MassTransit;
 
 namespace ChargePoints.Grpc.Extensions;
@@ -16,7 +17,8 @@ public static class ServicesExtensions
             
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
-                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
+                var connectionString = configuration.GetSection(MessageBrokerConfiguration.SectionName).Get<MessageBrokerConfiguration>()!.GetConnectionString();
+                cfg.Host(connectionString);
             });
         });
 
