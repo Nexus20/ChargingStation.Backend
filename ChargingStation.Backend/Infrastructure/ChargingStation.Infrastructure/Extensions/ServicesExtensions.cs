@@ -11,6 +11,7 @@ public static class ServicesExtensions
     {
         services.AddScoped(typeof(ITableManager<>), typeof(AzureTableStorageManager<>));
         var connectionString = configuration.GetConnectionString("AzureTableStorage");
+
         services.AddScoped(_ => new TableServiceClient(connectionString));
 
         return services;
