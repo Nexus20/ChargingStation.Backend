@@ -13,4 +13,6 @@ public interface IChargingProfileService
     Task<IPagedCollection<ChargingProfileResponse>> GetAsync(GetChargingProfilesRequest request, CancellationToken cancellationToken = default);
     Task<ChargingProfileResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<ChargingProfileResponse> CreateAsync(CreateChargingProfileRequest request, CancellationToken cancellationToken = default);
+    Task ClearChargingProfileAsync(ClearChargingProfileRequest request, CancellationToken cancellationToken = default);
+    Task ProcessClearChargingProfileResponseAsync(ClearChargingProfileResponse clearChargingProfileResponse, Guid chargePointId, string ocppMessageId, CancellationToken cancellationToken = default);
 }

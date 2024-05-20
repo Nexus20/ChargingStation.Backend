@@ -17,7 +17,8 @@ using MassTransit;
 using ChargingProfile = ChargingStation.Domain.Entities.ChargingProfile;
 using ChargingScheduleChargingRateUnit = ChargingStation.Common.Messages_OCPP16.Responses.Enums.ChargingScheduleChargingRateUnit;
 using ChargingSchedulePeriod = ChargingStation.Common.Messages_OCPP16.Responses.Enums.ChargingSchedulePeriod;
-using SetChargingProfileRequest = ChargingStation.Common.Messages_OCPP16.Requests.SetChargingProfileRequest;
+using SetChargingProfileOcppRequest = ChargingStation.Common.Messages_OCPP16.Requests.SetChargingProfileRequest;
+using ClearChargingProfileOcppRequest = ChargingStation.Common.Messages_OCPP16.Requests.ClearChargingProfileRequest;
 
 namespace ChargingStation.ChargingProfiles.Services;
 
@@ -50,7 +51,7 @@ public class ChargingProfileService : IChargingProfileService
     {
         try
         {
-            var pendingSetChargingProfileRequest = await _cacheManager.GetAsync<SetChargingProfileRequest>(ocppMessageId);
+            var pendingSetChargingProfileRequest = await _cacheManager.GetAsync<SetChargingProfileOcppRequest>(ocppMessageId);
                 
             if (pendingSetChargingProfileRequest == null)
             {
@@ -101,7 +102,93 @@ public class ChargingProfileService : IChargingProfileService
         }
     }
 
-    public async Task SetChargingProfileAsync(Models.Requests.SetChargingProfileRequest request, CancellationToken cancellationToken = default)
+    public async Task ClearChargingProfileAsync(ClearChargingProfileRequest request, CancellationToken cancellationToken = default)
+    {
+        var specification = new GetChargingProfileWithConnectorSpecification(request.ChargingProfileId);
+        
+        var chargingProfile = await _chargingProfileRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
+        
+        if (chargingProfile == null)
+            throw new NotFoundException(nameof(ChargingProfile), request.ChargingProfileId);
+        
+        if(chargingProfile.ConnectorChargingProfiles is null or { Count: 0 })
+            throw new BadRequestException($"Charging profile {request.ChargingProfileId} does not have any connectors assigned");
+        
+        if(chargingProfile.ConnectorChargingProfiles.All(x => x.ConnectorId != request.ConnectorId))
+            throw new BadRequestException($"Connector {request.ConnectorId} is not assigned to charging profile {request.ChargingProfileId}");
+        
+        var connector = await _connectorGrpcClientService.GetByIdAsync(request.ConnectorId, cancellationToken);
+        
+        var clearChargingProfileRequest = new ClearChargingProfileOcppRequest
+        {
+            Id = chargingProfile.ChargingProfileId,
+            ConnectorId = connector.ConnectorId,
+        };
+        
+        var clearChargingProfileRequestId = Guid.NewGuid().ToString();
+        var integrationOcppMessage = CentralSystemRequestIntegrationOcppMessage.Create(connector.ChargePointId, clearChargingProfileRequest, Ocpp16ActionTypes.ClearChargingProfile, clearChargingProfileRequestId, OcppProtocolVersions.Ocpp16);
+        
+        await _cacheManager.SetAsync(clearChargingProfileRequestId, clearChargingProfileRequest);
+        
+        await _publishEndpoint.Publish(integrationOcppMessage, cancellationToken);
+        _logger.LogInformation("Clear charging profile request sent to charge point {ChargePointId} and connector {ConnectorId} with unique id {UniqueId}", connector.ChargePointId, connector.ConnectorId, clearChargingProfileRequestId);
+    }
+
+    public async Task ProcessClearChargingProfileResponseAsync(ClearChargingProfileResponse clearChargingProfileResponse,
+        Guid chargePointId, string ocppMessageId, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var pendingClearChargingProfileRequest = await _cacheManager.GetAsync<ClearChargingProfileOcppRequest>(ocppMessageId);
+                
+            if (pendingClearChargingProfileRequest == null)
+            {
+                _logger.LogError("Pending clear charging profile request not found for unique id {UniqueId}", ocppMessageId);
+                return;
+            }
+            
+            switch (clearChargingProfileResponse.Status)
+            {
+                case ClearChargingProfileResponseStatus.Accepted:
+                {
+                    // TODO: Add case handling for connector zero
+                    var connector = await _connectorGrpcClientService.GetByChargePointIdAsync(chargePointId, pendingClearChargingProfileRequest.ConnectorId.Value, cancellationToken);
+                
+                    if (connector == null)
+                        throw new NotFoundException($"Connector of charge point {chargePointId} with id {pendingClearChargingProfileRequest.ConnectorId} not found");
+                
+                    // TODO: Add case for handling clearing profile for all connectors and by purpose or stack level
+                    var specification = new GetChargingProfileByNumericIdSpecification(pendingClearChargingProfileRequest.Id.Value);
+                
+                    var chargingProfile = await _chargingProfileRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
+                
+                    if (chargingProfile == null)
+                        throw new NotFoundException(nameof(ChargingProfile), pendingClearChargingProfileRequest.Id);
+                
+                    var connectorChargingProfileSpecification = new GetConnectorChargingProfileByConnectorAndProfileIdSpecification(connector.Id, chargingProfile.Id);
+                    var connectorChargingProfile = await _connectorChargingProfileRepository.GetFirstOrDefaultAsync(connectorChargingProfileSpecification, cancellationToken: cancellationToken);
+                    
+                    if (connectorChargingProfile == null)
+                        throw new NotFoundException($"Connector with id {connector.Id} does not have charging profile with id {chargingProfile.Id} assigned");
+                    
+                    _connectorChargingProfileRepository.Remove(connectorChargingProfile);
+                    await _connectorChargingProfileRepository.SaveChangesAsync(cancellationToken);
+                    _logger.LogInformation("Charging profile {ChargingProfileId} cleared from connector {ConnectorId}", chargingProfile.Id, connector.Id);
+                    return;
+                }
+                case ClearChargingProfileResponseStatus.Unknown:
+                    _logger.LogWarning("Clear charging profile request for charging profile {ChargingProfileId} and charge point {ChargePointId} with connector {ConnectorId} returned unknown status because no charging profile found with given criteria",
+                        pendingClearChargingProfileRequest.Id, chargePointId, pendingClearChargingProfileRequest.ConnectorId);
+                    break;
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error processing set charging profile response message");
+        }
+    }
+
+    public async Task SetChargingProfileAsync(SetChargingProfileRequest request, CancellationToken cancellationToken = default)
     {
         var specification = new GetChargingProfileWithSchedulesSpecification(request.ChargingProfileId);
         
@@ -137,14 +224,14 @@ public class ChargingProfileService : IChargingProfileService
             ocppChargingProfile = ocppChargingProfile with { TransactionId = transaction.TransactionId };
         }
         
-        var setChargingProfileRequest = new SetChargingProfileRequest(connector.ConnectorId, ocppChargingProfile);
-        var uniqueId = Guid.NewGuid().ToString();
-        var integrationOcppMessage = new IntegrationOcppMessage<SetChargingProfileRequest>(connector.ChargePointId, setChargingProfileRequest, uniqueId, OcppProtocolVersions.Ocpp16);
+        var setChargingProfileRequest = new SetChargingProfileOcppRequest(connector.ConnectorId, ocppChargingProfile);
+        var setChargingProfileRequestId = Guid.NewGuid().ToString();
+        var integrationOcppMessage = CentralSystemRequestIntegrationOcppMessage.Create(connector.ChargePointId, setChargingProfileRequest, Ocpp16ActionTypes.SetChargingProfile, setChargingProfileRequestId, OcppProtocolVersions.Ocpp16);
         
-        await _cacheManager.SetAsync(uniqueId, setChargingProfileRequest);
+        await _cacheManager.SetAsync(setChargingProfileRequestId, setChargingProfileRequest);
         
         await _publishEndpoint.Publish(integrationOcppMessage, cancellationToken);
-        _logger.LogInformation("Set charging profile request sent to charge point {ChargePointId} and connector {ConnectorId} with unique id {UniqueId}", connector.ChargePointId, connector.ConnectorId, uniqueId);
+        _logger.LogInformation("Set charging profile request sent to charge point {ChargePointId} and connector {ConnectorId} with unique id {UniqueId}", connector.ChargePointId, connector.ConnectorId, setChargingProfileRequestId);
     }
 
     public async Task<IPagedCollection<ChargingProfileResponse>> GetAsync(GetChargingProfilesRequest request, CancellationToken cancellationToken = default)

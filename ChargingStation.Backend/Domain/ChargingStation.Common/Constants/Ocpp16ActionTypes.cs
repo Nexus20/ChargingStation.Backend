@@ -14,4 +14,6 @@ public static class Ocpp16ActionTypes
     public const string ReserveNow = nameof(ReserveNow);
     public const string CancelReservation = nameof(CancelReservation);
     public const string ChangeAvailability = nameof(ChangeAvailability);
+    public const string SetChargingProfile = nameof(SetChargingProfile);
+    public const string ClearChargingProfile = nameof(ClearChargingProfile);
 }
