@@ -67,17 +67,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "EnergyConsumption", "Energy
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnergyConsumption.Application", "Services\EnergyConsumption\EnergyConsumption.Application\EnergyConsumption.Application.csproj", "{313713E5-C59B-4FE3-9DB8-FFBF7BF311A5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyConsumption.Grpc", "Services\EnergyConsumption\EnergyConsumption.Grpc\EnergyConsumption.Grpc.csproj", "{087307DA-F42E-4681-9F5C-2242889BF198}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnergyConsumption.Grpc", "Services\EnergyConsumption\EnergyConsumption.Grpc\EnergyConsumption.Grpc.csproj", "{087307DA-F42E-4681-9F5C-2242889BF198}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyConsumption.Api", "Services\EnergyConsumption\EnergyConsumption.Api\EnergyConsumption.Api.csproj", "{76584452-EAD5-4EB1-A40E-3833675914CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnergyConsumption.Api", "Services\EnergyConsumption\EnergyConsumption.Api\EnergyConsumption.Api.csproj", "{76584452-EAD5-4EB1-A40E-3833675914CA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gateway", "Gateway", "{E462EBBB-93E9-4412-B227-5C2DD103D905}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Aggregator", "Aggregator", "{6C490FAE-52DA-406B-9267-0D64AA390731}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aggregator", "Services\Aggregator\Aggregator\Aggregator.csproj", "{4BE48591-978F-417F-87A7-0EDAD748A0C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Aggregator", "Services\Aggregator\Aggregator\Aggregator.csproj", "{4BE48591-978F-417F-87A7-0EDAD748A0C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Gateway", "Services\Gateway\ChargingStation.Gateway\ChargingStation.Gateway.csproj", "{01AFC34A-7A8A-4E24-831D-B62396E96435}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Gateway", "Services\Gateway\ChargingStation.Gateway\ChargingStation.Gateway.csproj", "{01AFC34A-7A8A-4E24-831D-B62396E96435}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Heartbeats", "Heartbeats", "{543369D0-C61B-4B90-A231-158ADA295D21}"
 EndProject
@@ -89,15 +89,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebSockets", "WebSockets", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Depots", "Depots", "{5925A1D8-932A-4DC6-866B-3F0F8F874E32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.ChargingProfiles", "Services\ChargingProfiles\ChargingStation.ChargingProfiles\ChargingStation.ChargingProfiles.csproj", "{CA685BB8-1F4C-442E-A7E1-2AAFC6373022}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.ChargingProfiles", "Services\ChargingProfiles\ChargingStation.ChargingProfiles\ChargingStation.ChargingProfiles.csproj", "{CA685BB8-1F4C-442E-A7E1-2AAFC6373022}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Depots", "Services\Depots\ChargingStation.Depots\ChargingStation.Depots.csproj", "{90A22800-78E0-48BE-9145-1144CF81D997}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Depots", "Services\Depots\ChargingStation.Depots\ChargingStation.Depots.csproj", "{90A22800-78E0-48BE-9145-1144CF81D997}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.Heartbeats", "Services\Heartbeats\ChargingStation.Heartbeats\ChargingStation.Heartbeats.csproj", "{48BE9A31-7482-499B-9DC5-1D33CE7D7341}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Heartbeats", "Services\Heartbeats\ChargingStation.Heartbeats\ChargingStation.Heartbeats.csproj", "{48BE9A31-7482-499B-9DC5-1D33CE7D7341}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.SignalR", "Services\SignalR\ChargingStation.SignalR\ChargingStation.SignalR.csproj", "{4F73243F-1D0B-4BDF-82AE-B88DD28A4F94}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.SignalR", "Services\SignalR\ChargingStation.SignalR\ChargingStation.SignalR.csproj", "{4F73243F-1D0B-4BDF-82AE-B88DD28A4F94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.WebSockets", "Services\WebSockets\ChargingStation.WebSockets\ChargingStation.WebSockets.csproj", "{1E418331-1DF0-4F57-88CE-2F1F422BFFFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.WebSockets", "Services\WebSockets\ChargingStation.WebSockets\ChargingStation.WebSockets.csproj", "{1E418331-1DF0-4F57-88CE-2F1F422BFFFD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserManagement", "UserManagement", "{AB93801C-4341-413B-ACC2-87CF9B82A962}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.API", "Services\UserManagement\UserManagement.API\UserManagement.API.csproj", "{7C5F99C5-8516-45D4-A134-98AE87AC5769}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -233,6 +237,10 @@ Global
 		{1E418331-1DF0-4F57-88CE-2F1F422BFFFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E418331-1DF0-4F57-88CE-2F1F422BFFFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E418331-1DF0-4F57-88CE-2F1F422BFFFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C5F99C5-8516-45D4-A134-98AE87AC5769}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C5F99C5-8516-45D4-A134-98AE87AC5769}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C5F99C5-8516-45D4-A134-98AE87AC5769}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C5F99C5-8516-45D4-A134-98AE87AC5769}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -282,6 +290,8 @@ Global
 		{48BE9A31-7482-499B-9DC5-1D33CE7D7341} = {543369D0-C61B-4B90-A231-158ADA295D21}
 		{4F73243F-1D0B-4BDF-82AE-B88DD28A4F94} = {CDF81178-49FA-4945-ACE0-D0501CCEDF86}
 		{1E418331-1DF0-4F57-88CE-2F1F422BFFFD} = {177A1249-ACE4-42C7-9206-0D1BF1EC2E56}
+		{AB93801C-4341-413B-ACC2-87CF9B82A962} = {9668FC35-A0EA-4BCC-8ACB-E99021CBDEB3}
+		{7C5F99C5-8516-45D4-A134-98AE87AC5769} = {AB93801C-4341-413B-ACC2-87CF9B82A962}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A063F0C5-38BF-495E-8B72-2E7F00C1C4DE}
