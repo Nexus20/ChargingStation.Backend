@@ -8,6 +8,7 @@ builder.Configuration.AddEnvironmentVariables();
 // Add services to the container.
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddEnergyConsumptionSettingsServices(builder.Configuration);
+builder.Services.AddSwaggerDocumentation();
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
@@ -15,7 +16,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 app.UseMiddleware<ExceptionHandlingMiddleware>();

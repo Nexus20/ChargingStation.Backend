@@ -8,6 +8,7 @@ builder.Configuration.AddEnvironmentVariables();
 // Add services to the container.
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddChargePointServices(builder.Configuration);
+builder.Services.AddSwaggerDocumentation();
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
@@ -15,7 +16,7 @@ builder.Services.AddControllers().AddNewtonsoftJson(options =>
 });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+
 builder.Services.AddCors(o =>
     o.AddPolicy("AllowAll", b => b
         .WithOrigins("http://localhost:4200")
