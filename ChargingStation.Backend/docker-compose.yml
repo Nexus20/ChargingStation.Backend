@@ -129,3 +129,6 @@ services:
     build:
       context: .
       dockerfile: Emulator/ChargePointEmulator.UI/Dockerfile
+      
+volumes:
+  mongo_data:

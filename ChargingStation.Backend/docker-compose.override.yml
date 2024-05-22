@@ -288,7 +288,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ${WEBAPP_STORAGE_HOME}/site:/data/db
+      - mongo_data:/data/db
 
   chargingstation_emulator:
     container_name: chargingstation_emulator
