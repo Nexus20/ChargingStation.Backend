@@ -4,7 +4,7 @@ metadata:
   name: rabbitmq
 spec:
   serviceName: rabbitmq
-  replicas: 5
+  replicas: 3
   selector:
     matchLabels:
       app: rabbitmq
@@ -26,9 +26,21 @@ spec:
           mountPath: /config/
         - name: plugins-file
           mountPath: /etc/rabbitmq/
+      - name: set-erlang-cookie
+        image: busybox
+        command: ['/bin/sh', '-c', 'echo -n $RABBITMQ_ERLANG_COOKIE > /var/lib/rabbitmq/.erlang.cookie && chmod 400 /var/lib/rabbitmq/.erlang.cookie']
+        env:
+        - name: RABBITMQ_ERLANG_COOKIE
+          valueFrom:
+            secretKeyRef:
+              name: rabbit-secret
+              key: RABBITMQ_ERLANG_COOKIE
+        volumeMounts:
+        - name: data
+          mountPath: /var/lib/rabbitmq
       containers:
       - name: rabbitmq
-        image: rabbitmq:3.8-management
+        image: rabbitmq:3.13.2-management
         ports:
         - containerPort: 4369
           name: discovery
@@ -50,11 +62,6 @@ spec:
           value: "true"
         - name: RABBITMQ_CONFIG_FILE
           value: "/config/rabbitmq"
-        - name: RABBITMQ_ERLANG_COOKIE
-          valueFrom:
-            secretKeyRef:
-              name: rabbit-secret
-              key: RABBITMQ_ERLANG_COOKIE
         - name: K8S_HOSTNAME_SUFFIX
           value: .rabbitmq.$(RABBIT_POD_NAMESPACE).svc.cluster.local
         volumeMounts:
@@ -79,7 +86,7 @@ spec:
       name: data
     spec:
       accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "standard"
+      storageClassName: "hostpath"
       resources:
         requests:
           storage: 50Mi
