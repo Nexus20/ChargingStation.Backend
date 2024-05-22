@@ -59,7 +59,7 @@ public class AuthService : IAuthService
         {
             await _userManager.AddToRoleAsync(user, registerRequest.Role);
 
-            var token = _jwtHandler.GenerateToken(registerRequest, DateTime.UtcNow.AddHours(1));
+            var token = _jwtHandler.GenerateToken(user, registerRequest.Role, DateTime.UtcNow.AddHours(1));
 
             return new TokenResponse() { Token = token };
         }

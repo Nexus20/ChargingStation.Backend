@@ -4,7 +4,6 @@ using System.Security.Claims;
 using System.Text;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Infrastructure.Identity;
-using UserManagement.API.Models.Requests;
 using ChargingStation.Common.Utility;
 
 namespace UserManagement.API.Persistence;
@@ -26,30 +25,13 @@ public class JwtHandler
     {
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.Id),
-            new Claim(JwtRegisteredClaimNames.Email, user.Email),
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Name, user.UserName),
             new Claim(ClaimTypes.Role, role)
         };
 
         if (role == CustomRoles.Administrator)
-        {
-            claims = claims.Append(new Claim(ClaimTypes.Role, CustomRoles.Employee)).ToArray();
-        }
-
-        return GenerateToken(claims, expires);
-    }
-
-    public string GenerateToken(RegisterRequest registerRequest, DateTime expires)
-    {
-        var claims = new[]
-        {
-            new Claim(JwtRegisteredClaimNames.Email, registerRequest.Email),
-            new Claim(ClaimTypes.Name, $"{registerRequest.FirstName} {registerRequest.LastName}"),
-            new Claim(ClaimTypes.Role, registerRequest.Role)
-        };
-
-        if (registerRequest.Role == CustomRoles.Administrator)
         {
             claims = claims.Append(new Claim(ClaimTypes.Role, CustomRoles.Employee)).ToArray();
         }

@@ -10,13 +10,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddHeartbeatServices(builder.Configuration);
 builder.Services.AddChargePointsGrpcClient(builder.Configuration);
+builder.Services.AddSwaggerDocumentation();
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {
     options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 });
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(o =>
     o.AddPolicy("AllowAll", b => b

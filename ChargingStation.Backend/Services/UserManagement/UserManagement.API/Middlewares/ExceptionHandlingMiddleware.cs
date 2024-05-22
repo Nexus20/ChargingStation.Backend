@@ -30,7 +30,7 @@ public class ExceptionHandlingMiddleware
         catch (UnauthorizedException exception)
         {
             logger.LogInformation(exception, "{Message}", exception.Message);
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
         }
         catch (Exception exception)
         {

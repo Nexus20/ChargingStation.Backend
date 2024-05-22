@@ -1,7 +1,5 @@
-﻿namespace UserManagement.API.Models.Response
+﻿namespace UserManagement.API.Models.Response;
+public class TokenResponse
 {
-    public class TokenResponse
-    {
-        public required string Token { get; set; }
-    }
+    public required string Token { get; set; }
 }
