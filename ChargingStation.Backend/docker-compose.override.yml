@@ -290,3 +290,35 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+        
+  emulator_db:
+    container_name: emulator_db
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  chargingstation_emulator:
+    container_name: chargingstation_emulator
+    restart: always
+    ports:
+      - "8500:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:MongoDBConnection=mongodb://emulator_db:27017"
+      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "CentralSystemEndpoint=ws://chargingstation.websockets:8080"
+      - "ApiSettings:OcppTagServiceAddress=http://ocpptags.api:8080"
+      - "ApiSettings:ConnectorServiceAddress=http://connectors.api:8080"
+      - "ApiSettings:ReservationServiceAddress=http://reservations.api:8080"
+      - "HubEndpoint=http://chargingstation_emulator:8080"
+    depends_on:
+      - chargingstation_rabbitmq
+      - emulator_db
+      - ocpptags.api
+      - connectors.api
+      - reservations.api
+      - chargingstation.websockets

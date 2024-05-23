@@ -1,0 +1,117 @@
+﻿@page "/CentralSystem"
+@using ChargePointEmulator.Application.Models
+@using ChargePointEmulator.Application.Services
+@using ChargingStation.Common.Models.General
+@using ChargingStation.Common.Models.OcppTags.Responses
+@using System.Net.WebSockets
+<PageTitle>Send requests from central system</PageTitle>
+
+@inject IChargePointService ChargePointService
+@inject IOcppTagService OcppTagService
+@inject IReservationHttpService ReservationHttpService
+@inject ChargingStationSimulatorManager ChargingStationSimulatorManager
+
+@if (!_ocppTags.Any())
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <EditForm Model="_createReservationRequest" OnValidSubmit="OnSubmitAsync">
+        <div class="form-control">
+            <InputSelect @bind-Value="_createReservationRequest.ChargePointId" @onselect="OnChargePointSelected" class="form-select">
+                @foreach (var chargePoint in _chargePoints.Collection)
+                {
+                    <option value="@chargePoint.Id">@chargePoint.Id</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="form-control">
+            <InputSelect @bind-Value="_createReservationRequest.ConnectorId" class="form-select">
+                @foreach (var connector in _connectors)
+                {
+                    <option value="@connector">@connector</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="form-control">
+            <InputSelect @bind-Value="_createReservationRequest.OcppTagId" class="form-select">
+                @foreach (var ocppTag in _ocppTags)
+                {
+                    <option value="@ocppTag.Id">@ocppTag.TagId</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="form-control">
+            <InputDate Type="InputDateType.DateTimeLocal" @bind-Value="_createReservationRequest.StartDateTime" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")"/>
+        </div>
+        <div class="form-control">
+            <InputDate Type="InputDateType.DateTimeLocal" @bind-Value="_createReservationRequest.ExpiryDateTime" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")"/>
+        </div>
+        <input type="submit" value="Submit" class="btn btn-primary" @onsubmit="OnSubmitAsync"/>
+    </EditForm>
+}
+
+@code {
+    private readonly CreateReservationRequest _createReservationRequest = new()
+    {
+        StartDateTime = DateTime.UtcNow,
+        ExpiryDateTime = DateTime.UtcNow.AddHours(1)
+    };
+
+    private IPagedCollection<ChargePointSimulatorResponse> _chargePoints = new PagedCollection<ChargePointSimulatorResponse>();
+    private List<OcppTagResponse> _ocppTags = [];
+    private readonly List<int> _connectors = [1, 2, 3, 4];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var allChargePoints = await ChargePointService.GetAsync(new GetChargePointRequest());
+        
+        var chargePointsWithSimulatorConnected = allChargePoints.Collection.Where(x => x.SimulatorAdded).ToList();
+        var onlineChargePointsIds = ChargingStationSimulatorManager.ChargingStations.Values
+            .Where(x => x.WebSocketState == WebSocketState.Open)
+            .Select(x => x.Id)
+            .ToList();
+        
+        chargePointsWithSimulatorConnected = chargePointsWithSimulatorConnected
+            .Where(x => onlineChargePointsIds.Contains(x.Id))
+            .ToList();
+        
+        var chargePointsToUse = new List<ChargePointSimulatorResponse>();
+        
+        foreach (var chargePointWithSimulator in chargePointsWithSimulatorConnected)
+        {
+            var state = ChargingStationSimulatorManager.GetState(chargePointWithSimulator.Id);
+            
+            if(state.LastMessageReceived.HasValue && DateTime.UtcNow - state.LastMessageReceived.Value < TimeSpan.FromMinutes(2))
+            {
+                chargePointsToUse.Add(chargePointWithSimulator);
+            }
+        }
+        
+        _chargePoints = new PagedCollection<ChargePointSimulatorResponse>
+        {
+            Collection = chargePointsToUse,
+            ElementsTotalCount = chargePointsToUse.Count,
+            CurrentPage = 1,
+            PageSize = chargePointsToUse.Count
+        };
+        
+        _ocppTags = await OcppTagService.GetAsync();
+    }
+
+    private async Task OnSubmitAsync()
+    {
+        await ReservationHttpService.CreateReservationAsync(_createReservationRequest);
+    }
+
+    private void OnChargePointSelected(EventArgs arg)
+    {
+        var chargePointId = _createReservationRequest.ChargePointId;
+        var state = ChargingStationSimulatorManager.GetState(chargePointId);
+        
+        var authorizedTags = state.AuthorizedOcppTags.Select(x => x.Key);
+
+        _ocppTags = _ocppTags.Where(x => authorizedTags.Contains(x.TagId)).ToList();
+    }
+}
