@@ -5,6 +5,8 @@ using System.Text;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Infrastructure.Identity;
 using ChargingStation.Common.Utility;
+using UserManagement.API.Models.Requests;
+using System.Data;
 
 namespace UserManagement.API.Persistence;
 
@@ -19,6 +21,23 @@ public class JwtHandler
         _secret = secret;
         _issuer = issuer;
         _audience = audience;
+    }
+
+    public string GenerateInviteToken(InviteRequest inviteRequest)
+    {
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, inviteRequest.DepotId.ToString()),
+            new Claim(ClaimTypes.Email, inviteRequest.Email),
+            new Claim(ClaimTypes.Role, inviteRequest.Role)
+        };
+
+        if (inviteRequest.Role == CustomRoles.Administrator)
+        {
+            claims = claims.Append(new Claim(ClaimTypes.Role, CustomRoles.Employee)).ToArray();
+        }
+
+        return GenerateToken(claims, inviteRequest.Expiration);
     }
 
     public string GenerateToken(InfrastructureUser user, string role, DateTime expires)

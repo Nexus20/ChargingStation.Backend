@@ -25,6 +25,8 @@ public class Depot : Entity, ITimeMarkable
 
     public required Guid TimeZoneId { get; set; }
     public TimeZone? TimeZone { get; set; }
+
+    public List<ApplicationUserDepot>? ApplicationUserDepots { get; set; }
     
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
