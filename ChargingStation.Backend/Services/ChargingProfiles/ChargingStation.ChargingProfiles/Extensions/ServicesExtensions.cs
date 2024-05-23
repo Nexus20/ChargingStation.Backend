@@ -48,12 +48,17 @@ public static class ServicesExtensions
             busConfigurator.SetKebabCaseEndpointNameFormatter();
             
             busConfigurator.AddConsumer<SetChargingProfileResponseConsumer>();
+            busConfigurator.AddConsumer<ClearChargingProfileResponseConsumer>();
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
                 cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
                 
                 cfg.ReceiveEndpoint("set-charging-profile-response-queue-1_6", c => {
                     c.ConfigureConsumer<SetChargingProfileResponseConsumer>(ctx);
+                });
+                
+                cfg.ReceiveEndpoint("clear-charging-profile-response-queue-1_6", c => {
+                    c.ConfigureConsumer<ClearChargingProfileResponseConsumer>(ctx);
                 });
             });
         });
