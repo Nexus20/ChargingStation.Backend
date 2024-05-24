@@ -43,7 +43,7 @@ public class ReservationController : ControllerBase
         return Created();
     }
     
-    [HttpPut]
+    [HttpPut("{id:Guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateReservationAsync([FromBody] UpdateReservationRequest request, CancellationToken cancellationToken = default)

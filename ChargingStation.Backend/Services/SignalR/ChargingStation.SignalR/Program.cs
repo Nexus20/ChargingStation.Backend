@@ -11,6 +11,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalRServices(builder.Configuration);
+builder.Services.AddCors(o =>
+    o.AddPolicy("AllowAll", b => b
+        .WithOrigins("http://localhost:4200")
+        .AllowAnyMethod()
+        .AllowAnyHeader()
+        .AllowCredentials()
+    ));
 
 
 // Configure the HTTP request pipeline.
@@ -23,6 +30,7 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Local"))
     app.UseSwaggerUI();
 }
 
+app.UseCors("AllowAll");
 app.UseAuthorization();
 
 app.MapHub<ChargingStationHub>("/ChargePointHub");
