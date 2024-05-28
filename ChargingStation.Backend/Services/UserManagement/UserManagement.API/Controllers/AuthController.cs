@@ -39,8 +39,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("invite")]
-    [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Invite([FromBody] InviteRequest inviteRequest)
     {
@@ -50,17 +49,16 @@ public class AuthController : ControllerBase
 
         await _authService.SendInvitationEmailAsync(inviteRequest, invitationLink);
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpGet("confirm-invite")]
-    [Produces("application/json")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ConfirmInvite([FromQuery] string token)
     {
         await _authService.ConfirmInvite(token);
 
-        return Ok();
+        return NoContent();
     }
 }
