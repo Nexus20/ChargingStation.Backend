@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ChargePoints.Application.Models.Requests;
 using ChargePoints.Application.Specifications;
+using ChargingStation.CacheManager;
 using ChargingStation.Common.Constants;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Messages_OCPP16.Requests;
@@ -20,13 +21,15 @@ public class ChargePointService : IChargePointService
     private readonly IMapper _mapper;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly ILogger<ChargePointService> _logger;
+    private readonly ICacheManager _cacheManager;
 
-    public ChargePointService(IRepository<ChargePoint> chargePointRepository, IMapper mapper, IPublishEndpoint publishEndpoint, ILogger<ChargePointService> logger)
+    public ChargePointService(IRepository<ChargePoint> chargePointRepository, IMapper mapper, IPublishEndpoint publishEndpoint, ILogger<ChargePointService> logger, ICacheManager cacheManager)
     {
         _chargePointRepository = chargePointRepository;
         _mapper = mapper;
         _publishEndpoint = publishEndpoint;
         _logger = logger;
+        _cacheManager = cacheManager;
     }
 
     public async Task<IPagedCollection<ChargePointResponse>> GetAsync(GetChargePointRequest request, CancellationToken cancellationToken = default)
@@ -79,6 +82,7 @@ public class ChargePointService : IChargePointService
         var changeAvailabilityRequest = new ChangeAvailabilityRequest(0, request.AvailabilityType);
         
         var integrationOcppMessage = CentralSystemRequestIntegrationOcppMessage.Create(request.ChargePointId, changeAvailabilityRequest, Ocpp16ActionTypes.ChangeAvailability, Guid.NewGuid().ToString("N"), OcppProtocolVersions.Ocpp16);
+        await _cacheManager.SetAsync(integrationOcppMessage.OcppMessageId, changeAvailabilityRequest);
         
         await _publishEndpoint.Publish(integrationOcppMessage, cancellationToken);
         _logger.LogInformation("Change availability to \"{NewAvailability}\" request sent to charge point with id {ChargePointId}", request.AvailabilityType.ToString(), request.ChargePointId);

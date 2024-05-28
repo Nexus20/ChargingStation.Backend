@@ -24,6 +24,11 @@ public class CacheManager : ICacheManager
         return value.HasValue ? JsonConvert.DeserializeObject<T>(value) : default;
     }
     
+    public Task RemoveAsync(string key)
+    {
+        return _database.KeyDeleteAsync(key);
+    }
+    
     public async Task SetAsync<T>(string key, T value, TimeSpan? expiry = null)
     {
         await _database.StringSetAsync(key, JsonConvert.SerializeObject(value), expiry);
