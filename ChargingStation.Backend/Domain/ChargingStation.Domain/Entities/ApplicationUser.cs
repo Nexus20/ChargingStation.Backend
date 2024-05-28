@@ -5,7 +5,7 @@ namespace ChargingStation.Domain.Entities;
 
 public class ApplicationUser : Entity, ITimeMarkable
 {
-    public required string FirstName { get; set; }
+    public required string FirstName { get; set;  }
     public required string LastName { get; set; }
 
     public DateTime CreatedAt { get; set; }
@@ -13,5 +13,7 @@ public class ApplicationUser : Entity, ITimeMarkable
 
     public Guid? OcppTagId { get; set; }
     public OcppTag? OcppTag { get; set;}
+
+    public List<ApplicationUserDepot>? ApplicationUserDepots { get; set; }
 }
 

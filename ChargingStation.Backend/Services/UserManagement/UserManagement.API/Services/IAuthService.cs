@@ -7,5 +7,9 @@ namespace UserManagement.API.Services
     {
         Task<TokenResponse> LoginAsync(LoginRequest loginRequest);
         Task<TokenResponse> RegisterAsync(RegisterRequest registerRequest);
+
+        string GenerateInvitationToken(InviteRequest inviteRequest);
+        Task SendInvitationEmailAsync(InviteRequest inviteRequest, string invitationLink);
+        Task ConfirmInvite(string token);
     }
 }
