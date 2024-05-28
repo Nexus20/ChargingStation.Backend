@@ -10,6 +10,7 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/ChargePoints/ChargePoints.Grpc/ChargePoints.Grpc.csproj", "Services/ChargePoints/ChargePoints.Grpc/"]
 COPY ["Services/ChargePoints/ChargePoints.Application/ChargePoints.Application.csproj", "Services/ChargePoints/ChargePoints.Application/"]
+COPY ["Infrastructure/ChargingStation.CacheManager/ChargingStation.CacheManager.csproj", "Infrastructure/ChargingStation.CacheManager/"]
 COPY ["Infrastructure/ChargingStation.Infrastructure/ChargingStation.Infrastructure.csproj", "Infrastructure/ChargingStation.Infrastructure/"]
 COPY ["Domain/ChargingStation.Common/ChargingStation.Common.csproj", "Domain/ChargingStation.Common/"]
 COPY ["Domain/ChargingStation.Domain/ChargingStation.Domain.csproj", "Domain/ChargingStation.Domain/"]
