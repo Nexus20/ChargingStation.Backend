@@ -111,9 +111,11 @@ public class ReservationService : IReservationService
         {
             ChargePointId = request.ChargePointId,
             TagId = ocppTag.Id,
-            StartDateTime = DateTime.UtcNow,
+            StartDateTime = request.StartDateTime,
             ExpiryDateTime = request.ExpiryDateTime,
             ReservationRequestId = reserveNowRequestId,
+            Name = request.Name,
+            Description = request.Description,
             Status = "Created"
         };
         
@@ -181,7 +183,19 @@ public class ReservationService : IReservationService
         if (reservationToUpdate is null)
             throw new NotFoundException($"Reservation with id {request.Id} not found");
         
-        var conflictingReservationsSpecification = new GetConflictingReservationsSpecification(request.StartDateTime, request.ExpiryDateTime, TimeSpan.FromMinutes(30), reservationToUpdate.ChargePointId, request.ConnectorId);
+        var getOrCreateConnectorRequest = new GetOrCreateConnectorRequest
+        {
+            ChargePointId = request.ChargePointId,
+            ConnectorId = request.ConnectorId
+        };
+        var connector = await _connectorGrpcClientService.GetOrCreateConnectorAsync(getOrCreateConnectorRequest, cancellationToken);
+            
+        if (connector is null)
+        {
+            throw new NotFoundException($"Connector with id {request.ConnectorId} not found");
+        }
+        
+        var conflictingReservationsSpecification = new GetConflictingReservationsSpecification(request.StartDateTime, request.ExpiryDateTime, TimeSpan.FromMinutes(30), reservationToUpdate.ChargePointId, connector.Id);
         var conflictingReservations = await _reservationRepository.GetAsync(conflictingReservationsSpecification, cancellationToken: cancellationToken);
         
         if (conflictingReservations.Count != 0)
@@ -190,6 +204,7 @@ public class ReservationService : IReservationService
         }
 
         _mapper.Map(request, reservationToUpdate);
+        reservationToUpdate.ConnectorId = connector.Id;
         
         _reservationRepository.Update(reservationToUpdate);
         await _reservationRepository.SaveChangesAsync(cancellationToken);

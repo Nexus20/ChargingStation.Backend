@@ -3,6 +3,7 @@ using ChargingStation.WebSockets.Extensions;
 using ChargingStation.WebSockets.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 // Add services to the container.
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());

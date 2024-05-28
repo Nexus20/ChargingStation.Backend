@@ -55,6 +55,8 @@ public static class ServicesExtensions
         
         services.AddScoped<IOcppMessageHandler, ReserveNowResponseMessageHandler>();
         services.AddScoped<IOcppMessageHandler, CancelReservationResponseMessageHandler>();
+        services.AddScoped<IOcppMessageHandler, SetChargingProfileResponseMessageHandler>();
+        services.AddScoped<IOcppMessageHandler, ClearChargingProfileResponseMessageHandler>();
         
         services.AddScoped<IOcppMessageHandlerProvider, OcppMessageHandlerProvider>();
         services.AddScoped<IOcppWebSocketConnectionHandler, OcppWebSocketConnectionHandler>();

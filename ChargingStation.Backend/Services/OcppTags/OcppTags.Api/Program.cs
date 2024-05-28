@@ -3,6 +3,7 @@ using OcppTags.Api.Extensions;
 using OcppTags.Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 // Add services to the container.
 builder.Services.AddInfrastructureServices(builder.Configuration);

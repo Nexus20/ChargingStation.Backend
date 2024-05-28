@@ -1,0 +1,289 @@
+﻿@page "/chargepoint/{chargePointId?}"
+@using ChargePointEmulator.Application.Services
+@using ChargePointEmulator.Application.Models
+@using System.Net.WebSockets
+@using ChargePointEmulator.Application.State
+@using ChargePointEmulator.UI.Hubs
+@using ChargingStation.Common.Messages_OCPP16
+@using ChargingStation.Common.Messages_OCPP16.Requests.Enums
+@using ChargingStation.Common.Models.OcppTags.Responses
+@using Microsoft.AspNetCore.SignalR.Client
+
+
+<PageTitle>Charge point info</PageTitle>
+@inject NavigationManager NavigationManager
+@inject IChargePointService ChargePointService
+@inject IOcppTagService OcppTagService
+@inject ChargingStationSimulatorManager ChargingStationSimulatorManager
+@inject IConfiguration Configuration
+
+@implements IAsyncDisposable
+
+@if (_chargePoint == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <h1>@_chargePoint.Id</h1>
+    <p>@_chargePoint.Description</p>
+
+    if (_chargePoint.SimulatorAdded)
+    {
+        <p>Simulator added</p>
+        
+        <button type="button" class="btn btn-danger" @onclick="OnClearStatePressedAsync">Clear state</button>
+        
+        if(_webSocketState is WebSocketState.Open or WebSocketState.Connecting)
+        {
+            if(_webSocketState == WebSocketState.Open)
+            {
+                <p>Simulator connected</p>
+                
+                if(_lastMessageReceived.HasValue && DateTime.UtcNow - _lastMessageReceived.Value < TimeSpan.FromMinutes(2))
+                {
+                    <p>Central system responding (Last message received: @_lastMessageReceived)</p>
+                    
+                    <p>Connectors info:</p>
+                    foreach (var connector in _connectors)
+                    {
+                        <p>Connector @connector.Key: @connector.Value</p>
+                    }
+                    
+                    if(!string.IsNullOrWhiteSpace(_authorizedIdTag))
+                    {
+                        <p>Authorized with tag: @_authorizedIdTag</p>
+
+                        if (_connectors.Any(x => x.Value == StatusNotificationRequestStatus.Available))
+                        {
+                            <div>
+                                <p>Transaction form</p>
+                                <form>
+                                    <p>Available connectors</p>
+                                    <select @bind="_selectedConnectorId">
+                                        @foreach (var connector in _connectors.Where(x => x.Value == StatusNotificationRequestStatus.Available))
+                                        {
+                                            <option value="@connector.Key">@connector.Key</option>
+                                        }
+                                    </select>
+                                    <button type="button" class="btn btn-primary" @onclick="OnStartTransactionButtonPressedAsync">Start transaction</button>
+                                </form>
+                            </div>
+                        }
+
+                        if (_activeTransactions.Any())
+                        {
+                            <div class="row">
+                            @foreach (var activeTransaction in _activeTransactions)
+                            {
+                                <div class="col-3">
+                                    <p>Active transactions info</p>
+                                    <p>Id: @activeTransaction.TransactionId</p>
+                                    <p>Started at: @activeTransaction.StartTimestamp</p>
+                                    
+                                    @if(activeTransaction.StopTimestamp.HasValue)
+                                    {
+                                        <p>Stopped at: @activeTransaction.StopTimestamp</p>
+                                    }
+                                
+                                    @if (_lastMeterValues.ContainsKey(activeTransaction.TransactionId) && _lastMeterValues[activeTransaction.TransactionId].Item2.Any())
+                                    {
+                                        <p>Meter values</p>
+                                        foreach (var sampledValue in _lastMeterValues[activeTransaction.TransactionId].Item2)
+                                        {
+                                            <p>Measurand: @sampledValue.Measurand</p>
+                                            <p>Value: @sampledValue.Value (Unit: @sampledValue.Unit)</p>
+                                            <p>Timestamp: @_lastMeterValues[activeTransaction.TransactionId].Item1</p>
+                                        }
+                                    }
+                                
+                                </div>       
+                            }
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <p>Authorize</p>
+                        <select class="form-select" @bind="_idTag">
+                            @foreach (var ocppTag in _ocppTags)
+                            {
+                                <option value="@ocppTag.TagId">@ocppTag.TagId</option>
+                            }
+                        </select>
+                        <button type="button" class="btn btn-primary" @onclick="OnAuthorizeButtonPressedAsync">Authorize</button>
+                    }
+                }
+                else
+                {
+                    <p>Central system not responding</p>
+                }
+                
+                <button type="button" class="btn btn-primary" @onclick="OnDisconnectFromCentralSystemPressedAsync">Disconnect from central system</button>
+            }
+            else
+            {
+                <p>Simulator connecting...</p>
+            }
+        }
+        else
+        {
+            <button type="button" class="btn btn-primary" @onclick="OnConnectToCentralSystemPressedAsync">Connect to central system</button>
+        }
+    }
+    else
+    {
+        <button type="button" class="btn btn-primary" @onclick="OnAddSimulatorPressedAsync">Add simulator</button>
+    }
+}
+
+@code {
+    [Parameter]
+    public string? ChargePointId { get; set; }
+    
+    private ChargePointSimulatorResponse? _chargePoint;
+    private WebSocketState? _webSocketState;
+    private DateTime? _lastMessageReceived;
+    private string _idTag = string.Empty;
+    private string _authorizedIdTag = string.Empty;
+    private List<OcppTagResponse> _ocppTags = [];
+    private int _selectedConnectorId = -1;
+    private List<TransactionState> _activeTransactions = [];
+    private HubConnection? _hubConnection;
+    private Dictionary<int, (DateTimeOffset Timestamp, List<SampledValue> SampledValue)> _lastMeterValues = new();
+    private Dictionary<int, StatusNotificationRequestStatus> _connectors = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        if (ChargePointId == null || !Guid.TryParse(ChargePointId, out var guid))
+        {
+            NavigationManager.NavigateTo("/chargepoints");
+            return;
+        }
+
+        var hubEndpoint = $"{Configuration["HubEndpoint"]!}/ChargePointHub";
+        
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(hubEndpoint)
+            .Build();
+        
+        _hubConnection.On(HubMethods.ReceiveUpdateFromCentralSystem, () =>
+        {
+            InvokeAsync(() =>
+            {
+                UpdateVariables();
+                StateHasChanged();
+            });
+        });
+        
+        _chargePoint = await ChargePointService.GetByIdAsync(guid);
+        _ocppTags = await OcppTagService.GetAsync();
+        _connectors = new Dictionary<int, StatusNotificationRequestStatus>
+        {
+            {1, StatusNotificationRequestStatus.Available},
+            {2, StatusNotificationRequestStatus.Available},
+            {3, StatusNotificationRequestStatus.Available},
+            {4, StatusNotificationRequestStatus.Available}
+        };
+        
+        UpdateVariables();
+        
+        await _hubConnection.StartAsync();
+    }
+
+    private async Task OnAddSimulatorPressedAsync(MouseEventArgs arg)
+    {
+        await ChargePointService.AddSimulatorAsync(_chargePoint!.Id);
+        _chargePoint = await ChargePointService.GetByIdAsync(_chargePoint.Id);
+        UpdateVariables();
+    }
+
+    private async Task OnConnectToCentralSystemPressedAsync(MouseEventArgs arg)
+    {
+        await ChargingStationSimulatorManager.StartChargingStationAsync(_chargePoint!.Id);
+        _chargePoint = await ChargePointService.GetByIdAsync(_chargePoint.Id);
+        UpdateVariables();
+    }
+
+    private void UpdateVariables()
+    {
+        if(!ChargingStationSimulatorManager.ChargingStations.ContainsKey(Guid.Parse(ChargePointId)))
+            return;
+        
+        _webSocketState = ChargingStationSimulatorManager.ChargingStations[Guid.Parse(ChargePointId)].WebSocketState;
+        _lastMessageReceived = ChargingStationSimulatorManager.GetState(Guid.Parse(ChargePointId)).LastMessageReceived;
+        _authorizedIdTag = ChargingStationSimulatorManager.GetState(Guid.Parse(ChargePointId)).AuthorizedOcppTags.FirstOrDefault().Key;
+        
+        _activeTransactions = ChargingStationSimulatorManager.GetState(Guid.Parse(ChargePointId))
+            .Connectors.Where(x => x.Value.LastTransaction != null)
+            .Select(x => x.Value.LastTransaction)
+            .ToList();
+        
+        if (_activeTransactions.Any())
+        {
+            foreach (var activeTransaction in _activeTransactions)
+            {
+                if (activeTransaction.MeterValues.Any())
+                {
+                    var lastMeterValues = activeTransaction.MeterValues.Last().MeterValue.OrderBy(x => x.Timestamp).Last();
+                    _lastMeterValues[activeTransaction.TransactionId] = (lastMeterValues.Timestamp, lastMeterValues.SampledValue.ToList());
+                }
+            }
+        }
+        
+        var connectors = ChargingStationSimulatorManager.GetState(Guid.Parse(ChargePointId)).Connectors;
+        
+        if (connectors.Any())
+        {
+            foreach (var connector in connectors)
+            {
+                _connectors[connector.Key] = connector.Value.Status;
+            }
+        }
+    }
+
+    private async Task OnDisconnectFromCentralSystemPressedAsync(MouseEventArgs arg)
+    {
+        await ChargingStationSimulatorManager.StopChargingStationAsync(_chargePoint!.Id);
+        UpdateVariables();
+    }
+
+    private async Task OnAuthorizeButtonPressedAsync(MouseEventArgs arg)
+    {
+        if(_idTag == string.Empty)
+            return;
+        
+        await ChargingStationSimulatorManager.AuthorizeAsync(_chargePoint!.Id, _idTag);
+        await Task.Delay(5000);
+        UpdateVariables();
+    }
+
+    private async Task OnStartTransactionButtonPressedAsync(MouseEventArgs arg)
+    {
+        if(_selectedConnectorId == -1)
+            return;
+        
+        await ChargingStationSimulatorManager.StartTransactionAsync(_chargePoint!.Id, _selectedConnectorId, _authorizedIdTag);
+        await Task.Delay(5000);
+        UpdateVariables();
+        var activeTransaction = ChargingStationSimulatorManager.GetState(_chargePoint!.Id).Connectors[_selectedConnectorId].LastTransaction;
+        _activeTransactions.Add(activeTransaction);
+    }
+    
+    public bool IsConnected => _hubConnection?.State == HubConnectionState.Connected;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
+        }
+    }
+
+    private async Task OnClearStatePressedAsync(MouseEventArgs arg)
+    {
+        await ChargingStationSimulatorManager.ClearStateAsync(_chargePoint!.Id);
+        UpdateVariables();
+    }
+
+}

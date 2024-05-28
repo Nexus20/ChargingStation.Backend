@@ -3,6 +3,7 @@ using Transactions.Api.Extensions;
 using Transactions.Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables();
 
 // Add services to the container.
 builder.Services.AddInfrastructureServices(builder.Configuration);
