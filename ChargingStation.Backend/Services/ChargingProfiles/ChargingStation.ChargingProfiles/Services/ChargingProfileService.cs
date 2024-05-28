@@ -13,7 +13,9 @@ using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.GrpcClients;
+using ChargingStation.InternalCommunication.SignalRModels;
 using MassTransit;
+using Newtonsoft.Json;
 using ChargingProfile = ChargingStation.Domain.Entities.ChargingProfile;
 using ChargingScheduleChargingRateUnit = ChargingStation.Common.Messages_OCPP16.Responses.Enums.ChargingScheduleChargingRateUnit;
 using ChargingSchedulePeriod = ChargingStation.Common.Messages_OCPP16.Responses.Enums.ChargingSchedulePeriod;
@@ -59,22 +61,22 @@ public class ChargingProfileService : IChargingProfileService
                 return;
             }
             
+            var connector = await _connectorGrpcClientService.GetByChargePointIdAsync(chargePointId, pendingSetChargingProfileRequest.ConnectorId, cancellationToken);
+                
+            if (connector == null)
+                throw new NotFoundException($"Connector of charge point {chargePointId} with id {pendingSetChargingProfileRequest.ConnectorId} not found");
+                
+            var specification = new GetChargingProfileByNumericIdSpecification(pendingSetChargingProfileRequest.CsChargingProfiles.ChargingProfileId);
+                
+            var chargingProfile = await _chargingProfileRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
+                
+            if (chargingProfile == null)
+                throw new NotFoundException(nameof(ChargingProfile), pendingSetChargingProfileRequest.CsChargingProfiles.ChargingProfileId);
+            
             switch (setChargingProfileResponse.Status)
             {
                 case SetChargingProfileResponseStatus.Accepted:
                 {
-                    var connector = await _connectorGrpcClientService.GetByChargePointIdAsync(chargePointId, pendingSetChargingProfileRequest.ConnectorId, cancellationToken);
-                
-                    if (connector == null)
-                        throw new NotFoundException($"Connector of charge point {chargePointId} with id {pendingSetChargingProfileRequest.ConnectorId} not found");
-                
-                    var specification = new GetChargingProfileByNumericIdSpecification(pendingSetChargingProfileRequest.CsChargingProfiles.ChargingProfileId);
-                
-                    var chargingProfile = await _chargingProfileRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
-                
-                    if (chargingProfile == null)
-                        throw new NotFoundException(nameof(ChargingProfile), pendingSetChargingProfileRequest.CsChargingProfiles.ChargingProfileId);
-                
                     var connectorChargingProfile = new ConnectorChargingProfile
                     {
                         ConnectorId = connector.Id,
@@ -84,17 +86,30 @@ public class ChargingProfileService : IChargingProfileService
                     await _connectorChargingProfileRepository.AddAsync(connectorChargingProfile, cancellationToken);
                     await _connectorChargingProfileRepository.SaveChangesAsync(cancellationToken);
                     _logger.LogInformation("Connector charging profile added for connector {ConnectorId} and charging profile {ChargingProfileId}", connector.Id, chargingProfile.Id);
-                    return;
+                    break;
                 }
                 case SetChargingProfileResponseStatus.Rejected:
                     _logger.LogWarning("Set charging profile request rejected for charging profile {ChargingProfileId} and charge point {ChargePointId} with connector {ConnectorId}",
                         pendingSetChargingProfileRequest.CsChargingProfiles.ChargingProfileId, chargePointId, pendingSetChargingProfileRequest.ConnectorId);
-                    return;
+                    break;
                 case SetChargingProfileResponseStatus.NotSupported:
                     _logger.LogWarning("Charging profile {ChargingProfileId} is not supported on charge point {ChargePointId} with connector {ConnectorId}",
                         pendingSetChargingProfileRequest.CsChargingProfiles.ChargingProfileId, chargePointId, pendingSetChargingProfileRequest.ConnectorId);
-                    return;
+                    break;
             }
+            
+            var energyLimitExceededMessage = new ChargingProfileSetMessage
+            {
+                ChargePointId = chargePointId,
+                ConnectorId = pendingSetChargingProfileRequest.ConnectorId,
+                Status = setChargingProfileResponse.Status,
+                ChargingProfileId = chargingProfile.Id,
+            };
+
+            var energyLimitExceededSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(energyLimitExceededMessage), nameof(ChargingProfileSetMessage));
+            await _publishEndpoint.Publish(energyLimitExceededSignalRMessage, cancellationToken);
+            
+            await _cacheManager.RemoveAsync(ocppMessageId);
         }
         catch (Exception e)
         {
@@ -147,23 +162,24 @@ public class ChargingProfileService : IChargingProfileService
                 return;
             }
             
+            var connector = await _connectorGrpcClientService.GetByChargePointIdAsync(chargePointId, pendingClearChargingProfileRequest.ConnectorId.Value, cancellationToken);
+                
+            if (connector == null)
+                throw new NotFoundException($"Connector of charge point {chargePointId} with id {pendingClearChargingProfileRequest.ConnectorId} not found");
+            
+            var specification = new GetChargingProfileByNumericIdSpecification(pendingClearChargingProfileRequest.Id.Value);
+                
+            var chargingProfile = await _chargingProfileRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
+                
+            if (chargingProfile == null)
+                throw new NotFoundException(nameof(ChargingProfile), pendingClearChargingProfileRequest.Id);
+            
             switch (clearChargingProfileResponse.Status)
             {
                 case ClearChargingProfileResponseStatus.Accepted:
                 {
                     // TODO: Add case handling for connector zero
-                    var connector = await _connectorGrpcClientService.GetByChargePointIdAsync(chargePointId, pendingClearChargingProfileRequest.ConnectorId.Value, cancellationToken);
-                
-                    if (connector == null)
-                        throw new NotFoundException($"Connector of charge point {chargePointId} with id {pendingClearChargingProfileRequest.ConnectorId} not found");
-                
                     // TODO: Add case for handling clearing profile for all connectors and by purpose or stack level
-                    var specification = new GetChargingProfileByNumericIdSpecification(pendingClearChargingProfileRequest.Id.Value);
-                
-                    var chargingProfile = await _chargingProfileRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
-                
-                    if (chargingProfile == null)
-                        throw new NotFoundException(nameof(ChargingProfile), pendingClearChargingProfileRequest.Id);
                 
                     var connectorChargingProfileSpecification = new GetConnectorChargingProfileByConnectorAndProfileIdSpecification(connector.Id, chargingProfile.Id);
                     var connectorChargingProfile = await _connectorChargingProfileRepository.GetFirstOrDefaultAsync(connectorChargingProfileSpecification, cancellationToken: cancellationToken);
@@ -181,6 +197,21 @@ public class ChargingProfileService : IChargingProfileService
                         pendingClearChargingProfileRequest.Id, chargePointId, pendingClearChargingProfileRequest.ConnectorId);
                     break;
             }
+            
+            var energyLimitExceededMessage = new ChargingProfileClearedMessage
+            {
+                ChargePointId = chargePointId,
+                ConnectorId = pendingClearChargingProfileRequest.ConnectorId,
+                Status = clearChargingProfileResponse.Status,
+                ChargingProfileId = chargingProfile.Id,
+                StackLevel = pendingClearChargingProfileRequest.StackLevel,
+                ChargingProfilePurpose = pendingClearChargingProfileRequest.ChargingProfilePurpose
+            };
+
+            var energyLimitExceededSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(energyLimitExceededMessage), nameof(ChargingProfileClearedMessage));
+            await _publishEndpoint.Publish(energyLimitExceededSignalRMessage, cancellationToken);
+            
+            await _cacheManager.RemoveAsync(ocppMessageId);
         }
         catch (Exception e)
         {

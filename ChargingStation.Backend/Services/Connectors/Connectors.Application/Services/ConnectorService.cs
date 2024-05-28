@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ChargingStation.CacheManager;
 using ChargingStation.Common.Constants;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Messages_OCPP16.Requests;
@@ -25,14 +26,16 @@ public class ConnectorService : IConnectorService
     private readonly IMapper _mapper;
     private readonly ILogger<ConnectorService> _logger;
     private readonly IPublishEndpoint _publishEndpoint;
+    private readonly ICacheManager _cacheManager;
 
-    public ConnectorService(IRepository<Connector> connectorRepository, IMapper mapper, ILogger<ConnectorService> logger, IRepository<ConnectorStatus> connectorStatusRepository, IPublishEndpoint publishEndpoint)
+    public ConnectorService(IRepository<Connector> connectorRepository, IMapper mapper, ILogger<ConnectorService> logger, IRepository<ConnectorStatus> connectorStatusRepository, IPublishEndpoint publishEndpoint, ICacheManager cacheManager)
     {
         _connectorRepository = connectorRepository;
         _connectorStatusRepository = connectorStatusRepository;
         _mapper = mapper;
         _logger = logger;
         _publishEndpoint = publishEndpoint;
+        _cacheManager = cacheManager;
     }
 
     public async Task UpdateConnectorStatusAsync(UpdateConnectorStatusRequest request, CancellationToken cancellationToken = default)
@@ -73,7 +76,7 @@ public class ConnectorService : IConnectorService
             ConnectorId = statusToCreate.ConnectorId,
             Status = statusToCreate.CurrentStatus
         };
-        var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(connectorChangesMessage), nameof(connectorChangesMessage));
+        var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(connectorChangesMessage), nameof(ConnectorChangesMessage));
         await _publishEndpoint.Publish(signalRMessage, cancellationToken);
     }
 
@@ -181,7 +184,25 @@ public class ConnectorService : IConnectorService
         
         var integrationOcppMessage = CentralSystemRequestIntegrationOcppMessage.Create(connector.ChargePointId, changeAvailabilityRequest, Ocpp16ActionTypes.ChangeAvailability, Guid.NewGuid().ToString("N"), OcppProtocolVersions.Ocpp16);
         
+        await _cacheManager.SetAsync(integrationOcppMessage.OcppMessageId, changeAvailabilityRequest);
         await _publishEndpoint.Publish(integrationOcppMessage, cancellationToken);
         _logger.LogInformation("Change availability to \"{NewAvailability}\" request sent to connector {ConnectorId} of charge point with id {ChargePointId}", request.AvailabilityType.ToString(), connector.ConnectorId, connector.ChargePointId);
+    }
+
+    public async Task ProcessChangeAvailabilityResponseAsync(ChangeAvailabilityResponse response, Guid chargePointId, string ocppMessageId, CancellationToken cancellationToken = default)
+    {
+        var pendingChangeAvailabilityRequest = await _cacheManager.GetAsync<ChangeAvailabilityRequest>(ocppMessageId);
+
+        var changeAvailabilityMessage = new ChangeAvailabilityMessage
+        {
+            ChargePointId = chargePointId,
+            ConnectorId = pendingChangeAvailabilityRequest.ConnectorId,
+            Status = response.Status,
+        };
+        
+        var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(changeAvailabilityMessage), nameof(ChangeAvailabilityMessage));
+        await _publishEndpoint.Publish(signalRMessage, cancellationToken);
+            
+        await _cacheManager.RemoveAsync(ocppMessageId);
     }
 }

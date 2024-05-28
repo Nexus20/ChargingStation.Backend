@@ -211,6 +211,18 @@
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
+      "DownstreamPathTemplate": "/api/connector/changeavailability",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "connectors.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/connector/changeavailability",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
       "DownstreamPathTemplate": "/api/depot/getall",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

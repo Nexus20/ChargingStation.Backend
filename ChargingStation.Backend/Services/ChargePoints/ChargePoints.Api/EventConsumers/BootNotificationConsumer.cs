@@ -60,7 +60,7 @@ public class BootNotificationConsumer : IConsumer<IntegrationOcppMessage<BootNot
         {
             ChargePointId = chargePointId
         };
-        var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(stationConnectionMessage), nameof(stationConnectionMessage));
+        var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(stationConnectionMessage), nameof(StationConnectionMessage));
 
         await _publishEndpoint.Publish(integrationMessage, context.CancellationToken);
         await _publishEndpoint.Publish(signalRMessage, context.CancellationToken);

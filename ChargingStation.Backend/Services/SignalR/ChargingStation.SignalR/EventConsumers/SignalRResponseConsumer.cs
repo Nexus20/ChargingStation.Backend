@@ -38,6 +38,21 @@ public class SignalRResponseConsumer : IConsumer<SignalRMessage>
             case nameof(ChargePointAutomaticDisableMessage):
                 await HandleMessage<ChargePointAutomaticDisableMessage>(message, HubMessageTypes.ChargePointAutomaticDisable);
                 break;
+            case nameof(ChargingProfileSetMessage):
+                await HandleMessage<ChargingProfileSetMessage>(message, HubMessageTypes.ChargingProfileSet);
+                break;
+            case nameof(ChargingProfileClearedMessage):
+                await HandleMessage<ChargingProfileClearedMessage>(message, HubMessageTypes.ChargingProfileCleared);
+                break;
+            case nameof(ReservationProcessedMessage):
+                await HandleMessage<ReservationProcessedMessage>(message, HubMessageTypes.ReservationProcessed);
+                break;
+            case nameof(ReservationCancellationProcessedMessage):
+                await HandleMessage<ReservationCancellationProcessedMessage>(message, HubMessageTypes.ReservationCancellationProcessed);
+                break;
+            case nameof(ChangeAvailabilityMessage):
+                await HandleMessage<ChangeAvailabilityMessage>(message, HubMessageTypes.ChangeAvailability);
+                break;
         }
     }
 

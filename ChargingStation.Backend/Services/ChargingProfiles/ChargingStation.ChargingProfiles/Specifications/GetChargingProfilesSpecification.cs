@@ -42,5 +42,8 @@ public class GetChargingProfilesSpecification : Specification<ChargingProfile>
 
         if (request.MinChargingRate.HasValue) 
             AddFilter(x => x.MinChargingRate == request.MinChargingRate);
+        
+        if (!string.IsNullOrEmpty(request.Name))
+            AddFilter(x => x.Name.Contains(request.Name));
     }
 }

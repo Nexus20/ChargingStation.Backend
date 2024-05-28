@@ -60,10 +60,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:Redis=chargingstation_redis:6379"
       - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
+      - chargingstation_redis
       
   chargepoints.grpc:
     container_name: chargepoints.grpc
@@ -73,10 +75,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:Redis=chargingstation_redis:6379"
       - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
+      - chargingstation_redis
   
   ocpptags.api:
     container_name: ocpptags.api
@@ -112,10 +116,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:Redis=chargingstation_redis:6379"
       - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
+      - chargingstation_redis
   
   connectors.grpc:
     container_name: connectors.grpc
@@ -125,10 +131,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:Redis=chargingstation_redis:6379"
       - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
+      - chargingstation_redis
   
   transactions.api:
     container_name: transactions.api

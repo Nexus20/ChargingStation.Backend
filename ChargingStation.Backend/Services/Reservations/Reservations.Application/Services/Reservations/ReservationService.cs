@@ -11,9 +11,11 @@ using ChargingStation.Common.Models.Reservations.Requests;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.GrpcClients;
+using ChargingStation.InternalCommunication.SignalRModels;
 using Hangfire;
 using MassTransit;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Reservations.Application.Models.Requests;
 using Reservations.Application.Models.Responses;
 using Reservations.Application.Specifications;
@@ -227,6 +229,17 @@ public class ReservationService : IReservationService
         _reservationRepository.Update(reservation);
         await _reservationRepository.SaveChangesAsync(cancellationToken);
         
+        var reservationConfirmedMessage = new ReservationProcessedMessage
+        {
+            ReservationId = reservation.Id,
+            ConnectorId = reservation.ConnectorId,
+            ExpiryDate = reservation.ExpiryDateTime,
+            Status = reservationResponse.Status
+        };
+        
+        var energyLimitExceededSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(reservationConfirmedMessage), nameof(ReservationProcessedMessage));
+        await _publishEndpoint.Publish(energyLimitExceededSignalRMessage, cancellationToken);
+        
         _logger.LogInformation("Reservation with id {ReservationId} updated with status {Status}", reservation.ReservationId, reservationResponse.Status);
     }
     
@@ -275,5 +288,15 @@ public class ReservationService : IReservationService
         {
             _logger.LogWarning("Cancellation of reservation with id {ReservationId} rejected", reservation.ReservationId);
         }
+        
+        var reservationConfirmedMessage = new ReservationCancellationProcessedMessage
+        {
+            ReservationId = reservation.Id,
+            ConnectorId = reservation.ConnectorId,
+            Status = cancelReservationResponse.Status
+        };
+        
+        var energyLimitExceededSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(reservationConfirmedMessage), nameof(ReservationCancellationProcessedMessage));
+        await _publishEndpoint.Publish(energyLimitExceededSignalRMessage, cancellationToken);
     }
 }

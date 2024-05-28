@@ -30,13 +30,14 @@ public static class ServicesExtensions
                 };
             });
 
-        services.AddConnectorApplicationServices();
+        services.AddConnectorApplicationServices(configuration);
 
         services.AddMassTransit(busConfigurator =>
         {
             busConfigurator.SetKebabCaseEndpointNameFormatter();
             
             busConfigurator.AddConsumer<StatusNotificationConsumer>();
+            busConfigurator.AddConsumer<ChangeAvailabilityResponseConsumer>();
             
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
@@ -44,6 +45,10 @@ public static class ServicesExtensions
                 
                 cfg.ReceiveEndpoint("status-notification-queue-1_6", c => {
                     c.ConfigureConsumer<StatusNotificationConsumer>(ctx);
+                });
+                
+                cfg.ReceiveEndpoint("change-availability-response-queue-1_6", c => {
+                    c.ConfigureConsumer<ChangeAvailabilityResponseConsumer>(ctx);
                 });
             });
         });

@@ -30,7 +30,7 @@ public static class ServicesExtensions
                 };
             });
 
-        services.AddChargePointsApplicationServices();
+        services.AddChargePointsApplicationServices(configuration);
         
         services.AddMassTransit(busConfigurator =>
         {

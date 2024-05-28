@@ -5,6 +5,7 @@ namespace ChargingStation.ChargingProfiles.Models.Requests;
 
 public class GetChargingProfilesRequest : BaseCollectionRequest
 {
+    public string? Name { get; set; }
     public int? StackLevel { get; set; }
     public DateTime? ValidFrom { get; set; }
     public DateTime? ValidTo { get; set; }

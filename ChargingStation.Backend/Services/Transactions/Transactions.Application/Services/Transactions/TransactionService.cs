@@ -247,7 +247,7 @@ public class TransactionService : ITransactionService
                     ConnectorId = connector.Id,
                     TransactionId = transactionToCreate.TransactionId
                 };
-                var signalRMessage = new SignalRMessage( JsonConvert.SerializeObject(transactionMessage), nameof(transactionMessage));
+                var signalRMessage = new SignalRMessage( JsonConvert.SerializeObject(transactionMessage), nameof(TransactionMessage));
                 await _publishEndpoint.Publish(signalRMessage, cancellationToken);
 
                 // Return DB-ID as transaction ID
@@ -412,7 +412,7 @@ public class TransactionService : ITransactionService
                                 ConnectorId = transaction.ConnectorId,
                                 TransactionId = transaction.TransactionId,
                             };
-                            var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(transactionMessage), nameof(transactionMessage));
+                            var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(transactionMessage), nameof(TransactionMessage));
                             await _publishEndpoint.Publish(signalRMessage, cancellationToken);
                         }
                         
