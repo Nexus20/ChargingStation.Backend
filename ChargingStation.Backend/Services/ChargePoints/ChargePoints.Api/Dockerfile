@@ -12,6 +12,7 @@ COPY ["Services/ChargePoints/ChargePoints.Api/ChargePoints.Api.csproj", "Service
 COPY ["Infrastructure/ChargingStation.InternalCommunication/ChargingStation.InternalCommunication.csproj", "Infrastructure/ChargingStation.InternalCommunication/"]
 COPY ["Domain/ChargingStation.Common/ChargingStation.Common.csproj", "Domain/ChargingStation.Common/"]
 COPY ["Services/ChargePoints/ChargePoints.Application/ChargePoints.Application.csproj", "Services/ChargePoints/ChargePoints.Application/"]
+COPY ["Infrastructure/ChargingStation.CacheManager/ChargingStation.CacheManager.csproj", "Infrastructure/ChargingStation.CacheManager/"]
 COPY ["Infrastructure/ChargingStation.Infrastructure/ChargingStation.Infrastructure.csproj", "Infrastructure/ChargingStation.Infrastructure/"]
 COPY ["Domain/ChargingStation.Domain/ChargingStation.Domain.csproj", "Domain/ChargingStation.Domain/"]
 RUN dotnet restore "./Services/ChargePoints/ChargePoints.Api/ChargePoints.Api.csproj"
