@@ -165,7 +165,7 @@ public class ConnectorService : IConnectorService
             response.CurrentStatus = _mapper.Map<ConnectorStatusResponse>(lastStatus);
             
             if(x.ConnectorChargingProfiles is not null && x.ConnectorChargingProfiles.Count > 0)
-                response.ChargingProfilesIds = x.ConnectorChargingProfiles.Select(cp => cp.Id).ToList();
+                response.ChargingProfilesIds = x.ConnectorChargingProfiles.Select(cp => cp.ChargingProfileId).ToList();
 
             return response;
         }).ToList();
