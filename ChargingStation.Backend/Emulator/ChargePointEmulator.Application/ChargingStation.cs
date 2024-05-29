@@ -543,9 +543,130 @@ public class ChargingStation : IAsyncDisposable
                 var changeAvailabilityRequest = JsonConvert.DeserializeObject<ChangeAvailabilityRequest>(jsonPayload);
                 await HandleChangeAvailabilityRequestAsync(changeAvailabilityRequest, uniqueId, cancellationToken);
                 break;
+            case Ocpp16ActionTypes.SetChargingProfile:
+                var chargingProfileRequest = JsonConvert.DeserializeObject<SetChargingProfileRequest>(jsonPayload);
+                await HandleSetChargingProfileRequestAsync(chargingProfileRequest, uniqueId, cancellationToken);
+                break;
+            case Ocpp16ActionTypes.ClearChargingProfile:
+                var clearChargingProfileRequest = JsonConvert.DeserializeObject<ClearChargingProfileRequest>(jsonPayload);
+                await HandleClearChargingProfileRequestAsync(clearChargingProfileRequest, uniqueId, cancellationToken);
+                break;
         }
     }
 
+    private async Task HandleClearChargingProfileRequestAsync(ClearChargingProfileRequest request, string uniqueId, CancellationToken cancellationToken)
+    {
+        var profileRemoved = false;
+
+        if (request.Id.HasValue)
+        {
+            var connectorId = State.Connectors.Values.FirstOrDefault(x => x.ChargingProfiles.ContainsKey(request.Id.Value))?.ConnectorId;
+
+            if (connectorId.HasValue)
+            {
+                State.Connectors[connectorId.Value].ChargingProfiles.Remove(request.Id.Value);
+                await SaveStateAsync(cancellationToken);
+                profileRemoved = true;
+            }
+        } 
+        else if (request.ConnectorId.HasValue)
+        {
+            if (State.Connectors.TryGetValue(request.ConnectorId.Value, out _))
+            {
+                State.Connectors[request.ConnectorId.Value].ChargingProfiles.Clear();
+                await SaveStateAsync(cancellationToken);
+                profileRemoved = true;
+            }
+        }
+        else if (request.ChargingProfilePurpose.HasValue)
+        {
+            foreach (var connector in State.Connectors.Values)
+            {
+                var profilesToRemove = connector.ChargingProfiles.Values.Where(x => (int)x.ChargingProfilePurpose == (int)request.ChargingProfilePurpose.Value).ToList();
+                
+                if(profilesToRemove.Count == 0)
+                    continue;
+                
+                foreach (var profile in profilesToRemove)
+                {
+                    connector.ChargingProfiles.Remove(profile.ChargingProfileId);
+                    profileRemoved = true;
+                }
+            }
+            
+            if(profileRemoved)
+                await SaveStateAsync(cancellationToken);
+        } else if (request.StackLevel.HasValue)
+        {
+            foreach (var connector in State.Connectors.Values)
+            {
+                var profilesToRemove = connector.ChargingProfiles.Values.Where(x => x.StackLevel == request.StackLevel.Value).ToList();
+                
+                if(profilesToRemove.Count == 0)
+                    continue;
+                
+                foreach (var profile in profilesToRemove)
+                {
+                    connector.ChargingProfiles.Remove(profile.ChargingProfileId);
+                    profileRemoved = true;
+                }
+            }
+            
+            if(profileRemoved)
+                await SaveStateAsync(cancellationToken);
+        }
+        
+        var response = new ClearChargingProfileResponse(profileRemoved ? ClearChargingProfileResponseStatus.Accepted : ClearChargingProfileResponseStatus.Unknown);
+        var jsonPayload = JsonConvert.SerializeObject(response);
+        var ocppMessage = new OcppMessage(OcppMessageTypes.CallResult, uniqueId, jsonPayload);
+        var textMessage = $"[{ocppMessage.MessageType},\"{ocppMessage.UniqueId}\",{ocppMessage.JsonPayload}]";
+        await SendMessageAsync(textMessage, cancellationToken);
+    }
+
+    private async Task HandleSetChargingProfileRequestAsync(SetChargingProfileRequest request, string uniqueId, CancellationToken cancellationToken)
+    {
+        if(!State.Connectors.TryGetValue(request.ConnectorId, out var connector))
+            throw new InvalidOperationException("Connector not found");
+        
+        if (request.CsChargingProfiles.ChargingProfilePurpose != CsChargingProfilesChargingProfilePurpose.TxProfile)
+        {
+            // find charging profile with same profile id
+            if(connector.ChargingProfiles.TryGetValue(request.CsChargingProfiles.ChargingProfileId, out var profile))
+            {
+                connector.ChargingProfiles[request.CsChargingProfiles.ChargingProfileId] = request.CsChargingProfiles;
+            }
+            else
+            {
+                var sameStackAndPurposeProfile = connector.ChargingProfiles.Values.FirstOrDefault(x => x.StackLevel == request.CsChargingProfiles.StackLevel && x.ChargingProfilePurpose == request.CsChargingProfiles.ChargingProfilePurpose);
+                
+                if (sameStackAndPurposeProfile is not null)
+                {
+                    connector.ChargingProfiles[sameStackAndPurposeProfile.ChargingProfileId] = request.CsChargingProfiles;
+                }
+                else
+                {
+                    connector.ChargingProfiles.TryAdd(request.CsChargingProfiles.ChargingProfileId, request.CsChargingProfiles);
+                }
+            }
+
+            await SaveStateAsync(cancellationToken);
+            var response = new SetChargingProfileResponse(SetChargingProfileResponseStatus.Accepted);
+            var jsonPayload = JsonConvert.SerializeObject(response);
+            var ocppMessage = new OcppMessage(OcppMessageTypes.CallResult, uniqueId, jsonPayload);
+            var textMessage = $"[{ocppMessage.MessageType},\"{ocppMessage.UniqueId}\",{ocppMessage.JsonPayload}]";
+            await SendMessageAsync(textMessage, cancellationToken);
+        }
+        
+        if (request.CsChargingProfiles.TransactionId.HasValue)
+        {
+            // handle charging profile for particular transaction
+        }
+        else
+        {
+            
+        }
+    }
+    
     private async Task HandleReserveNowRequestAsync(ReserveNowRequest request, string uniqueId, CancellationToken cancellationToken)
     {
         if (State.Reservations.TryGetValue(request.ReservationId, out _))
@@ -555,6 +676,7 @@ public class ChargingStation : IAsyncDisposable
             
             var reserveNowResponse = new ReserveNowResponse(ReserveNowResponseStatus.Accepted);
             
+            await SaveStateAsync(cancellationToken);
             var jsonPayload = JsonConvert.SerializeObject(reserveNowResponse);
             var ocppMessage = new OcppMessage(OcppMessageTypes.CallResult, uniqueId, jsonPayload);
             var textMessage = $"[{ocppMessage.MessageType},\"{ocppMessage.UniqueId}\",{ocppMessage.JsonPayload}]";

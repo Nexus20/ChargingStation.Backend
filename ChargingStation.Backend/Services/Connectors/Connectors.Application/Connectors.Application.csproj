@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\..\..\Infrastructure\ChargingStation.CacheManager\ChargingStation.CacheManager.csproj" />
         <ProjectReference Include="..\..\..\Infrastructure\ChargingStation.Infrastructure\ChargingStation.Infrastructure.csproj"/>
         <ProjectReference Include="..\..\..\Infrastructure\ChargingStation.InternalCommunication\ChargingStation.InternalCommunication.csproj" />
     </ItemGroup>

@@ -54,6 +54,33 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ApplicationUserDepot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ApplicationUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("DepotId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("DepotId");
+
+                    b.ToTable("ApplicationUserDepot");
+                });
+
             modelBuilder.Entity("ChargingStation.Domain.Entities.ChargePoint", b =>
                 {
                     b.Property<Guid>("Id")
@@ -939,6 +966,25 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.Navigation("OcppTag");
                 });
 
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ApplicationUserDepot", b =>
+                {
+                    b.HasOne("ChargingStation.Domain.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany("ApplicationUserDepots")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ChargingStation.Domain.Entities.Depot", "Depot")
+                        .WithMany("ApplicationUserDepots")
+                        .HasForeignKey("DepotId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("Depot");
+                });
+
             modelBuilder.Entity("ChargingStation.Domain.Entities.ChargePoint", b =>
                 {
                     b.HasOne("ChargingStation.Domain.Entities.Depot", "Depot")
@@ -1186,6 +1232,11 @@ namespace ChargingStation.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("ChargingStation.Domain.Entities.ApplicationUser", b =>
+                {
+                    b.Navigation("ApplicationUserDepots");
+                });
+
             modelBuilder.Entity("ChargingStation.Domain.Entities.ChargePoint", b =>
                 {
                     b.Navigation("Connectors");
@@ -1217,6 +1268,8 @@ namespace ChargingStation.Infrastructure.Migrations
 
             modelBuilder.Entity("ChargingStation.Domain.Entities.Depot", b =>
                 {
+                    b.Navigation("ApplicationUserDepots");
+
                     b.Navigation("ChargePoints");
 
                     b.Navigation("EnergyConsumptionSettings");

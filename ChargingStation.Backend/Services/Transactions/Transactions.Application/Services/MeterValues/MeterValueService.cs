@@ -167,7 +167,7 @@ public class MeterValueService : IMeterValueService
                 connectorChangesMessage.ConnectorId = connector.Id;
                 connectorChangesMessage.TransactionId = transaction.TransactionId;
 
-                var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(connectorChangesMessage), nameof(connectorChangesMessage));
+                var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(connectorChangesMessage), nameof(ConnectorChangesMessage));
                 await _publishEndpoint.Publish(signalRMessage, cancellationToken);
                 
                 await CheckEnergyConsumptionLimitAndWarnAsync(chargePointId, cancellationToken);

@@ -15,4 +15,6 @@ public interface IConnectorService
     Task<StatusNotificationResponse> ProcessStatusNotificationAsync(StatusNotificationRequest request, Guid chargePointId, CancellationToken cancellationToken = default);
     Task<List<ConnectorResponse>> GetByChargePointsIdsAsync(List<Guid> chargePointsIds, CancellationToken cancellationToken = default);
     Task ChangeAvailabilityAsync(ChangeConnectorAvailabilityRequest request, CancellationToken cancellationToken = default);
+    Task ProcessChangeAvailabilityResponseAsync(ChangeAvailabilityResponse response, Guid chargePointId,
+        string ocppMessageId, CancellationToken cancellationToken);
 }

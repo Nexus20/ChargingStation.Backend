@@ -16,7 +16,7 @@ public static class InfrastructureServicesRegistration
     {
         services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
-
+        
         services.AddIdentity<InfrastructureUser, InfrastructureRole>()
             .AddUserStore<UserStore<InfrastructureUser, InfrastructureRole, ApplicationDbContext, string, IdentityUserClaim<string>, InfrastructureUserRole,
                 IdentityUserLogin<string>, IdentityUserToken<string>, IdentityRoleClaim<string>>>()

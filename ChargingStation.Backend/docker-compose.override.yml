@@ -60,10 +60,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:Redis=chargingstation_redis:6379"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
+      - chargingstation_redis
       
   chargepoints.grpc:
     container_name: chargepoints.grpc
@@ -73,10 +75,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:Redis=chargingstation_redis:6379"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
+      - chargingstation_redis
   
   ocpptags.api:
     container_name: ocpptags.api
@@ -112,10 +116,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:Redis=chargingstation_redis:6379"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
+      - chargingstation_redis
   
   connectors.grpc:
     container_name: connectors.grpc
@@ -125,10 +131,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:Redis=chargingstation_redis:6379"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
+      - chargingstation_redis
   
   transactions.api:
     container_name: transactions.api
@@ -281,6 +289,15 @@ services:
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
       - chargingstation_rabbitmq
+   
+  usermanagement.api:
+    container_name: usermanagement.api
+    ports:
+      - "8010:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
         
   emulator_db:
     container_name: emulator_db
@@ -288,7 +305,7 @@ services:
     ports:
       - "27017:27017"
     volumes:
-      - ${WEBAPP_STORAGE_HOME}/site:/data/db
+      - mongo_data:/data/db
 
   chargingstation_emulator:
     container_name: chargingstation_emulator
@@ -299,12 +316,13 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-      - "ConnectionStrings:MongoDB=mongodb://emulator_db:27017"
+      - "ConnectionStrings:MongoDBConnection=mongodb://emulator_db:27017"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
       - "CentralSystemEndpoint=ws://chargingstation.websockets:8080"
       - "ApiSettings:OcppTagServiceAddress=http://ocpptags.api:8080"
       - "ApiSettings:ConnectorServiceAddress=http://connectors.api:8080"
       - "ApiSettings:ReservationServiceAddress=http://reservations.api:8080"
+      - "HubEndpoint=http://chargingstation_emulator:8080"
     depends_on:
       - chargingstation_rabbitmq
       - emulator_db

@@ -12,11 +12,13 @@ public class ChargingStationSimulatorManager
 
     private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly string _centralSystemEndpoint;
+    private readonly string _hubEndpoint;
 
     public ChargingStationSimulatorManager(IConfiguration configuration, IServiceScopeFactory serviceScopeFactory)
     {
         _serviceScopeFactory = serviceScopeFactory;
-        _centralSystemEndpoint = configuration.GetValue<string>("CentralSystemEndpoint");
+        _centralSystemEndpoint = configuration.GetValue<string>("CentralSystemEndpoint")!;
+        _hubEndpoint = configuration.GetValue<string>("HubEndpoint")!;
     }
     
     public bool TryAddChargingStation(Guid chargingStationId)
@@ -25,7 +27,7 @@ public class ChargingStationSimulatorManager
         
         var stateRepository = scope.ServiceProvider.GetRequiredService<IChargingStationStateRepository>();
         
-        var chargingStation = new ChargingStation(chargingStationId, stateRepository, "http://localhost:5259/ChargePointHub");
+        var chargingStation = new ChargingStation(chargingStationId, stateRepository, $"{_hubEndpoint}/ChargePointHub");
         
         return ChargingStations.TryAdd(chargingStationId, chargingStation);
     }

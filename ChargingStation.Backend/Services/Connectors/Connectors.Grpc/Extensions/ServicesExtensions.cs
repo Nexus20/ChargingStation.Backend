@@ -15,7 +15,7 @@ public static class ServicesExtensions
             options.EnableDetailedErrors = true;
         });
 
-        services.AddConnectorApplicationServices();
+        services.AddConnectorApplicationServices(configuration);
 
         services.AddMassTransit(busConfigurator =>
         {

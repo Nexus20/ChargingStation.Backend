@@ -47,12 +47,20 @@ public class ChargingProfileController : ControllerBase
     }
     
     [HttpPost("set")]
-    [Produces("application/json")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     public async Task<IActionResult> SetChargingProfileAsync([FromBody] SetChargingProfileRequest request, CancellationToken cancellationToken = default)
     {
         await _chargingProfileService.SetChargingProfileAsync(request, cancellationToken);
+        return Accepted();
+    }
+    
+    [HttpPost("clear")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status202Accepted)]
+    public async Task<IActionResult> ClearChargingProfileAsync([FromBody] ClearChargingProfileRequest request, CancellationToken cancellationToken = default)
+    {
+        await _chargingProfileService.ClearChargingProfileAsync(request, cancellationToken);
         return Accepted();
     }
 }
