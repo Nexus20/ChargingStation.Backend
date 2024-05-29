@@ -2,10 +2,10 @@ version: '3.4'
 
 services:
   chargingstation_rabbitmq:
-    image: rabbitmq:3-management-alpine
+    image: rabbitmq:3.13.2-management-alpine
     
   chargingstation_redis:
-    image: redis:alpine
+    image: redis:7.2.5-alpine
 
   chargingstation.aggregator:
     image: ${DOCKER_REGISTRY-}aggregator

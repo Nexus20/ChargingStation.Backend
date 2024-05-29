@@ -30,17 +30,19 @@ spec:
               secretKeyRef:
                 name: mssql-main-db-secret
                 key: mssql-main-db-connection-string
+          - name: ConnectionStrings__Redis
+            value: "redis-0.redis.csms.svc.cluster.local:6379,password=redis-complex-password"
           - name: MessageBrokerSettings__RabbitMqHost
-            value: ""
+            value: "rabbitmq-0.rabbitmq.csms.svc.cluster.local"
           - name: MessageBrokerSettings__RabbitMqUsername
             valueFrom:
               secretKeyRef:
-                name: rabbitmq-publisher
+                name: rabbitmq-secret
                 key: rabbitmq-username
           - name: MessageBrokerSettings__RabbitMqPassword
             valueFrom:
               secretKeyRef:
-                name: rabbitmq-publisher
+                name: rabbitmq-secret
                 key: rabbitmq-password
         resources:
             requests:
