@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: energyconsumptionsettingsapi-deployment
+  labels:
+    app: energyconsumptionsettingsapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: energyconsumptionsettingsapi
+  template:
+    metadata:
+      labels:
+        app: energyconsumptionsettingsapi
+    spec:
+      containers:
+      - name: energyconsumptionsettingsapi
+        image: yevhen0825/energyconsumptionsettingsapi:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Development
+          - name: ASPNETCORE_HTTP_PORTS
+            value: "8080"
+          - name: ConnectionStrings__DefaultConnection
+            valueFrom:
+              secretKeyRef:
+                name: mssql-db-secret
+                key: mssql-main-db-connection-string
+          - name: ApiSettings__DepotServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: depots-config
+                key: depots-api-url
+          - name: GrpcSettings__ChargePointServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: chargepoints-config
+                key: chargepoints-grpc-url
+        resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: energyconsumptionsettingsapi-service
+  labels:
+    app: energyconsumptionsettingsapi
+spec:
+  type: LoadBalancer
+  selector:
+    app: energyconsumptionsettingsapi
+  ports:
+    - protocol: TCP
+      name: http
+      port: 8009
+      targetPort: 8080
