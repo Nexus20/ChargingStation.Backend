@@ -147,7 +147,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
-      - "ApiSettings:EnergyConsumptionSettingsServiceAddress=http://chargingprofiles.api:8080/api/EnergyConsumptionSettings/"
+      - "GrpcSettings:EnergyConsumptionSettingsServiceAddress=http://energyconsumptionsettings.grpc:8080"
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
       - "GrpcSettings:OcppTagServiceAddress=http://ocpptags.grpc:8080"
       - "GrpcSettings:ConnectorServiceAddress=http://connectors.grpc:8080"

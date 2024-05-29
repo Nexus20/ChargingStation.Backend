@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: connectorsgrpc-deployment
+  name: reservationsgrpc-deployment
   labels:
-    app: connectorsgrpc
+    app: reservationsgrpc
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: connectorsgrpc
+      app: reservationsgrpc
   template:
     metadata:
       labels:
-        app: connectorsgrpc
+        app: reservationsgrpc
     spec:
       containers:
-      - name: connectorsgrpc
-        image: yevhen0825/connectorsgrpc:latest
+      - name: reservationsgrpc
+        image: yevhen0825/reservationsgrpc:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
@@ -30,20 +30,6 @@ spec:
               secretKeyRef:
                 name: mssql-db-secret
                 key: mssql-main-db-connection-string
-          - name: ConnectionStrings__Redis
-            value: "redis-0.redis.csms.svc.cluster.local:6379,password=redis-complex-password"
-          - name: MessageBrokerSettings__RabbitMqHost
-            value: "rabbitmq-0.rabbitmq.csms.svc.cluster.local"
-          - name: MessageBrokerSettings__RabbitMqUsername
-            valueFrom:
-              secretKeyRef:
-                name: rabbitmq-secret
-                key: rabbitmq-username
-          - name: MessageBrokerSettings__RabbitMqPassword
-            valueFrom:
-              secretKeyRef:
-                name: rabbitmq-secret
-                key: rabbitmq-password
         resources:
             requests:
               memory: "256Mi"
@@ -55,15 +41,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: connectorsgrpc-service
+  name: reservationsgrpc-service
   labels:
-    app: connectorsgrpc
+    app: reservationsgrpc
 spec:
   type: LoadBalancer
   selector:
-    app: connectorsgrpc
+    app: reservationsgrpc
   ports:
     - protocol: TCP
       name: http
-      port: 8054
+      port: 8057
       targetPort: 8080

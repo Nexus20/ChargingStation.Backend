@@ -28,7 +28,7 @@ spec:
           - name: ConnectionStrings__DefaultConnection
             valueFrom:
               secretKeyRef:
-                name: mssql-main-db-secret
+                name: mssql-db-secret
                 key: mssql-main-db-connection-string
           - name: ConnectionStrings__Redis
             value: "redis-0.redis.csms.svc.cluster.local:6379,password=redis-complex-password"

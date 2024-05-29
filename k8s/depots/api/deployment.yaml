@@ -28,7 +28,7 @@ spec:
           - name: ConnectionStrings__DefaultConnection
             valueFrom:
               secretKeyRef:
-                name: mssql-main-db-secret
+                name: mssql-db-secret
                 key: mssql-main-db-connection-string
         resources:
             requests:
