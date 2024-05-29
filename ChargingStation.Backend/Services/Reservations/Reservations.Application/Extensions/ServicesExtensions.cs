@@ -10,6 +10,13 @@ namespace Reservations.Application.Extensions;
 
 public static class ServicesExtensions
 {
+    public static IServiceCollection AddReservationApplicationBaseServices(this IServiceCollection services)
+    {
+        services.AddScoped<IBaseReservationService, BaseReservationService>();
+
+        return services;
+    }
+    
     public static IServiceCollection AddReservationApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddChargePointsGrpcClient(configuration);

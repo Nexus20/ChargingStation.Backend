@@ -7,7 +7,6 @@ using ChargingStation.Common.Messages_OCPP16.Responses.Enums;
 using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Models.OcppTags.Responses;
-using ChargingStation.Common.Models.Reservations.Requests;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.GrpcClients;
@@ -22,13 +21,12 @@ using Reservations.Application.Specifications;
 
 namespace Reservations.Application.Services.Reservations;
 
-public class ReservationService : IReservationService
+public class ReservationService : BaseReservationService, IReservationService
 {
     private readonly ILogger<ReservationService> _logger;
     private readonly OcppTagGrpcClientService _ocppTagGrpcClientService;
     private readonly ChargePointGrpcClientService _chargePointGrpcClientService;
     private readonly ConnectorGrpcClientService _connectorGrpcClientService;
-    private readonly IRepository<Reservation> _reservationRepository;
     private readonly IPublishEndpoint _publishEndpoint;
     private readonly IMapper _mapper;
 
@@ -38,20 +36,19 @@ public class ReservationService : IReservationService
                               ConnectorGrpcClientService connectorGrpcClientService,
                               IRepository<Reservation> reservationRepository,
                               IPublishEndpoint publishEndpoint, 
-                              IMapper mapper)
+                              IMapper mapper) : base(reservationRepository)
     {
         _logger = logger;
         _ocppTagGrpcClientService = ocppTagGrpcClientService;
         _chargePointGrpcClientService = chargePointGrpcClientService;
         _connectorGrpcClientService = connectorGrpcClientService;
-        _reservationRepository = reservationRepository;
         _publishEndpoint = publishEndpoint;
         _mapper = mapper;
     }
     
     public async Task<ReservationResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var reservation = await _reservationRepository.GetByIdAsync(id, cancellationToken);
+        var reservation = await ReservationRepository.GetByIdAsync(id, cancellationToken);
         
         if (reservation is null)
             throw new NotFoundException($"Reservation with id {id} not found");
@@ -63,36 +60,13 @@ public class ReservationService : IReservationService
     public async Task<IPagedCollection<ReservationResponse>> GetAsync(GetReservationsRequest request, CancellationToken cancellationToken = default)
     {
         var specification = new GetReservationsSpecification(request);
-        var reservations = await _reservationRepository.GetPagedCollectionAsync(specification, request.PagePredicate?.Page, request.PagePredicate?.PageSize, cancellationToken: cancellationToken);
+        var reservations = await ReservationRepository.GetPagedCollectionAsync(specification, request.PagePredicate?.Page, request.PagePredicate?.PageSize, cancellationToken: cancellationToken);
         
         if (!reservations.Collection.Any())
             return PagedCollection<ReservationResponse>.Empty;
         
         var result = _mapper.Map<IPagedCollection<ReservationResponse>>(reservations);
         return result;
-    }
-
-    public async Task UseReservationAsync(UseReservationRequest request, CancellationToken cancellationToken = default)
-    {
-        var specification = new GetReservationsSpecification(request);
-        
-        var reservation = await _reservationRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
-        
-        if (reservation is null)
-        {
-            throw new NotFoundException($"Reservation with id {request.ReservationId} for charge point with id {request.ChargePointId} not found");
-        }
-        
-        if (reservation.Status != ReserveNowResponseStatus.Accepted.ToString())
-        {
-            throw new BadRequestException($"Reservation with id {request.ReservationId} for charge point with id {request.ChargePointId} is not accepted");
-        }
-        
-        reservation.IsUsed = true;
-        reservation.Status = "Used";
-        
-        _reservationRepository.Update(reservation);
-        await _reservationRepository.SaveChangesAsync(cancellationToken);
     }
 
     public async Task CreateReservationAsync(CreateReservationRequest request, CancellationToken cancellationToken = default)
@@ -138,7 +112,7 @@ public class ReservationService : IReservationService
             reservation.ConnectorId = connector.Id;
             
             var conflictingReservationsSpecification = new GetConflictingReservationsSpecification(request.StartDateTime, request.ExpiryDateTime, TimeSpan.FromMinutes(30), request.ChargePointId, connector.Id);
-            var conflictingReservations = await _reservationRepository.GetAsync(conflictingReservationsSpecification, cancellationToken: cancellationToken);
+            var conflictingReservations = await ReservationRepository.GetAsync(conflictingReservationsSpecification, cancellationToken: cancellationToken);
             
             if (conflictingReservations.Count != 0)
             {
@@ -146,8 +120,8 @@ public class ReservationService : IReservationService
             }
         }
         
-        await _reservationRepository.AddAsync(reservation, cancellationToken);
-        await _reservationRepository.SaveChangesAsync(cancellationToken);
+        await ReservationRepository.AddAsync(reservation, cancellationToken);
+        await ReservationRepository.SaveChangesAsync(cancellationToken);
 
         BackgroundJob.Schedule(
             () => SendReserveNowRequestAsync(reserveNowRequestId, request, ocppTag, reservation.ReservationId, reservation.Id, cancellationToken),
@@ -164,7 +138,7 @@ public class ReservationService : IReservationService
         var integrationOcppMessage = CentralSystemRequestIntegrationOcppMessage.Create(request.ChargePointId, reserveNowRequest, Ocpp16ActionTypes.ReserveNow, reserveNowRequestId, OcppProtocolVersions.Ocpp16);
         await _publishEndpoint.Publish(integrationOcppMessage, cancellationToken);
         
-        var reservationEntity = await _reservationRepository.GetByIdAsync(reservationGuid, cancellationToken);
+        var reservationEntity = await ReservationRepository.GetByIdAsync(reservationGuid, cancellationToken);
         
         if (reservationEntity is null)
         {
@@ -174,13 +148,13 @@ public class ReservationService : IReservationService
         
         reservationEntity.Status = "RequestSent";
         
-        _reservationRepository.Update(reservationEntity);
-        await _reservationRepository.SaveChangesAsync(cancellationToken);
+        ReservationRepository.Update(reservationEntity);
+        await ReservationRepository.SaveChangesAsync(cancellationToken);
     }
     
     public async Task UpdateReservationAsync(UpdateReservationRequest request, CancellationToken cancellationToken = default)
     {
-        var reservationToUpdate = await _reservationRepository.GetByIdAsync(request.Id, cancellationToken);
+        var reservationToUpdate = await ReservationRepository.GetByIdAsync(request.Id, cancellationToken);
         
         if (reservationToUpdate is null)
             throw new NotFoundException($"Reservation with id {request.Id} not found");
@@ -198,7 +172,7 @@ public class ReservationService : IReservationService
         }
         
         var conflictingReservationsSpecification = new GetConflictingReservationsSpecification(request.StartDateTime, request.ExpiryDateTime, TimeSpan.FromMinutes(30), reservationToUpdate.ChargePointId, connector.Id);
-        var conflictingReservations = await _reservationRepository.GetAsync(conflictingReservationsSpecification, cancellationToken: cancellationToken);
+        var conflictingReservations = await ReservationRepository.GetAsync(conflictingReservationsSpecification, cancellationToken: cancellationToken);
         
         if (conflictingReservations.Count != 0)
         {
@@ -208,8 +182,8 @@ public class ReservationService : IReservationService
         _mapper.Map(request, reservationToUpdate);
         reservationToUpdate.ConnectorId = connector.Id;
         
-        _reservationRepository.Update(reservationToUpdate);
-        await _reservationRepository.SaveChangesAsync(cancellationToken);
+        ReservationRepository.Update(reservationToUpdate);
+        await ReservationRepository.SaveChangesAsync(cancellationToken);
         
         _logger.LogInformation("Reservation with id {ReservationId} updated", request.Id);
     }
@@ -217,7 +191,7 @@ public class ReservationService : IReservationService
     public async Task ProcessReservationResponseAsync(ReserveNowResponse reservationResponse, string ocppMessageId, CancellationToken cancellationToken = default)
     {
         var specification = new GetReservationByRequestIdSpecification(ocppMessageId);
-        var reservation = await _reservationRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
+        var reservation = await ReservationRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
         
         if (reservation is null)
         {
@@ -226,8 +200,8 @@ public class ReservationService : IReservationService
         }
 
         reservation.Status = reservationResponse.Status.ToString();
-        _reservationRepository.Update(reservation);
-        await _reservationRepository.SaveChangesAsync(cancellationToken);
+        ReservationRepository.Update(reservation);
+        await ReservationRepository.SaveChangesAsync(cancellationToken);
         
         var reservationConfirmedMessage = new ReservationProcessedMessage
         {
@@ -245,7 +219,7 @@ public class ReservationService : IReservationService
     
     public async Task CreateReservationCancellation(CreateReservationCancellationRequest request, CancellationToken cancellationToken = default)
     {
-        var reservation = await _reservationRepository.GetByIdAsync(request.ReservationId, cancellationToken);
+        var reservation = await ReservationRepository.GetByIdAsync(request.ReservationId, cancellationToken);
         
         if (reservation is null)
         {
@@ -256,8 +230,8 @@ public class ReservationService : IReservationService
         
         reservation.CancellationRequestId = cancelReservationRequestId;
         
-        _reservationRepository.Update(reservation);
-        await _reservationRepository.SaveChangesAsync(cancellationToken);
+        ReservationRepository.Update(reservation);
+        await ReservationRepository.SaveChangesAsync(cancellationToken);
         
         var cancelReservationRequest = new CancelReservationRequest(reservation.ReservationId);
         var integrationOcppMessage = CentralSystemRequestIntegrationOcppMessage.Create(reservation.ChargePointId, cancelReservationRequest, Ocpp16ActionTypes.CancelReservation, cancelReservationRequestId, OcppProtocolVersions.Ocpp16);
@@ -269,7 +243,7 @@ public class ReservationService : IReservationService
     public async Task ProcessReservationCancellationResponseAsync(CancelReservationResponse cancelReservationResponse, string ocppMessageId, CancellationToken cancellationToken = default)
     {
         var specification = new GetReservationByCancellationRequestIdSpecification(ocppMessageId);
-        var reservation = await _reservationRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
+        var reservation = await ReservationRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
         
         if (reservation is null)
         {
@@ -280,8 +254,8 @@ public class ReservationService : IReservationService
         if(cancelReservationResponse.Status == CancelReservationResponseStatus.Accepted)
         {
             reservation.IsCancelled = true;
-            _reservationRepository.Update(reservation);
-            await _reservationRepository.SaveChangesAsync(cancellationToken);
+            ReservationRepository.Update(reservation);
+            await ReservationRepository.SaveChangesAsync(cancellationToken);
             _logger.LogInformation("Reservation with id {ReservationId} canceled", reservation.ReservationId);
         }
         else
