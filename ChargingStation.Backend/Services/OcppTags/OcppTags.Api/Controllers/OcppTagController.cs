@@ -3,6 +3,7 @@ using ChargingStation.Common.Models.OcppTags.Responses;
 using Microsoft.AspNetCore.Mvc;
 using OcppTags.Application.Models.Requests;
 using OcppTags.Application.Services;
+using System.Security.Claims;
 
 namespace OcppTags.Api.Controllers;
 
@@ -58,7 +59,9 @@ public class OcppTagController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] CreateOcppTagRequest chargePoint, CancellationToken cancellationToken = default)
     {
-        var createdChargePoint = await _ocppTagService.CreateAsync(chargePoint, cancellationToken);
+        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        var createdChargePoint = await _ocppTagService.CreateAsync(chargePoint, userId, cancellationToken);
 
         return StatusCode(StatusCodes.Status201Created, createdChargePoint);
     }

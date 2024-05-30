@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ChargingStation.Common.Models.General;
+using Microsoft.AspNetCore.Mvc;
 using UserManagement.API.Models.Requests;
 using UserManagement.API.Models.Response;
 using UserManagement.API.Services;
@@ -60,5 +61,15 @@ public class AuthController : ControllerBase
         await _authService.ConfirmInvite(token);
 
         return NoContent();
+    }
+
+    [HttpPost("getAllUsers")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(IPagedCollection<UserResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUsers([FromBody] GetUserRequest request, CancellationToken cancellationToken = default)
+    {
+        var users = await _authService.GetUsers(request, cancellationToken);
+
+        return Ok(users);
     }
 }

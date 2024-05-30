@@ -10,6 +10,8 @@ using AutoMapper;
 using ChargingStation.Mailing.Messages;
 using ChargingStation.Mailing.Services;
 using System.Security.Claims;
+using ChargingStation.Common.Models.General;
+using UserManagement.API.Specifications;
 
 namespace UserManagement.API.Services;
 
@@ -42,8 +44,9 @@ public class AuthService : IAuthService
         if (user != null && await _userManager.CheckPasswordAsync(user, loginRequest.Password))
         {
             var userRoles = await _userManager.GetRolesAsync(user);
+            var applicationUser = await _applicationUserRepository.GetByIdAsync(user.ApplicationUserId);
 
-            var token = _jwtHandler.GenerateToken(user, userRoles.FirstOrDefault(), DateTime.UtcNow.AddHours(1));
+            var token = _jwtHandler.GenerateToken(applicationUser!, userRoles.FirstOrDefault(), DateTime.UtcNow.AddHours(1));
 
             return new TokenResponse() { Token = token };
         }
@@ -61,6 +64,7 @@ public class AuthService : IAuthService
             UserName = registerRequest.FirstName + applicationUser.LastName,
             Email = registerRequest.Email,
             ApplicationUserId = applicationUser.Id,
+            PhoneNumber = registerRequest.Phone
         };
         var result = await _userManager.CreateAsync(user, registerRequest.Password);
 
@@ -68,7 +72,7 @@ public class AuthService : IAuthService
         {
             await _userManager.AddToRoleAsync(user, registerRequest.Role);
 
-            var token = _jwtHandler.GenerateToken(user, registerRequest.Role, DateTime.UtcNow.AddHours(1));
+            var token = _jwtHandler.GenerateToken(applicationUser, registerRequest.Role, DateTime.UtcNow.AddHours(1));
 
             return new TokenResponse() { Token = token };
         }
@@ -140,5 +144,18 @@ public class AuthService : IAuthService
 
         await _applicationUserDepotRepository.AddAsync(userDepot);
         await _applicationUserDepotRepository.SaveChangesAsync();
+    }
+
+    public async Task<IPagedCollection<UserResponse>> GetUsers(GetUserRequest request, CancellationToken cancellationToken)
+    {
+        var specification = new GetUsersSpecification(request);
+
+        var users = await _applicationUserRepository.GetPagedCollectionAsync(specification, request.PagePredicate?.Page, request.PagePredicate?.PageSize, cancellationToken: cancellationToken);
+
+        if (!users.Collection.Any())
+            return PagedCollection<UserResponse>.Empty;
+
+        var result = _mapper.Map<IPagedCollection<UserResponse>>(users);
+        return result;
     }
 }

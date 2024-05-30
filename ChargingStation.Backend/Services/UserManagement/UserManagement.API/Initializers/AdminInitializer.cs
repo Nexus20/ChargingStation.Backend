@@ -50,8 +50,10 @@ public class AdminInitializer : IAdminInitializer
         {
             Id = id,
             FirstName = "Admin",
-            LastName = "Global"
-            
+            LastName = "Global",
+            Email = "admin@gmail.com",
+            Phone = "1234567890",
+
         });
 
         await _userManager.CreateAsync(new InfrastructureUser

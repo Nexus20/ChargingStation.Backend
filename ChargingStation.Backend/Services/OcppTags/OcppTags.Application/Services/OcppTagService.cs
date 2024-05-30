@@ -62,9 +62,15 @@ public class OcppTagService : IOcppTagService
         return result;
     }
 
-    public async Task<OcppTagResponse> CreateAsync(CreateOcppTagRequest request, CancellationToken cancellationToken = default)
+    public async Task<OcppTagResponse> CreateAsync(CreateOcppTagRequest request, string? userId, CancellationToken cancellationToken = default)
     {
+        if (userId == null)
+        {
+            throw new BadRequestException("User ID not found in the token.");
+        }
+
         var ocppTagToCreate = _mapper.Map<OcppTag>(request);
+        ocppTagToCreate.ApplicationUserId = Guid.Parse(userId);
         
         await _ocppTagRepository.AddAsync(ocppTagToCreate, cancellationToken);
         await _ocppTagRepository.SaveChangesAsync(cancellationToken);

@@ -7,6 +7,7 @@ using ChargingStation.Infrastructure.Identity;
 using ChargingStation.Common.Utility;
 using UserManagement.API.Models.Requests;
 using System.Data;
+using ChargingStation.Domain.Entities;
 
 namespace UserManagement.API.Persistence;
 
@@ -40,13 +41,14 @@ public class JwtHandler
         return GenerateToken(claims, inviteRequest.Expiration);
     }
 
-    public string GenerateToken(InfrastructureUser user, string role, DateTime expires)
+    public string GenerateToken(ApplicationUser user, string role, DateTime expires)
     {
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.UserName),
+            new Claim(ClaimTypes.MobilePhone, user.Phone),
+            new Claim(ClaimTypes.Name, user.LastName + " " + user.LastName),
             new Claim(ClaimTypes.Role, role)
         };
 
