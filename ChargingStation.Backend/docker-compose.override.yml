@@ -278,7 +278,6 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api:8080"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
       - chargingstation_rabbitmq

@@ -3,4 +3,5 @@ kind: ConfigMap
 metadata:
   name: chargepoints-config
 data:
+  chargepoints-api-url: "http://chargepointsapi-service:8080"
   chargepoints-grpc-url: "http://chargepointsgrpc-service:8080"
