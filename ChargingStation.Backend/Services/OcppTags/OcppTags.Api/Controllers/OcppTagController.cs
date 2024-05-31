@@ -1,5 +1,7 @@
 using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Models.OcppTags.Responses;
+using ChargingStation.Common.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using OcppTags.Application.Models.Requests;
 using OcppTags.Application.Services;
@@ -7,6 +9,7 @@ using OcppTags.Application.Services;
 namespace OcppTags.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class OcppTagController : ControllerBase
 {
@@ -18,6 +21,7 @@ public class OcppTagController : ControllerBase
     }
 
     [HttpPost("getall")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(IPagedCollection<OcppTagResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> Get([FromBody] GetOcppTagsRequest request, CancellationToken cancellationToken = default)
@@ -28,6 +32,7 @@ public class OcppTagController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Driver}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(OcppTagResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -39,6 +44,7 @@ public class OcppTagController : ControllerBase
     }
     
     [HttpGet("GetByTagId/{ocppTagId}")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Driver}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(OcppTagResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -54,6 +60,7 @@ public class OcppTagController : ControllerBase
 
     [HttpPost]
     [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}")]
     [ProducesResponseType(typeof(OcppTagResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] CreateOcppTagRequest chargePoint, CancellationToken cancellationToken = default)
@@ -65,6 +72,7 @@ public class OcppTagController : ControllerBase
 
     [HttpPut("{id}")]
     [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}")]
     [ProducesResponseType(typeof(OcppTagResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -76,6 +84,7 @@ public class OcppTagController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)
