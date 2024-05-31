@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Utility;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using UserManagement.API.Models.Requests;
 using UserManagement.API.Models.Response;
 using UserManagement.API.Services;
@@ -31,13 +34,13 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     [Authorize(Roles = $"{CustomRoles.SuperAdministrator}")]
     [Produces("application/json")]
-    [ProducesResponseType(typeof(TokenResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
     {
-        var token = await _authService.RegisterAsync(registerRequest);
+        await _authService.RegisterAsync(registerRequest);
 
-        return Ok(token);
+        return NoContent();
     }
 
     [HttpPost("invite")]
@@ -64,6 +67,17 @@ public class AuthController : ControllerBase
 
         return NoContent();
     }
+
+    [HttpGet("confirm-registration")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ConfirmRegistration([FromBody] ConfirmRegistrationRequest confirmRegistrationRequest)
+    {
+        await _authService.ConfirmRegistration(confirmRegistrationRequest);
+
+        return NoContent();
+    }
+
 
     [HttpPost("getAllUsers")]
     [Produces("application/json")]

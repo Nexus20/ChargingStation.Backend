@@ -12,6 +12,9 @@ using ChargingStation.Mailing.Services;
 using System.Security.Claims;
 using ChargingStation.Common.Models.General;
 using UserManagement.API.Specifications;
+using Microsoft.AspNetCore.Identity.Data;
+using LoginRequest = UserManagement.API.Models.Requests.LoginRequest;
+using RegisterRequest = UserManagement.API.Models.Requests.RegisterRequest;
 
 namespace UserManagement.API.Services;
 
@@ -54,7 +57,7 @@ public class AuthService : IAuthService
         throw new UnauthorizedException("Invalid credentials");
     }
 
-    public async Task<TokenResponse> RegisterAsync(RegisterRequest registerRequest)
+    public async Task RegisterAsync(RegisterRequest registerRequest)
     {
         var applicationUser = _mapper.Map<ApplicationUser>(registerRequest);
         await _applicationUserRepository.AddAsync(applicationUser);
@@ -66,18 +69,23 @@ public class AuthService : IAuthService
             ApplicationUserId = applicationUser.Id,
             PhoneNumber = registerRequest.Phone
         };
-        var result = await _userManager.CreateAsync(user, registerRequest.Password);
+        var result = await _userManager.CreateAsync(user);
 
         if (result.Succeeded)
         {
             await _userManager.AddToRoleAsync(user, registerRequest.Role);
 
             var token = _jwtHandler.GenerateToken(applicationUser, registerRequest.Role, DateTime.UtcNow.AddHours(1));
+            
+            var registrationLink = $"https://yourcompany.com/register?token={token}"; //TODO: write correct link 
+            var emailMessage = new RegistrationEmailMessage(registrationLink, registerRequest.FirstName);
 
-            return new TokenResponse() { Token = token };
+            await _emailService.SendMessageAsync(emailMessage, registerRequest.Email);
         }
-
-        throw new BadRequestException("Registration failed");
+        else
+        {
+            throw new BadRequestException("Registration failed");
+        }
     }
 
 
@@ -144,6 +152,16 @@ public class AuthService : IAuthService
 
         await _applicationUserDepotRepository.AddAsync(userDepot);
         await _applicationUserDepotRepository.SaveChangesAsync();
+    }
+
+    public async Task ConfirmRegistration(ConfirmRegistrationRequest confirmRegistrationRequest)
+    {
+        var infrastructureUser = await _userManager.FindByEmailAsync(confirmRegistrationRequest.Email);
+
+        if (infrastructureUser is null)
+            throw new NotFoundException(nameof(InfrastructureUser), confirmRegistrationRequest.Email);
+
+        await _userManager.AddPasswordAsync(infrastructureUser, confirmRegistrationRequest.Password);
     }
 
     public async Task<IPagedCollection<UserResponse>> GetUsers(GetUserRequest request, CancellationToken cancellationToken)
