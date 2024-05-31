@@ -45,7 +45,6 @@ public class MeterValueService : IMeterValueService
         var connectorChangesMessage = new ConnectorChangesMessage();
 
         var connectorId = -1;
-        var msgMeterValue = string.Empty;
 
         try
         {
@@ -71,6 +70,7 @@ public class MeterValueService : IMeterValueService
             
             // Known charge station => process meter values
             DateTimeOffset? meterTime = null;
+            double? valueToSave = null;
             foreach (var meterValue in request.MeterValue)
             {
                 foreach (var sampleValue in meterValue.SampledValue)
@@ -81,19 +81,19 @@ public class MeterValueService : IMeterValueService
                     if (sampleValue.Measurand == SampledValueMeasurand.Power_Active_Import)
                     {
                         // current charging power
-                        if (double.TryParse(sampleValue.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var currentChargeKw))
+                        if (double.TryParse(sampleValue.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var currentChargeW))
                         {
                             if (sampleValue.Unit is SampledValueUnit.W or SampledValueUnit.VA or SampledValueUnit.Var or null)
                             {
-                                connectorChangesMessage.Energy = currentChargeKw;
-                                _logger.LogTrace("MeterValues => Charging '{CurrentChargeW:0.0}' W", currentChargeKw);
-                                // convert W => kW
-                                currentChargeKw = currentChargeKw / 1000;
+                                connectorChangesMessage.Power = currentChargeW;
+                                valueToSave = currentChargeW;
+                                _logger.LogTrace("MeterValues => Charging '{CurrentChargeW:0.0}' W", currentChargeW);
                             }
                             else if (sampleValue.Unit is SampledValueUnit.KW or SampledValueUnit.KVA or SampledValueUnit.Kvar)
                             {
-                                // already kW => OK
-                                _logger.LogTrace("MeterValues => Charging '{CurrentChargeKw:0.0}' kW", currentChargeKw);
+                                connectorChangesMessage.Power = currentChargeW * 1000;
+                                valueToSave = currentChargeW * 1000;
+                                _logger.LogTrace("MeterValues => Charging '{CurrentChargeKw:0.0}' kW", currentChargeW);
                             }
                             else
                             {
@@ -108,18 +108,19 @@ public class MeterValueService : IMeterValueService
                     else if (sampleValue.Measurand is SampledValueMeasurand.Energy_Active_Import_Register or null)
                     {
                         // charged amount of energy
-                        if (double.TryParse(sampleValue.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var meterKwh))
+                        if (double.TryParse(sampleValue.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var meterWh))
                         {
                             if (sampleValue.Unit is SampledValueUnit.Wh or SampledValueUnit.Varh or null)
                             {
-                                _logger.LogTrace("MeterValues => Value: '{MeterWh:0.0}' Wh", meterKwh);
-                                // convert Wh => kWh
-                                meterKwh = meterKwh / 1000;
+                                connectorChangesMessage.Energy = meterWh;
+                                valueToSave = meterWh;
+                                _logger.LogTrace("MeterValues => Value: '{MeterWh:0.0}' Wh", meterWh);
                             }
                             else if (sampleValue.Unit is SampledValueUnit.KWh or SampledValueUnit.Kvarh)
                             {
-                                // already kWh => OK
-                                _logger.LogTrace("MeterValues => Value: '{MeterKwh:0.0}' kWh", meterKwh);
+                                connectorChangesMessage.Energy = meterWh * 1000;
+                                valueToSave = meterWh * 1000;
+                                _logger.LogTrace("MeterValues => Value: '{MeterKwh:0.0}' kWh", meterWh);
                             }
                             else
                             {
@@ -138,6 +139,7 @@ public class MeterValueService : IMeterValueService
                         if (double.TryParse(sampleValue.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var stateOfCharge))
                         {
                             connectorChangesMessage.SoC = (int)stateOfCharge;
+                            valueToSave = stateOfCharge;
                             _logger.LogTrace("MeterValues => SoC: '{0:0.0}'%", stateOfCharge);
                         }
                         else
@@ -145,30 +147,42 @@ public class MeterValueService : IMeterValueService
                             _logger.LogError("MeterValues => invalid value '{Value}' (SoC)", sampleValue.Value);
                         }
                     }
-                    
-                    var meterValueToAdd = new ConnectorMeterValue
+
+                    if (valueToSave.HasValue)
                     {
-                        ConnectorId = connector.Id,
-                        TransactionId = transaction.Id,
-                        Value = sampleValue.Value,
-                        Measurand = sampleValue.Measurand!.Value.ToString(),
-                        Location = sampleValue.Location.ToString(),
-                        Phase = sampleValue.Phase.ToString(),
-                        Format = sampleValue.Format.ToString(),
-                        Unit = sampleValue.Unit.ToString(),
-                        MeterValueTimestamp = meterTime?.UtcDateTime ?? DateTime.UtcNow
-                    };
-                    meterValuesToAdd.Add(meterValueToAdd);
+                        var meterValueToAdd = new ConnectorMeterValue
+                        {
+                            ConnectorId = connector.Id,
+                            TransactionId = transaction.Id,
+                            Value = valueToSave.Value.ToString(CultureInfo.InvariantCulture),
+                            Measurand = sampleValue.Measurand!.Value.ToString(),
+                            Location = sampleValue.Location.ToString(),
+                            Phase = sampleValue.Phase.ToString(),
+                            Format = sampleValue.Format.ToString(),
+                            Unit = sampleValue.Unit.ToString(),
+                            MeterValueTimestamp = meterTime?.UtcDateTime ?? DateTime.UtcNow
+                        };
+                    
+                        meterValuesToAdd.Add(meterValueToAdd);
+                    }
                 }
-                await _connectorMeterValueRepository.AddRangeAsync(meterValuesToAdd, cancellationToken);
-                await _connectorMeterValueRepository.SaveChangesAsync(cancellationToken);
+                
+                if (meterValuesToAdd.Count == 0)
+                {
+                    _logger.LogWarning("MeterValues => No values to save");
+                    
+                    await _connectorMeterValueRepository.AddRangeAsync(meterValuesToAdd, cancellationToken);
+                    await _connectorMeterValueRepository.SaveChangesAsync(cancellationToken);
 
-                connectorChangesMessage.ChargePointId = chargePointId;
-                connectorChangesMessage.ConnectorId = connector.Id;
-                connectorChangesMessage.TransactionId = transaction.TransactionId;
+                    connectorChangesMessage.ChargePointId = chargePointId;
+                    connectorChangesMessage.ConnectorId = connector.Id;
+                    connectorChangesMessage.TransactionId = transaction.TransactionId;
 
-                var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(connectorChangesMessage), nameof(ConnectorChangesMessage));
-                await _publishEndpoint.Publish(signalRMessage, cancellationToken);
+                    var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(connectorChangesMessage), nameof(ConnectorChangesMessage));
+                    await _publishEndpoint.Publish(signalRMessage, cancellationToken);
+                    
+                    return response;
+                }
                 
                 await CheckEnergyConsumptionLimitAndWarnAsync(chargePointId, cancellationToken);
             }

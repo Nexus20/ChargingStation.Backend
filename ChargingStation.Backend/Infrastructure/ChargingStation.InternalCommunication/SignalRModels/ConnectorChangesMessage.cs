@@ -7,4 +7,5 @@ public class ConnectorChangesMessage : BaseMessage
     public string? Status { get; set; }
     public double? Energy { get; set; }
     public int? TransactionId { get; set; }
+    public double? Power { get; set; }
 }

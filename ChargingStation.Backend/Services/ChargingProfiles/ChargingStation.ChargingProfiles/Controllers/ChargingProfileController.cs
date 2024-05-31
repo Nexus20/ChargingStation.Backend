@@ -2,11 +2,14 @@
 using ChargingStation.ChargingProfiles.Models.Responses;
 using ChargingStation.ChargingProfiles.Services;
 using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChargingStation.ChargingProfiles.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class ChargingProfileController : ControllerBase
 {
@@ -19,6 +22,7 @@ public class ChargingProfileController : ControllerBase
     
     [HttpPost("getall")]
     [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
     [ProducesResponseType(typeof(IPagedCollection<ChargingProfileResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> Get([FromBody] GetChargingProfilesRequest request, CancellationToken cancellationToken = default)
     {
@@ -29,6 +33,7 @@ public class ChargingProfileController : ControllerBase
     
     [HttpGet("{id:Guid}")]
     [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
     [ProducesResponseType(typeof(ChargingProfileResponse), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
@@ -38,6 +43,7 @@ public class ChargingProfileController : ControllerBase
     
     [HttpPost]
     [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}")]
     [ProducesResponseType(typeof(ChargingProfileResponse), StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateChargingProfileAsync([FromBody] CreateChargingProfileRequest request, CancellationToken cancellationToken = default)
@@ -47,6 +53,7 @@ public class ChargingProfileController : ControllerBase
     }
     
     [HttpPost("set")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     public async Task<IActionResult> SetChargingProfileAsync([FromBody] SetChargingProfileRequest request, CancellationToken cancellationToken = default)
@@ -56,6 +63,7 @@ public class ChargingProfileController : ControllerBase
     }
     
     [HttpPost("clear")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     public async Task<IActionResult> ClearChargingProfileAsync([FromBody] ClearChargingProfileRequest request, CancellationToken cancellationToken = default)
