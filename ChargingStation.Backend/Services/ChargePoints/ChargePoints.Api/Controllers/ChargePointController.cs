@@ -3,12 +3,15 @@ using ChargePoints.Application.Services;
 using ChargingStation.Common.Models.ChargePoints.Requests;
 using ChargingStation.Common.Models.ChargePoints.Responses;
 using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChargePoints.Api.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
+[Authorize]
+[Route("api/[controller]")]
 public class ChargePointController : ControllerBase
 {
     private readonly IChargePointService _chargePointService;
@@ -61,6 +64,7 @@ public class ChargePointController : ControllerBase
 
     [HttpPost]
     [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}")]
     [ProducesResponseType(typeof(ChargePointResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] CreateChargePointRequest chargePoint, CancellationToken cancellationToken = default)
@@ -71,6 +75,7 @@ public class ChargePointController : ControllerBase
     }
     
     [HttpPost("reset")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
     [Produces("application/json")]
     public async Task<IActionResult> ResetAsync([FromBody] ResetChargePointRequest request, CancellationToken cancellationToken = default)
     {
@@ -80,6 +85,7 @@ public class ChargePointController : ControllerBase
     }
     
     [HttpPost("changeavailability")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     public async Task<IActionResult> ChangeAvailabilityAsync([FromBody] ChangeChargePointAvailabilityRequest request, CancellationToken cancellationToken = default)
     {
@@ -90,6 +96,7 @@ public class ChargePointController : ControllerBase
 
     [HttpPut("{id}")]
     [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}")]
     [ProducesResponseType(typeof(ChargePointResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -101,6 +108,7 @@ public class ChargePointController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)

@@ -2,6 +2,8 @@ using Aggregator.Models.Responses;
 using Aggregator.Services;
 using ChargingStation.Common.Models.Depots.Requests;
 using ChargingStation.Common.Models.General;
+using ChargingStation.Common.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Aggregator.Controllers;
@@ -18,6 +20,7 @@ public class DepotController : ControllerBase
     }
     
     [HttpPost("getall")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(IPagedCollection<DepotAggregatedResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> Get([FromBody]GetDepotsRequest request, CancellationToken cancellationToken = default)
@@ -28,6 +31,7 @@ public class DepotController : ControllerBase
     }
     
     [HttpGet("{id}")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(DepotAggregatedDetailsResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

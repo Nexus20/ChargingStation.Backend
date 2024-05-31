@@ -2,8 +2,10 @@
 using ChargingStation.Common.Models.Depots.Responses;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Models.TimeZone;
+using ChargingStation.Common.Utility;
 using ChargingStation.Depots.Models.Requests;
 using ChargingStation.Depots.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChargingStation.Depots.Controllers;
@@ -20,6 +22,7 @@ public class DepotController : ControllerBase
     }
 
     [HttpPost("getall")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(IPagedCollection<DepotResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> Get([FromBody]GetDepotsRequest request, CancellationToken cancellationToken = default)
@@ -31,6 +34,7 @@ public class DepotController : ControllerBase
 
     [HttpGet("{id}")]
     [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
     [ProducesResponseType(typeof(DepotResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken = default)
@@ -42,6 +46,7 @@ public class DepotController : ControllerBase
 
     [HttpPost]
     [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}")]
     [ProducesResponseType(typeof(DepotResponse), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Post([FromBody] CreateDepotRequest request, CancellationToken cancellationToken = default)
@@ -52,6 +57,7 @@ public class DepotController : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(DepotResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -64,6 +70,7 @@ public class DepotController : ControllerBase
     }
 
     [HttpDelete("{id}")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken = default)

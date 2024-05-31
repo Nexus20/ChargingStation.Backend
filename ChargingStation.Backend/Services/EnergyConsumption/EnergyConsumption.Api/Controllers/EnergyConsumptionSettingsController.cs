@@ -1,11 +1,14 @@
-﻿using ChargingStation.Common.Models.DepotEnergyConsumption;
+using ChargingStation.Common.Models.DepotEnergyConsumption;
+using ChargingStation.Common.Utility;
 using EnergyConsumption.Application.Models.Requests;
 using EnergyConsumption.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EnergyConsumption.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class EnergyConsumptionSettingsController : ControllerBase
 {
@@ -17,6 +20,7 @@ public class EnergyConsumptionSettingsController : ControllerBase
     }
     
     [HttpPost("set")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}")]
     [Produces("text/plain")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -28,6 +32,7 @@ public class EnergyConsumptionSettingsController : ControllerBase
     
     [HttpGet("{id}")]
     [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
     [ProducesResponseType(typeof(DepotEnergyConsumptionSettingsResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetByIdAsync(Guid id, CancellationToken cancellationToken)
@@ -38,6 +43,7 @@ public class EnergyConsumptionSettingsController : ControllerBase
     
     [HttpGet("getByDepot/{depotId}")]
     [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
     [ProducesResponseType(typeof(DepotEnergyConsumptionSettingsResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> GetByDepotAsync(Guid depotId, CancellationToken cancellationToken)
@@ -52,6 +58,7 @@ public class EnergyConsumptionSettingsController : ControllerBase
     
     [HttpGet("getByChargingStation/{chargingStationId}")]
     [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
     [ProducesResponseType(typeof(DepotEnergyConsumptionSettingsResponse), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> GetByChargingStationAsync(Guid chargingStationId, CancellationToken cancellationToken)

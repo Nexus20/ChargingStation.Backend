@@ -1,5 +1,7 @@
 using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Models.Reservations.Requests;
+using ChargingStation.Common.Utility;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Reservations.Application.Models.Requests;
 using Reservations.Application.Models.Responses;
@@ -7,6 +9,7 @@ using Reservations.Application.Services.Reservations;
 
 namespace Reservations.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("api/[controller]")]
 public class ReservationController : ControllerBase
@@ -35,6 +38,7 @@ public class ReservationController : ControllerBase
     }
     
     [HttpPost]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Driver}")]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CreateReservationAsync([FromBody] CreateReservationRequest request, CancellationToken cancellationToken = default)
@@ -44,6 +48,7 @@ public class ReservationController : ControllerBase
     }
     
     [HttpPut("{id:Guid}")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Driver}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> UpdateReservationAsync([FromBody] UpdateReservationRequest request, CancellationToken cancellationToken = default)
@@ -53,6 +58,7 @@ public class ReservationController : ControllerBase
     }
     
     [HttpPost("cancel")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Driver}")]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CancelReservationAsync([FromBody] CreateReservationCancellationRequest request, CancellationToken cancellationToken = default)
