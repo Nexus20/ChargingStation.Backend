@@ -50,7 +50,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
         
   chargepoints.api:
     container_name: chargepoints.api
@@ -59,7 +59,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ConnectionStrings:Redis=chargingstation_redis:6379"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
@@ -74,7 +74,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ConnectionStrings:Redis=chargingstation_redis:6379"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
@@ -89,7 +89,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
       - chargingstation_rabbitmq
@@ -102,7 +102,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
         - chargingstation_rabbitmq
@@ -115,7 +115,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ConnectionStrings:Redis=chargingstation_redis:6379"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
@@ -130,7 +130,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ConnectionStrings:Redis=chargingstation_redis:6379"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
@@ -145,7 +145,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
       - "GrpcSettings:EnergyConsumptionSettingsServiceAddress=http://energyconsumptionsettings.grpc:8080"
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
@@ -163,7 +163,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
       - "GrpcSettings:EnergyConsumptionSettingsServiceAddress=http://energyconsumptionsettings.grpc:8080"
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
@@ -181,7 +181,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
     depends_on:
@@ -195,8 +195,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-      - "ConnectionStrings:HangfireConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-hangfire;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:HangfireConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-hangfire;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
       - "GrpcSettings:OcppTagServiceAddress=http://ocpptags.grpc:8080"
@@ -211,7 +211,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   
   chargingprofiles.api:
     container_name: chargingprofiles.api
@@ -220,7 +220,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ConnectionStrings:Redis=chargingstation_redis:6379"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
       - "ApiSettings:DepotServiceAddress=http://depots.api:8080"
@@ -239,7 +239,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ApiSettings:DepotServiceAddress=http://depots.api:8080"
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
     depends_on:
@@ -252,7 +252,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ApiSettings:DepotServiceAddress=http://depots.api:8080"
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
     depends_on:
@@ -289,7 +289,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
         
   emulator_db:
     container_name: emulator_db
@@ -307,7 +307,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ConnectionStrings:DefaultConnection=Server=tcp:csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ConnectionStrings:MongoDBConnection=mongodb://emulator_db:27017"
       - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
       - "CentralSystemEndpoint=ws://chargingstation.websockets:8080"
