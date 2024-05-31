@@ -1,12 +1,15 @@
 using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Common.Models.Connectors.Responses;
+using ChargingStation.Common.Utility;
 using Connectors.Application.Models.Requests;
 using Connectors.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Connectors.Api.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class ConnectorController : ControllerBase
 {
@@ -26,6 +29,7 @@ public class ConnectorController : ControllerBase
         return Ok(connector);
     }
     
+    // TODO: Review
     [HttpPost("GetOrCreate")]
     public async Task<IActionResult> GetOrCreateAsync([FromBody]GetOrCreateConnectorRequest request, CancellationToken cancellationToken)
     {
@@ -44,6 +48,7 @@ public class ConnectorController : ControllerBase
         return Ok(connectors);
     }
     
+    // TODO: Review
     [HttpPost("UpdateStatus")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> UpdateStatusAsync([FromBody]UpdateConnectorStatusRequest request, CancellationToken cancellationToken)
@@ -54,6 +59,7 @@ public class ConnectorController : ControllerBase
     }
     
     [HttpPost("changeavailability")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
     public async Task<IActionResult> ChangeAvailabilityAsync([FromBody] ChangeConnectorAvailabilityRequest request, CancellationToken cancellationToken = default)
     {
         await _connectorService.ChangeAvailabilityAsync(request, cancellationToken);

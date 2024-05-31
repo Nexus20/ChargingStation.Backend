@@ -1,11 +1,13 @@
 ﻿using ChargingStation.Heartbeats.Models;
 using ChargingStation.Heartbeats.Models.Request;
 using ChargingStation.Heartbeats.Services.Heartbeats;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ChargingStation.Heartbeats.Controllers;
 
 [Route("api/[controller]")]
+[Authorize]
 [ApiController]
 public class HeartbeatController : ControllerBase
 {
