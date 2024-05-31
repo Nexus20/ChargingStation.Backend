@@ -1,0 +1,75 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aggregator-deployment
+  labels:
+    app: aggregator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aggregator
+  template:
+    metadata:
+      labels:
+        app: aggregator
+    spec:
+      containers:
+      - name: aggregator
+        image: yevhen0825/aggregator:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Development
+          - name: ASPNETCORE_HTTP_PORTS
+            value: "8080"
+          - name: ApiSettings__DepotServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: depots-config
+                key: depots-api-url
+          - name: ApiSettings__ChargePointsServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: chargepoints-config
+                key: chargepoints-api-url
+          - name: ApiSettings__ConnectorsServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: connectors-config
+                key: connectors-api-url
+          - name: ApiSettings__EnergyConsumptionSettingsServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: energyconsumptionsettings-config
+                key: energyconsumptionsettings-api-url
+          - name: ApiSettings__WebsocketsServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: websockets-config
+                key: websockets-api-url
+        resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aggregator-service
+  labels:
+    app: aggregator
+spec:
+  type: LoadBalancer
+  selector:
+    app: aggregator
+  ports:
+    - protocol: TCP
+      name: http
+      port: 8025
+      targetPort: 8080

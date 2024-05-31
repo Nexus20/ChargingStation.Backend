@@ -3,4 +3,5 @@ kind: ConfigMap
 metadata:
   name: energyconsumptionsettings-config
 data:
+  energyconsumptionsettings-api-url: "http://energyconsumptionsettingsapi-service:8080"
   energyconsumptionsettings-grpc-url: "http://energyconsumptionsettingsgrpc-service:8080"

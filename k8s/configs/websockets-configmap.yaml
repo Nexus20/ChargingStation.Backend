@@ -1,0 +1,6 @@
+﻿apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: websockets-config
+data:
+  websockets-api-url: "http://websockets-service:8080"
