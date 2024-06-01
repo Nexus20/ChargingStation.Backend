@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using ChargingStation.ChargingProfiles.Models.Requests.ConsumptionSettings;
 using ChargingStation.Common.Models.DepotEnergyConsumption;
 using ChargingStation.Common.Models.DepotEnergyConsumption.Dtos;
 using ChargingStation.Domain.Entities;
+using EnergyConsumption.Application.Models.Requests;
 
-namespace ChargingStation.ChargingProfiles.Mappers;
+namespace EnergyConsumption.Application.Mappers;
 
 public class EnergyConsumptionSettingsProfile : Profile
 {

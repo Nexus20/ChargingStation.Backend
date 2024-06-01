@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: depotsgrpc-deployment
+  labels:
+    app: depotsgrpc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: depotsgrpc
+  template:
+    metadata:
+      labels:
+        app: depotsgrpc
+    spec:
+      containers:
+      - name: depotsgrpc
+        image: yevhen0825/depotsgrpc:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Development
+          - name: ASPNETCORE_HTTP_PORTS
+            value: "8080"
+          - name: ConnectionStrings__DefaultConnection
+            valueFrom:
+              secretKeyRef:
+                name: mssql-db-secret
+                key: mssql-main-db-connection-string
+        resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: depotsgrpc-service
+  labels:
+    app: depotsgrpc
+spec:
+  type: LoadBalancer
+  selector:
+    app: depotsgrpc
+  ports:
+    - protocol: TCP
+      name: http
+      port: 8051
+      targetPort: 8080

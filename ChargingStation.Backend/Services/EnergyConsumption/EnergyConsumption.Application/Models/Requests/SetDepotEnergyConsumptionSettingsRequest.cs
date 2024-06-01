@@ -1,6 +1,6 @@
 ﻿using ChargingStation.Common.Models.DepotEnergyConsumption.Dtos;
 
-namespace ChargingStation.ChargingProfiles.Models.Requests.ConsumptionSettings;
+namespace EnergyConsumption.Application.Models.Requests;
 
 public class SetDepotEnergyConsumptionSettingsRequest
 {

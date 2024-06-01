@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reservationsapi-deployment
+  labels:
+    app: reservationsapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reservationsapi
+  template:
+    metadata:
+      labels:
+        app: reservationsapi
+    spec:
+      containers:
+      - name: reservationsapi
+        image: yevhen0825/reservationsapi:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Development
+          - name: ASPNETCORE_HTTP_PORTS
+            value: "8080"
+          - name: ConnectionStrings__DefaultConnection
+            valueFrom:
+              secretKeyRef:
+                name: mssql-db-secret
+                key: mssql-main-db-connection-string
+          - name: ConnectionStrings__HangfireConnection
+            valueFrom:
+              secretKeyRef:
+                name: mssql-db-secret
+                key: mssql-hangfire-db-connection-string
+          - name: MessageBrokerSettings__RabbitMqHost
+            value: "rabbitmq-0.rabbitmq.csms.svc.cluster.local"
+          - name: MessageBrokerSettings__RabbitMqUsername
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq-secret
+                key: rabbitmq-username
+          - name: MessageBrokerSettings__RabbitMqPassword
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq-secret
+                key: rabbitmq-password
+          - name: GrpcSettings__ChargePointServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: chargepoints-config
+                key: chargepoints-grpc-url
+          - name: GrpcSettings__OcppTagServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: ocpptags-config
+                key: ocpptags-grpc-url
+          - name: GrpcSettings__ConnectorServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: connectors-config
+                key: connectors-grpc-url
+        resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reservationsapi-service
+  labels:
+    app: reservationsapi
+spec:
+  type: LoadBalancer
+  selector:
+    app: reservationsapi
+  ports:
+    - protocol: TCP
+      name: http
+      port: 8007
+      targetPort: 8080

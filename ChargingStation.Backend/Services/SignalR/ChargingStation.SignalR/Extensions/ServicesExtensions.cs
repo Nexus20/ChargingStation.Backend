@@ -1,4 +1,5 @@
-﻿using ChargingStation.SignalR.EventConsumers;
+﻿using ChargingStation.Common.Configurations;
+using ChargingStation.SignalR.EventConsumers;
 using ChargingStation.SignalR.Hubs;
 using MassTransit;
 
@@ -19,7 +20,8 @@ public static class ServicesExtensions
 
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
-                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
+                var connectionString = configuration.GetSection(MessageBrokerConfiguration.SectionName).Get<MessageBrokerConfiguration>()!.GetConnectionString();
+                cfg.Host(connectionString);
 
                 cfg.ReceiveEndpoint("signalR-queue", c => {
                     c.ConfigureConsumer<SignalRResponseConsumer>(ctx);

@@ -1,6 +1,6 @@
-﻿using ChargingStation.ChargingProfiles.Models.Requests.ConsumptionSettings;
 using ChargingStation.Common.Models.DepotEnergyConsumption;
 using ChargingStation.Common.Utility;
+using EnergyConsumption.Application.Models.Requests;
 using EnergyConsumption.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

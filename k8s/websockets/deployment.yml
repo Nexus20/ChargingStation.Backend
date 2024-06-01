@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: websockets-deployment
+  labels:
+    app: websockets
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: websockets
+  template:
+    metadata:
+      labels:
+        app: websockets
+    spec:
+      containers:
+      - name: websockets
+        image: yevhen0825/websockets:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Development
+          - name: ASPNETCORE_HTTP_PORTS
+            value: "8080"
+          - name: MessageBrokerSettings__RabbitMqHost
+            value: "rabbitmq-0.rabbitmq.csms.svc.cluster.local"
+          - name: MessageBrokerSettings__RabbitMqUsername
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq-secret
+                key: rabbitmq-username
+          - name: MessageBrokerSettings__RabbitMqPassword
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq-secret
+                key: rabbitmq-password
+          - name: GrpcSettings__ChargePointServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: chargepoints-config
+                key: chargepoints-grpc-url
+        resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: websockets-service
+  labels:
+    app: websockets
+spec:
+  selector:
+    app: websockets
+  ports:
+    - protocol: TCP
+      name: http
+      port: 8080
+      targetPort: 8080

@@ -1,4 +1,6 @@
-﻿using ChargingStation.WebSockets.EventConsumers;
+﻿using ChargingStation.Common.Configurations;
+using ChargingStation.InternalCommunication.Extensions;
+using ChargingStation.WebSockets.EventConsumers;
 using ChargingStation.WebSockets.OcppConnectionHandlers;
 using ChargingStation.WebSockets.OcppMessageHandlers.Abstract;
 using ChargingStation.WebSockets.OcppMessageHandlers.Providers;
@@ -13,10 +15,8 @@ public static class ServicesExtensions
 {
     public static IServiceCollection AddOcppCommunicationServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddHttpClient<IChargePointCommunicationService, ChargePointCommunicationService>(c =>
-        {
-            c.BaseAddress = new Uri(configuration["ApiSettings:ChargePointServiceAddress"]!);
-        });
+        services.AddChargePointsGrpcClient(configuration);
+        services.AddScoped<IChargePointCommunicationService, ChargePointCommunicationService>();
 
         services.AddMassTransit(busConfigurator =>
         {
@@ -28,7 +28,8 @@ public static class ServicesExtensions
             
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
-                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
+                var connectionString = configuration.GetSection(MessageBrokerConfiguration.SectionName).Get<MessageBrokerConfiguration>()!.GetConnectionString();
+                cfg.Host(connectionString);
                 
                 cfg.ReceiveEndpoint("ocpp-request-queue", c => {
                     c.ConfigureConsumer<OcppCentralSystemRequestConsumer>(ctx);

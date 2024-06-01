@@ -2,10 +2,10 @@ version: '3.4'
 
 services:
   chargingstation_rabbitmq:
-    image: rabbitmq:3-management-alpine
+    image: rabbitmq:3.13.2-management-alpine
     
   chargingstation_redis:
-    image: redis:alpine
+    image: redis:7.2.5-alpine
 
   chargingstation.aggregator:
     image: ${DOCKER_REGISTRY-}aggregator
@@ -23,7 +23,13 @@ services:
     image: ${DOCKER_REGISTRY-}depotsapi
     build:
       context: .
-      dockerfile: Services/Depots/ChargingStation.Depots/Dockerfile
+      dockerfile: Services/Depots/Depots.Api/Dockerfile
+      
+  depots.grpc:
+    image: ${DOCKER_REGISTRY-}depotsgrpc
+    build:
+      context: .
+      dockerfile: Services/Depots/Depots.Grpc/Dockerfile
       
   chargepoints.api:
     image: ${DOCKER_REGISTRY-}chargepointsapi

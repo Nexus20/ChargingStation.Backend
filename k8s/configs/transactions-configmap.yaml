@@ -1,0 +1,6 @@
+﻿apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: transactions-config
+data:
+  transactions-grpc-url: "http://transactionsgrpc-service:8080"

@@ -1,5 +1,4 @@
 ﻿using ChargePointEmulator.Application.Models;
-using ChargingStation.Common.Models.ChargePoints.Responses;
 using ChargingStation.Common.Models.General;
 
 namespace ChargePointEmulator.Application.Services;
