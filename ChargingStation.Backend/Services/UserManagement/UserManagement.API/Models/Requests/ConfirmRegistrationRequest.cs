@@ -1,8 +1,7 @@
-﻿namespace UserManagement.API.Models.Requests
+﻿namespace UserManagement.API.Models.Requests;
+
+public class ConfirmRegistrationRequest
 {
-    public class ConfirmRegistrationRequest
-    {
-        public required string Email { get; set; }
-        public required string Password { get; set; }
-    }
+    public required string Email { get; set; }
+    public required string Password { get; set; }
 }
