@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reservations-config
+data:
+  reservations-grpc-url: "http://reservationsgrpc-service:8080"
+  reservations-api-url: "http://reservationsapi-service:8080"

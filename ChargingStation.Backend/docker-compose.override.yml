@@ -51,6 +51,15 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+      
+  depots.grpc:
+    container_name: depots.grpc
+    ports:
+      - "8051:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
         
   chargepoints.api:
     container_name: chargepoints.api
@@ -61,7 +70,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ConnectionStrings:Redis=chargingstation_redis:6379"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
@@ -76,7 +85,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ConnectionStrings:Redis=chargingstation_redis:6379"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
@@ -90,7 +99,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
@@ -103,7 +112,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
         - chargingstation_rabbitmq
         - depots.api
@@ -117,7 +126,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ConnectionStrings:Redis=chargingstation_redis:6379"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
@@ -132,7 +141,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ConnectionStrings:Redis=chargingstation_redis:6379"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
@@ -146,8 +155,8 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
-      - "ApiSettings:EnergyConsumptionSettingsServiceAddress=http://chargingprofiles.api:8080/api/EnergyConsumptionSettings/"
+      - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
+      - "GrpcSettings:EnergyConsumptionSettingsServiceAddress=http://energyconsumptionsettings.grpc:8080"
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
       - "GrpcSettings:OcppTagServiceAddress=http://ocpptags.grpc:8080"
       - "GrpcSettings:ConnectorServiceAddress=http://connectors.grpc:8080"
@@ -164,7 +173,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
       - "GrpcSettings:EnergyConsumptionSettingsServiceAddress=http://energyconsumptionsettings.grpc:8080"
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
       - "GrpcSettings:OcppTagServiceAddress=http://ocpptags.grpc:8080"
@@ -182,7 +191,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
     depends_on:
       - chargingstation_rabbitmq
@@ -197,7 +206,7 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ConnectionStrings:HangfireConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-hangfire;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
       - "GrpcSettings:OcppTagServiceAddress=http://ocpptags.grpc:8080"
       - "GrpcSettings:ConnectorServiceAddress=http://connectors.grpc:8080"
@@ -212,11 +221,6 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-      - "ConnectionStrings:HangfireConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-hangfire;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
-      - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
-      - "GrpcSettings:OcppTagServiceAddress=http://ocpptags.grpc:8080"
-      - "GrpcSettings:ConnectorServiceAddress=http://connectors.grpc:8080"
   
   chargingprofiles.api:
     container_name: chargingprofiles.api
@@ -227,13 +231,10 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ConnectionStrings:Redis=chargingstation_redis:6379"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
-      - "ApiSettings:ConnectorServiceAddress=http://connectors.api:8080"
-      - "ApiSettings:TransactionServiceAddress=http://transactions.api:8080"
-      - "ApiSettings:DepotServiceAddress=http://depots.api:8080"
-      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api:8080"
+      - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
       - "GrpcSettings:ConnectorServiceAddress=http://connectors.grpc:8080"
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
+      - "GrpcSettings:TransactionServiceAddress=http://transactions.grpc:8080"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
@@ -247,7 +248,7 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-      - "ApiSettings:DepotServiceAddress=http://depots.api:8080"
+      - "GrpcSettings:DepotServiceAddress=http://depots.grpc:8080"
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
     depends_on:
       - chargingstation_rabbitmq
@@ -255,12 +256,12 @@ services:
   energyconsumptionsettings.grpc:
     container_name: energyconsumptionsettings.grpc
     ports:
-      - "8089:8080"
+      - "8059:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
-      - "ApiSettings:DepotServiceAddress=http://depots.api:8080"
+      - "GrpcSettings:DepotServiceAddress=http://depots.grpc:8080"
       - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
     depends_on:
       - chargingstation_rabbitmq
@@ -272,8 +273,8 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api:8080"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "GrpcSettings:ChargePointServiceAddress=http://chargepoints.grpc:8080"
+      - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
       - chargingstation_rabbitmq
       - depots.api
@@ -285,8 +286,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_HTTP_PORTS=8080
-      - "ApiSettings:ChargePointServiceAddress=http://chargepoints.api:8080"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
     depends_on:
       - chargingstation_rabbitmq
    
@@ -317,11 +317,10 @@ services:
       - ASPNETCORE_HTTP_PORTS=8080
       - "ConnectionStrings:DefaultConnection=Server=tcp:sql-csms.database.windows.net,1433;Initial Catalog=csms-db;Persist Security Info=False;User ID=sqladmin;Password=wfd775X7890123456;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
       - "ConnectionStrings:MongoDBConnection=mongodb://emulator_db:27017"
-      - "MessageBrokerSettings:HostAddress=amqp://guest:guest@chargingstation_rabbitmq:5672"
+      - "MessageBrokerSettings:RabbitMqHost=chargingstation_rabbitmq"
       - "CentralSystemEndpoint=ws://chargingstation.websockets:8080"
-      - "ApiSettings:OcppTagServiceAddress=http://ocpptags.api:8080"
-      - "ApiSettings:ConnectorServiceAddress=http://connectors.api:8080"
       - "ApiSettings:ReservationServiceAddress=http://reservations.api:8080"
+      - "ApiSettings:AuthServiceAddress=http://usermanagement.api:8080"
       - "HubEndpoint=http://chargingstation_emulator:8080"
     depends_on:
       - chargingstation_rabbitmq

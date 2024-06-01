@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using ChargingStation.InternalCommunication.Extensions;
 using ChargingStation.Mailing.Extensions;
-using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Transactions.Application.Repositories.ConnectorMeterValues;

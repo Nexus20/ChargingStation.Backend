@@ -1,7 +1,7 @@
 ﻿using Grpc.Core;
 using Grpc.Core.Interceptors;
 
-namespace ChargingStation.Connectors.GrpcInterceptors;
+namespace Connectors.Grpc.GrpcInterceptors;
 
 public class GrpcExceptionInterceptor : Interceptor
 {

@@ -7,7 +7,7 @@ builder.Configuration.AddEnvironmentVariables();
 
 // Add services to the container.
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddReservationGrpcServices(builder.Configuration);
+builder.Services.AddReservationGrpcServices();
 
 var app = builder.Build();
 

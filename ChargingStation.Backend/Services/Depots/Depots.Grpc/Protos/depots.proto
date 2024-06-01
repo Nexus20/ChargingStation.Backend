@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/wrappers.proto";
+
+option csharp_namespace = "Depots.Grpc.Protos";
+
+package depots;
+
+service DepotsGrpc {
+  rpc GetById (GetDepotByIdGrpcRequest) returns (DepotGrpcResponse);
+}
+
+message GetDepotByIdGrpcRequest {
+  string id = 1;
+}
+
+message DepotGrpcResponse {
+  string id = 1;
+  string name = 2;
+  string country = 3;
+  string city = 4;
+  string street = 5;
+  string building = 6;
+  google.protobuf.Duration baseUtcOffset = 7;
+  string ianaId = 8;
+  google.protobuf.StringValue phoneNumber = 9;
+  google.protobuf.StringValue email = 10;
+  google.protobuf.StringValue description = 11;
+  double latitude = 12;
+  double longitude = 13;
+  int32 status = 14;
+  google.protobuf.Timestamp createdAt = 15;
+  google.protobuf.Timestamp updatedAt = 16;
+}

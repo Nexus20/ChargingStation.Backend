@@ -8,9 +8,9 @@ namespace Reservations.Grpc.Services;
 
 public class ReservationGrpcService : ReservationsGrpc.ReservationsGrpcBase
 {
-    private readonly IReservationService _reservationService;
+    private readonly IBaseReservationService _reservationService;
     
-    public ReservationGrpcService(IReservationService reservationService)
+    public ReservationGrpcService(IBaseReservationService reservationService)
     {
         _reservationService = reservationService;
     }

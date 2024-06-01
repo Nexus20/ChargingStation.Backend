@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using ChargingStation.InternalCommunication.Extensions;
 using Hangfire;
-using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Reservations.Application.Services.Reservations;
@@ -10,6 +9,13 @@ namespace Reservations.Application.Extensions;
 
 public static class ServicesExtensions
 {
+    public static IServiceCollection AddReservationApplicationBaseServices(this IServiceCollection services)
+    {
+        services.AddScoped<IBaseReservationService, BaseReservationService>();
+
+        return services;
+    }
+    
     public static IServiceCollection AddReservationApplicationServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddChargePointsGrpcClient(configuration);

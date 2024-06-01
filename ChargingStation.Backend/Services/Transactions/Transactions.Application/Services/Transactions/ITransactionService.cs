@@ -10,7 +10,6 @@ public interface ITransactionService
 {
     Task<IPagedCollection<TransactionResponse>> GetAsync(GetTransactionsRequest request, CancellationToken cancellationToken = default);
     Task<TransactionResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
-    Task<TransactionResponse> CreateAsync(CreateTransactionRequest request, CancellationToken cancellationToken = default);
     Task<TransactionResponse> UpdateAsync(UpdateTransactionRequest request, CancellationToken cancellationToken = default);
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
     Task<StartTransactionResponse> ProcessStartTransactionAsync(StartTransactionRequest request, Guid chargePointId, CancellationToken cancellationToken = default);

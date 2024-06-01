@@ -91,7 +91,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Depots", "Depots", "{5925A1
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.ChargingProfiles", "Services\ChargingProfiles\ChargingStation.ChargingProfiles\ChargingStation.ChargingProfiles.csproj", "{CA685BB8-1F4C-442E-A7E1-2AAFC6373022}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Depots", "Services\Depots\ChargingStation.Depots\ChargingStation.Depots.csproj", "{90A22800-78E0-48BE-9145-1144CF81D997}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Depots.Api", "Services\Depots\Depots.Api\Depots.Api.csproj", "{90A22800-78E0-48BE-9145-1144CF81D997}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.Heartbeats", "Services\Heartbeats\ChargingStation.Heartbeats\ChargingStation.Heartbeats.csproj", "{48BE9A31-7482-499B-9DC5-1D33CE7D7341}"
 EndProject
@@ -101,15 +101,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.WebSockets"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UserManagement", "UserManagement", "{AB93801C-4341-413B-ACC2-87CF9B82A962}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserManagement.API", "Services\UserManagement\UserManagement.API\UserManagement.API.csproj", "{7C5F99C5-8516-45D4-A134-98AE87AC5769}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserManagement.API", "Services\UserManagement\UserManagement.API\UserManagement.API.csproj", "{7C5F99C5-8516-45D4-A134-98AE87AC5769}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Emulator", "Emulator", "{1CF7F656-7CEA-456F-A32B-30A9F6E8A493}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargePointEmulator.UI", "Emulator\ChargePointEmulator.UI\ChargePointEmulator.UI.csproj", "{D7366FC9-ACD5-4C21-A673-8F285553987F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargePointEmulator.UI", "Emulator\ChargePointEmulator.UI\ChargePointEmulator.UI.csproj", "{D7366FC9-ACD5-4C21-A673-8F285553987F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargePointEmulator.Application", "Emulator\ChargePointEmulator.Application\ChargePointEmulator.Application.csproj", "{B4D01F89-67A8-4C0F-903A-AB6AE0D0D873}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargePointEmulator.Application", "Emulator\ChargePointEmulator.Application\ChargePointEmulator.Application.csproj", "{B4D01F89-67A8-4C0F-903A-AB6AE0D0D873}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargePointEmulator.Persistence", "Emulator\ChargePointEmulator.Persistence\ChargePointEmulator.Persistence.csproj", "{7C823C69-2FCD-4E28-B4FD-EE5256153866}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargePointEmulator.Persistence", "Emulator\ChargePointEmulator.Persistence\ChargePointEmulator.Persistence.csproj", "{7C823C69-2FCD-4E28-B4FD-EE5256153866}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Depots.Grpc", "Services\Depots\Depots.Grpc\Depots.Grpc.csproj", "{8CB89D15-B86A-49A2-8773-9CDF5B294E81}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Depots.Application", "Services\Depots\Depots.Application\Depots.Application.csproj", "{B6FEEDE6-519C-4596-83B0-836934DC32CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -261,6 +265,14 @@ Global
 		{7C823C69-2FCD-4E28-B4FD-EE5256153866}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C823C69-2FCD-4E28-B4FD-EE5256153866}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C823C69-2FCD-4E28-B4FD-EE5256153866}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8CB89D15-B86A-49A2-8773-9CDF5B294E81}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8CB89D15-B86A-49A2-8773-9CDF5B294E81}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8CB89D15-B86A-49A2-8773-9CDF5B294E81}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8CB89D15-B86A-49A2-8773-9CDF5B294E81}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6FEEDE6-519C-4596-83B0-836934DC32CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6FEEDE6-519C-4596-83B0-836934DC32CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6FEEDE6-519C-4596-83B0-836934DC32CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6FEEDE6-519C-4596-83B0-836934DC32CA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -315,6 +327,8 @@ Global
 		{D7366FC9-ACD5-4C21-A673-8F285553987F} = {1CF7F656-7CEA-456F-A32B-30A9F6E8A493}
 		{B4D01F89-67A8-4C0F-903A-AB6AE0D0D873} = {1CF7F656-7CEA-456F-A32B-30A9F6E8A493}
 		{7C823C69-2FCD-4E28-B4FD-EE5256153866} = {1CF7F656-7CEA-456F-A32B-30A9F6E8A493}
+		{8CB89D15-B86A-49A2-8773-9CDF5B294E81} = {5925A1D8-932A-4DC6-866B-3F0F8F874E32}
+		{B6FEEDE6-519C-4596-83B0-836934DC32CA} = {5925A1D8-932A-4DC6-866B-3F0F8F874E32}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A063F0C5-38BF-495E-8B72-2E7F00C1C4DE}

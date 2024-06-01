@@ -6,7 +6,6 @@ using ChargingStation.Common.Exceptions;
 using ChargingStation.Infrastructure.Identity;
 using ChargingStation.Common.Utility;
 using UserManagement.API.Models.Requests;
-using System.Data;
 
 namespace UserManagement.API.Persistence;
 

@@ -1,11 +1,14 @@
 ﻿using ChargePoints.Grpc.Protos;
+using ChargingStation.Common.Enums;
 using ChargingStation.Common.Models.ChargePoints.Responses;
 using ChargingStation.Common.Models.Connectors.Responses;
 using ChargingStation.Common.Models.DepotEnergyConsumption;
 using ChargingStation.Common.Models.DepotEnergyConsumption.Dtos;
+using ChargingStation.Common.Models.Depots.Responses;
 using ChargingStation.Common.Models.OcppTags.Responses;
 using ChargingStation.Common.Models.Transactions.Responses;
 using Connectors.Grpc.Protos;
+using Depots.Grpc.Protos;
 using EnergyConsumption.Grpc.Protos;
 using OcppTags.Grpc.Protos;
 using Transactions.Grpc.Protos;
@@ -14,11 +17,44 @@ namespace ChargingStation.InternalCommunication.Extensions;
 
 public static class GrpcResponseExtensions
 {
+    public static DepotResponse ToResponse(this DepotGrpcResponse grpcResponse)
+    {
+        return new DepotResponse
+        {
+            Id = Guid.Parse(grpcResponse.Id),
+            Name = grpcResponse.Name,
+            Country = grpcResponse.Country,
+            City = grpcResponse.City,
+            Street = grpcResponse.Street,
+            Building = grpcResponse.Building,
+            CreatedAt = grpcResponse.CreatedAt.ToDateTime(),
+            UpdatedAt = grpcResponse.UpdatedAt?.ToDateTime(),
+            BaseUtcOffset = grpcResponse.BaseUtcOffset.ToTimeSpan(),
+            Status = (DepotStatus)grpcResponse.Status,
+            Description = grpcResponse.Description,
+            Latitude = grpcResponse.Latitude,
+            Longitude = grpcResponse.Longitude,
+            Email = grpcResponse.Email,
+            PhoneNumber = grpcResponse.PhoneNumber,
+            IanaId = grpcResponse.IanaId
+        };
+    }
+    
     public static TransactionResponse ToResponse(this TransactionGrpcResponse grpcResponse)
     {
         return new TransactionResponse
         {
-            TransactionId = grpcResponse.TransactionId
+            Id = Guid.Parse(grpcResponse.Id),
+            TransactionId = grpcResponse.TransactionId,
+            ConnectorId = Guid.Parse(grpcResponse.ConnectorId),
+            CreatedAt = grpcResponse.CreatedAt.ToDateTime(),
+            StartTime = grpcResponse.StartTime.ToDateTime(),
+            StartTagId = grpcResponse.StartTagId,
+            StopTagId = grpcResponse.StopTagId,
+            StopTime = grpcResponse.StopTime?.ToDateTime(),
+            StopReason = grpcResponse.StopReason,
+            UpdatedAt = grpcResponse.UpdatedAt?.ToDateTime(),
+            ReservationId = grpcResponse.ReservationId != null ? Guid.Parse(grpcResponse.ReservationId) : null
         };
     }
     

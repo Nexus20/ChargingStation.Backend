@@ -8,7 +8,6 @@ option csharp_namespace = "Connectors.Grpc.Protos";
 
 package connectors;
 
-// The greeting service definition.
 service ConnectorsGrpc {
   // Get connector by id
   rpc GetById (GetConnectorByIdGrpcRequest) returns (ConnectorGrpcResponse);

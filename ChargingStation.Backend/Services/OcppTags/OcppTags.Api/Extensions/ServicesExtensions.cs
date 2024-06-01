@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using ChargingStation.Common.Configurations;
+using System.Text;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -40,7 +41,8 @@ public static class ServicesExtensions
             
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
-                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
+                var connectionString = configuration.GetSection(MessageBrokerConfiguration.SectionName).Get<MessageBrokerConfiguration>()!.GetConnectionString();
+                cfg.Host(connectionString);
                 
                 cfg.ReceiveEndpoint("authorize-queue", c => {
                     c.ConfigureConsumer<AuthorizeConsumer>(ctx);

@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: connectors-config
+data:
+  connectors-api-url: "http://connectorsapi-service:8080"
+  connectors-grpc-url: "http://connectorsgrpc-service:8080"

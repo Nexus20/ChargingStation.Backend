@@ -3,6 +3,7 @@ using System.Text;
 using ChargingStation.CacheManager.Extensions;
 using ChargingStation.ChargingProfiles.EventConsumers;
 using ChargingStation.ChargingProfiles.Services;
+using ChargingStation.Common.Configurations;
 using ChargingStation.InternalCommunication.Extensions;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -36,8 +37,6 @@ public static class ServicesExtensions
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
-        services.AddDepotsHttpClient(configuration);
-        
         services.AddCacheServices(configuration);
         services.AddChargePointsGrpcClient(configuration);
         services.AddConnectorsGrpcClient(configuration);
@@ -51,7 +50,8 @@ public static class ServicesExtensions
             busConfigurator.AddConsumer<ClearChargingProfileResponseConsumer>();
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
-                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
+                var connectionString = configuration.GetSection(MessageBrokerConfiguration.SectionName).Get<MessageBrokerConfiguration>()!.GetConnectionString();
+                cfg.Host(connectionString);
                 
                 cfg.ReceiveEndpoint("set-charging-profile-response-queue-1_6", c => {
                     c.ConfigureConsumer<SetChargingProfileResponseConsumer>(ctx);

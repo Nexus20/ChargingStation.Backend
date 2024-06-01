@@ -1,0 +1,6 @@
+﻿apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: emulator-config
+data:
+  hub-endpoint-url: "http://localhost:8080"

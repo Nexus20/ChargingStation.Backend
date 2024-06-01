@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using ChargingStation.Common.Configurations;
+using System.Text;
 using Connectors.Api.EventConsumers;
 using Connectors.Application.Extensions;
 using MassTransit;
@@ -41,7 +42,8 @@ public static class ServicesExtensions
             
             busConfigurator.UsingRabbitMq((ctx, cfg) =>
             {
-                cfg.Host(configuration["MessageBrokerSettings:HostAddress"]);
+                var connectionString = configuration.GetSection(MessageBrokerConfiguration.SectionName).Get<MessageBrokerConfiguration>()!.GetConnectionString();
+                cfg.Host(connectionString);
                 
                 cfg.ReceiveEndpoint("status-notification-queue-1_6", c => {
                     c.ConfigureConsumer<StatusNotificationConsumer>(ctx);
