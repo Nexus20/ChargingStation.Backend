@@ -25,10 +25,11 @@ public class AuthService : IAuthService
     private readonly JwtHandler _jwtHandler;
     private readonly IMapper _mapper;
     private readonly IEmailService _emailService;
+    private readonly IConfiguration _configuration;
 
     public AuthService(UserManager<InfrastructureUser> userManager, IRepository<ApplicationUser> applicationUserRepository, 
         IRepository<ApplicationUserDepot> applicationUserDepotRepository,JwtHandler jwtHandler, IMapper mapper, 
-        IEmailService emailService)
+        IEmailService emailService, IConfiguration configuration)
     {
         _userManager = userManager;
         _jwtHandler = jwtHandler;
@@ -36,7 +37,7 @@ public class AuthService : IAuthService
         _applicationUserDepotRepository = applicationUserDepotRepository;
         _mapper = mapper;
         _emailService = emailService;
-        
+        _configuration = configuration;
     }
 
     public async Task<TokenResponse> LoginAsync(LoginRequest loginRequest)
@@ -76,7 +77,8 @@ public class AuthService : IAuthService
 
             var token = _jwtHandler.GenerateToken(applicationUser, registerRequest.Role, DateTime.UtcNow.AddHours(1));
             
-            var registrationLink = $"https://yourcompany.com/register?token={token}"; //TODO: write correct link 
+            var clientApplicationHost = _configuration["ClientApplicationHost"]!;
+            var registrationLink = $"https://{clientApplicationHost}/register?token={token}"; 
             var emailMessage = new RegistrationEmailMessage(registrationLink, registerRequest.FirstName);
 
             await _emailService.SendMessageAsync(emailMessage, registerRequest.Email);
@@ -86,8 +88,7 @@ public class AuthService : IAuthService
             throw new BadRequestException("Registration failed");
         }
     }
-
-
+    
     public string GenerateInvitationToken(InviteRequest inviteRequest)
     {
         var invitationToken = _jwtHandler.GenerateInviteToken(inviteRequest);

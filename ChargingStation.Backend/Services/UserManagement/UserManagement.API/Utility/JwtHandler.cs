@@ -45,8 +45,6 @@ public class JwtHandler
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.MobilePhone, user.Phone),
-            new Claim(ClaimTypes.Name, user.LastName + " " + user.LastName),
             new Claim(ClaimTypes.Role, role)
         };
 
@@ -58,7 +56,7 @@ public class JwtHandler
         return GenerateToken(claims, expires);
     }
 
-    private string GenerateToken(Claim[] claims, DateTime expires)
+    private string GenerateToken(IEnumerable<Claim> claims, DateTime expires)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
