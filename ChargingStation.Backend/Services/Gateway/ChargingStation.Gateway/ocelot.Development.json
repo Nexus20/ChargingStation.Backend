@@ -1,6 +1,23 @@
 {
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/auth/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "usermanagement.api",
+          "Port": 8010
+        }
+      ],
+      "UpstreamPathTemplate": "/api/auth/{everything}",
+      "UpstreamHttpMethod": [
+        "GET",
+        "POST",
+        "PUT",
+        "DELETE"
+      ]
+    },
+    {
       "DownstreamPathTemplate": "/api/aggregator/Depot/getall",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -160,6 +177,18 @@
         }
       ],
       "UpstreamPathTemplate": "/api/chargingprofile/set",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/chargingprofile/clear",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "chargingprofiles.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/chargingprofile/clear",
       "UpstreamHttpMethod": [ "POST" ]
     },
     {

@@ -1,4 +1,5 @@
 ﻿using ChargingStation.Common.Configurations;
+using ChargingStation.InternalCommunication.Extensions;
 using ChargingStation.WebSockets.EventConsumers;
 using ChargingStation.WebSockets.OcppConnectionHandlers;
 using ChargingStation.WebSockets.OcppMessageHandlers.Abstract;
@@ -14,10 +15,8 @@ public static class ServicesExtensions
 {
     public static IServiceCollection AddOcppCommunicationServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddHttpClient<IChargePointCommunicationService, ChargePointCommunicationService>(c =>
-        {
-            c.BaseAddress = new Uri(configuration["ApiSettings:ChargePointServiceAddress"]!);
-        });
+        services.AddChargePointsGrpcClient(configuration);
+        services.AddScoped<IChargePointCommunicationService, ChargePointCommunicationService>();
 
         services.AddMassTransit(busConfigurator =>
         {

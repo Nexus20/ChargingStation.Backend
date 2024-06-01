@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using ChargingStation.Domain.Entities;
-using ChargingStation.Infrastructure.Identity;
 using UserManagement.API.Models.Requests;
 
 namespace UserManagement.API.Mappings

@@ -1,5 +1,8 @@
 syntax = "proto3";
 
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/wrappers.proto";
+
 option csharp_namespace = "Transactions.Grpc.Protos";
 
 package transactions;
@@ -13,5 +16,15 @@ message GetTransactionByIdGrpcRequest {
 }
 
 message TransactionGrpcResponse {
-  int32 transaction_id = 1;
+  string id = 1;
+  int32 transaction_id = 2;
+  string start_tag_id = 3;
+  google.protobuf.StringValue stop_tag_id = 4;
+  google.protobuf.Timestamp start_time = 5;
+  google.protobuf.Timestamp stop_time = 6;
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp updated_at = 8;
+  google.protobuf.StringValue stop_reason = 9;
+  string connector_id = 10;
+  google.protobuf.StringValue reservation_id = 11;
 }

@@ -37,11 +37,11 @@ spec:
               secretKeyRef:
                 name: rabbitmq-secret
                 key: rabbitmq-password
-          - name: ApiSettings__ChargePointServiceAddress
+          - name: GrpcSettings__ChargePointServiceAddress
             valueFrom:
               configMapKeyRef:
                 name: chargepoints-config
-                key: chargepoints-api-url
+                key: chargepoints-grpc-url
         resources:
             requests:
               memory: "256Mi"
@@ -57,11 +57,10 @@ metadata:
   labels:
     app: websockets
 spec:
-  type: LoadBalancer
   selector:
     app: websockets
   ports:
     - protocol: TCP
       name: http
-      port: 8020
+      port: 8080
       targetPort: 8080

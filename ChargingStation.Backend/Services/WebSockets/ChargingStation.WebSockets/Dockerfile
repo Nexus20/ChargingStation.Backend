@@ -11,6 +11,7 @@ WORKDIR /src
 COPY ["Services/WebSockets/ChargingStation.WebSockets/ChargingStation.WebSockets.csproj", "Services/WebSockets/ChargingStation.WebSockets/"]
 COPY ["Domain/ChargingStation.Common/ChargingStation.Common.csproj", "Domain/ChargingStation.Common/"]
 COPY ["Domain/ChargingStation.Domain/ChargingStation.Domain.csproj", "Domain/ChargingStation.Domain/"]
+COPY ["Infrastructure/ChargingStation.InternalCommunication/ChargingStation.InternalCommunication.csproj", "Infrastructure/ChargingStation.InternalCommunication/"]
 RUN dotnet restore "./Services/WebSockets/ChargingStation.WebSockets/ChargingStation.WebSockets.csproj"
 COPY . .
 WORKDIR "/src/Services/WebSockets/ChargingStation.WebSockets"

@@ -23,7 +23,13 @@ services:
     image: ${DOCKER_REGISTRY-}depotsapi
     build:
       context: .
-      dockerfile: Services/Depots/ChargingStation.Depots/Dockerfile
+      dockerfile: Services/Depots/Depots.Api/Dockerfile
+      
+  depots.grpc:
+    image: ${DOCKER_REGISTRY-}depotsgrpc
+    build:
+      context: .
+      dockerfile: Services/Depots/Depots.Grpc/Dockerfile
       
   chargepoints.api:
     image: ${DOCKER_REGISTRY-}chargepointsapi

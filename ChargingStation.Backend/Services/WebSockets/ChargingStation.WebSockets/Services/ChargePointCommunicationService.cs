@@ -1,27 +1,27 @@
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
+using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.WebSockets.OcppMessageHandlers.Providers;
 
 namespace ChargingStation.WebSockets.Services;
 
 public class ChargePointCommunicationService : IChargePointCommunicationService
 {
-    private readonly HttpClient _httpClient;
     private readonly IOcppMessageHandlerProvider _ocppMessageHandlerProvider;
+    private readonly ChargePointGrpcClientService _chargePointGrpcClientService;
 
-    public ChargePointCommunicationService(HttpClient httpClient, IOcppMessageHandlerProvider ocppMessageHandlerProvider)
+    public ChargePointCommunicationService(IOcppMessageHandlerProvider ocppMessageHandlerProvider, ChargePointGrpcClientService chargePointGrpcClientService)
     {
-        _httpClient = httpClient;
         _ocppMessageHandlerProvider = ocppMessageHandlerProvider;
+        _chargePointGrpcClientService = chargePointGrpcClientService;
     }
 
     public async Task CheckChargePointPresenceAsync(Guid chargePointId, CancellationToken cancellationToken = default)
     {
-        var requestUri = $"api/ChargePoint/{chargePointId}";
-        var result = await _httpClient.GetAsync(requestUri, cancellationToken);
+        var chargePoint = await _chargePointGrpcClientService.GetByIdAsync(chargePointId, cancellationToken: cancellationToken);
 
-        if (!result.IsSuccessStatusCode)
+        if (chargePoint is null)
             throw new NotFoundException(nameof(ChargePoint), chargePointId);
     }
     

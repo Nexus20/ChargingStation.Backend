@@ -59,11 +59,10 @@ metadata:
   labels:
     app: chargepointsgrpc
 spec:
-  type: LoadBalancer
   selector:
     app: chargepointsgrpc
   ports:
     - protocol: TCP
       name: http
-      port: 8052
+      port: 8080
       targetPort: 8080

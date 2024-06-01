@@ -5,7 +5,6 @@ using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.GrpcClients;
-using ChargingStation.InternalCommunication.Services.Depots;
 using EnergyConsumption.Application.Models.Requests;
 using EnergyConsumption.Application.Specifications;
 using Microsoft.Extensions.Logging;
@@ -14,15 +13,15 @@ namespace EnergyConsumption.Application.Services;
 
 public class EnergyConsumptionSettingsService : IEnergyConsumptionSettingsService
 {
-    private readonly IDepotHttpService _depotHttpService;
+    private readonly DepotGrpcClientService _depotGrpcClientService;
     private readonly ChargePointGrpcClientService _chargePointGrpcClientService;
     private readonly IMapper _mapper;
     private readonly IRepository<DepotEnergyConsumptionSettings> _depotEnergyConsumptionSettingsRepository;
     private readonly ILogger<EnergyConsumptionSettingsService> _logger;
 
-    public EnergyConsumptionSettingsService(IDepotHttpService depotHttpService, ChargePointGrpcClientService chargePointGrpcClientService, IMapper mapper, IRepository<DepotEnergyConsumptionSettings> depotEnergyConsumptionSettingsRepository, ILogger<EnergyConsumptionSettingsService> logger)
+    public EnergyConsumptionSettingsService(DepotGrpcClientService depotGrpcClientService, ChargePointGrpcClientService chargePointGrpcClientService, IMapper mapper, IRepository<DepotEnergyConsumptionSettings> depotEnergyConsumptionSettingsRepository, ILogger<EnergyConsumptionSettingsService> logger)
     {
-        _depotHttpService = depotHttpService;
+        _depotGrpcClientService = depotGrpcClientService;
         _chargePointGrpcClientService = chargePointGrpcClientService;
         _mapper = mapper;
         _depotEnergyConsumptionSettingsRepository = depotEnergyConsumptionSettingsRepository;
@@ -32,7 +31,7 @@ public class EnergyConsumptionSettingsService : IEnergyConsumptionSettingsServic
     public async Task<Guid> SetEnergyConsumptionSettingsAsync(SetDepotEnergyConsumptionSettingsRequest request,
         CancellationToken cancellationToken = default)
     {
-        var depot = await _depotHttpService.GetByIdAsync(request.DepotId, cancellationToken);
+        var depot = await _depotGrpcClientService.GetByIdAsync(request.DepotId, cancellationToken);
         
         if(depot is null)
             throw new NotFoundException("Depot with id {request.DepotId} not found");

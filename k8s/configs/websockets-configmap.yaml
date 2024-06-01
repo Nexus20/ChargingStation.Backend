@@ -4,3 +4,4 @@ metadata:
   name: websockets-config
 data:
   websockets-api-url: "http://websockets-service:8080"
+  websockets-endpoint-url: "ws://websockets-service:8080"

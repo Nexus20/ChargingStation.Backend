@@ -1,7 +1,6 @@
 ﻿using System.Reflection;
 using ChargingStation.InternalCommunication.Extensions;
 using Hangfire;
-using MassTransit;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Reservations.Application.Services.Reservations;

@@ -3,7 +3,9 @@ using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.InternalCommunication.Services.Depots;
 using ChargingStation.InternalCommunication.Services.EnergyConsumption;
 using Connectors.Grpc.Protos;
+using Depots.Grpc.Protos;
 using EnergyConsumption.Grpc.Protos;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using OcppTags.Grpc.Protos;
@@ -74,12 +76,27 @@ public static class ServicesExtensions
         return services;
     }
     
+    public static IServiceCollection AddDepotsGrpcClient(this IServiceCollection services,
+        IConfiguration configuration)
+    {
+        services.AddGrpcClient<DepotsGrpc.DepotsGrpcClient>
+            (o => o.Address = new Uri(configuration["GrpcSettings:DepotServiceAddress"]!));
+        services.AddScoped<DepotGrpcClientService>();
+        
+        return services;
+    }
+    
     public static IServiceCollection AddDepotsHttpClient(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddHttpClient<IDepotHttpService, DepotHttpService>(c =>
+        services.AddHttpContextAccessor();
+        services.AddHttpClient<IDepotHttpService, DepotHttpService>((sp, c) =>
         {
+            var contextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+            var authorizationHeader = contextAccessor.HttpContext!.Request.Headers.Authorization.ToString();
+            
             c.BaseAddress = new Uri(configuration["ApiSettings:DepotServiceAddress"]!);
+            c.DefaultRequestHeaders.Add("Authorization", authorizationHeader);
         });
 
         return services;
@@ -88,9 +105,14 @@ public static class ServicesExtensions
     public static IServiceCollection AddEnergyConsumptionSettingsHttpClient(this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddHttpClient<IEnergyConsumptionHttpService, EnergyConsumptionHttpService>(c =>
+        services.AddHttpContextAccessor();
+        services.AddHttpClient<IEnergyConsumptionHttpService, EnergyConsumptionHttpService>((sp, c) =>
         {
+            var contextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+            var authorizationHeader = contextAccessor.HttpContext!.Request.Headers.Authorization.ToString();
+            
             c.BaseAddress = new Uri(configuration["ApiSettings:EnergyConsumptionSettingsServiceAddress"]!);
+            c.DefaultRequestHeaders.Add("Authorization", authorizationHeader);
         });
 
         return services;

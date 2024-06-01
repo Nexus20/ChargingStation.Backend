@@ -1,0 +1,6 @@
+﻿apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: usermanagement-config
+data:
+  usermanagement-api-url: "http://usermanagement-service:8080"

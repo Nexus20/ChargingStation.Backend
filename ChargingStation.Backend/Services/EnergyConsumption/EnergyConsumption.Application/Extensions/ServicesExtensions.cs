@@ -12,7 +12,7 @@ public static class ServicesExtensions
         IConfiguration configuration)
     {
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
-        services.AddDepotsHttpClient(configuration);
+        services.AddDepotsGrpcClient(configuration);
         services.AddChargePointsGrpcClient(configuration);
         
         services.AddScoped<IEnergyConsumptionSettingsService, EnergyConsumptionSettingsService>();

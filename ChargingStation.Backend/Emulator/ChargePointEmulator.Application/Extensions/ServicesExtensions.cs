@@ -21,6 +21,11 @@ public static class ServicesExtensions
             client.BaseAddress = new Uri($"{configuration["ApiSettings:ReservationServiceAddress"]!}/api/Reservation");
         });
         
+        services.AddHttpClient<IAuthHttpService, AuthHttpService>(client =>
+        {
+            client.BaseAddress = new Uri($"{configuration["ApiSettings:AuthServiceAddress"]!}/api/Auth");
+        });
+        
         return services;
     }
 }

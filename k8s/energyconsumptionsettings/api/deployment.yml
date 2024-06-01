@@ -30,11 +30,11 @@ spec:
               secretKeyRef:
                 name: mssql-db-secret
                 key: mssql-main-db-connection-string
-          - name: ApiSettings__DepotServiceAddress
+          - name: GrpcSettings__DepotServiceAddress
             valueFrom:
               configMapKeyRef:
                 name: depots-config
-                key: depots-api-url
+                key: depots-grpc-url
           - name: GrpcSettings__ChargePointServiceAddress
             valueFrom:
               configMapKeyRef:

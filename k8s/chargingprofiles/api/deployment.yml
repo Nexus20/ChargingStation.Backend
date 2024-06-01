@@ -59,11 +59,6 @@ spec:
               configMapKeyRef:
                 name: transactions-config
                 key: transactions-grpc-url
-          - name: ApiSettings__DepotServiceAddress
-            valueFrom:
-              configMapKeyRef:
-                name: depots-config
-                key: depots-api-url
         resources:
             requests:
               memory: "256Mi"

@@ -9,6 +9,7 @@ public class GetChargingProfilesSpecification : Specification<ChargingProfile>
     public GetChargingProfilesSpecification(GetChargingProfilesRequest request)
     {
         AddFilters(request);
+        AddInclude($"{nameof(ChargingProfile.ChargingSchedulePeriods)}");
     }
     
     private void AddFilters(GetChargingProfilesRequest request)

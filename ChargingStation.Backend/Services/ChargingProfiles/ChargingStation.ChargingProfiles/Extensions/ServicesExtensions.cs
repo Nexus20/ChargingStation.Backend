@@ -37,8 +37,6 @@ public static class ServicesExtensions
 
         services.AddAutoMapper(Assembly.GetExecutingAssembly());
         
-        services.AddDepotsHttpClient(configuration);
-        
         services.AddCacheServices(configuration);
         services.AddChargePointsGrpcClient(configuration);
         services.AddConnectorsGrpcClient(configuration);

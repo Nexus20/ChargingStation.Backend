@@ -6,8 +6,15 @@ namespace Transactions.Application.Specifications;
 
 public class GetTransactionsSpecification : Specification<OcppTransaction>
 {
+    public GetTransactionsSpecification(Guid transactionId)
+    {
+        AddInclude($"{nameof(OcppTransaction.Reservation)}");
+        AddFilter(t => t.Id == transactionId);
+    }
+    
     public GetTransactionsSpecification(GetTransactionsRequest request)
     {
+        AddInclude($"{nameof(OcppTransaction.Reservation)}");
         AddFilters(request);
 
         if (request.OrderPredicates.Count != 0)
@@ -19,16 +26,10 @@ public class GetTransactionsSpecification : Specification<OcppTransaction>
         if(request.TransactionId.HasValue)
             AddFilter(t => t.TransactionId == request.TransactionId);
         
-        // if (!string.IsNullOrEmpty(request.TagId))
-        //     AddFilter(с => с.TagId.Contains(request.TagId));
-        //
-        // if (!string.IsNullOrEmpty(request.ParentTagId))
-        //     AddFilter(с => с.ParentTagId != null && с.ParentTagId.Contains(request.ParentTagId));
-        //
-        // if (request.Blocked.HasValue)
-        //     AddFilter(с => с.Blocked == request.Blocked);
-        //
-        // if (request.ExpiryDate.HasValue)
-        //     AddFilter(с => с.ExpiryDate == request.ExpiryDate);
+        if(request.StartTime.HasValue)
+            AddFilter(t => t.StartTime == request.StartTime);
+        
+        if(request.StopTime.HasValue)
+            AddFilter(t => t.StopTime == request.StopTime);
     }
 }

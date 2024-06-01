@@ -92,24 +92,13 @@ public class TransactionService : ITransactionService
 
     public async Task<TransactionResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
     {
-        var transaction = await _transactionRepository.GetByIdAsync(id, cancellationToken);
+        var specification = new GetTransactionsSpecification(id);
+        var transaction = await _transactionRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
 
         if (transaction is null)
             throw new NotFoundException(nameof(OcppTransaction), id);
 
         var result = _mapper.Map<TransactionResponse>(transaction);
-        return result;
-    }
-
-    public async Task<TransactionResponse> CreateAsync(CreateTransactionRequest request,
-        CancellationToken cancellationToken = default)
-    {
-        var transactionToCreate = _mapper.Map<OcppTransaction>(request);
-
-        await _transactionRepository.AddAsync(transactionToCreate, cancellationToken);
-        await _transactionRepository.SaveChangesAsync(cancellationToken);
-
-        var result = _mapper.Map<TransactionResponse>(transactionToCreate);
         return result;
     }
 
