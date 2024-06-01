@@ -8,7 +8,7 @@ builder.Configuration.AddEnvironmentVariables();
 // Add services to the container.
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddTransactionServices(builder.Configuration);
-builder.Services.AddSwaggerDocumentation();
+builder.Services.AddCustomSwaggerGen();
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {

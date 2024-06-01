@@ -4,7 +4,7 @@ namespace Transactions.Api.Extensions;
 
 public static class SwaggerServiceExtensions
 {
-    public static IServiceCollection AddSwaggerDocumentation(this IServiceCollection services)
+    public static IServiceCollection AddCustomSwaggerGen(this IServiceCollection services)
     {
         services.AddSwaggerGen();
 

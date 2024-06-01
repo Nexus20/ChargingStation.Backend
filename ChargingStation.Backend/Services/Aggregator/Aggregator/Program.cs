@@ -6,7 +6,7 @@ builder.Configuration.AddEnvironmentVariables();
 
 // Add services to the container.
 builder.Services.AddAggregatorServices(builder.Configuration);
-builder.Services.AddSwaggerDocumentation();
+builder.Services.AddCustomSwaggerGen();
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
