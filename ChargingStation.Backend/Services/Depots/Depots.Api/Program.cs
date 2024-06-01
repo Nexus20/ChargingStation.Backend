@@ -9,7 +9,7 @@ builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddDepotServices(builder.Configuration);
-builder.Services.AddSwaggerDocumentation();
+builder.Services.AddCustomSwaggerGen();
 
 builder.Services.AddControllers().AddNewtonsoftJson(options =>
 {

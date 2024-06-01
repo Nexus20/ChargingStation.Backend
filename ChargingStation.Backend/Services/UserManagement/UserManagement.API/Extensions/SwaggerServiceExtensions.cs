@@ -1,6 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 
-namespace Depots.Api.Extensions;
+namespace UserManagement.API.Extensions;
 
 public static class SwaggerServiceExtensions
 {
