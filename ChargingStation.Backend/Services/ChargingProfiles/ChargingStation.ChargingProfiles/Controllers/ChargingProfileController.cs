@@ -2,7 +2,7 @@
 using ChargingStation.ChargingProfiles.Models.Responses;
 using ChargingStation.ChargingProfiles.Services;
 using ChargingStation.Common.Models.General;
-using ChargingStation.Common.Utility;
+using ChargingStation.Common.Rbac;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

@@ -10,6 +10,9 @@ public class OcppTag : Entity, ITimeMarkable
     public string? ParentTagId { get; set; }
     
     public DateTime? ExpiryDate { get; set; }
+
+    public Guid? ApplicationUserId { get; set; }
+    public ApplicationUser? ApplicationUser { get; set; }
     
     public bool? Blocked { get; set; }
     public DateTime CreatedAt { get; set; }

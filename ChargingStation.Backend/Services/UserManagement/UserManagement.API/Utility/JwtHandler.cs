@@ -1,13 +1,13 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ChargingStation.Common.Exceptions;
-using ChargingStation.Infrastructure.Identity;
-using ChargingStation.Common.Utility;
+using ChargingStation.Common.Rbac;
+using ChargingStation.Domain.Entities;
+using Microsoft.IdentityModel.Tokens;
 using UserManagement.API.Models.Requests;
 
-namespace UserManagement.API.Persistence;
+namespace UserManagement.API.Utility;
 
 public class JwtHandler
 {
@@ -39,13 +39,12 @@ public class JwtHandler
         return GenerateToken(claims, inviteRequest.Expiration);
     }
 
-    public string GenerateToken(InfrastructureUser user, string role, DateTime expires)
+    public string GenerateToken(ApplicationUser user, string role, DateTime expires)
     {
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Name, user.UserName),
             new Claim(ClaimTypes.Role, role)
         };
 
@@ -57,7 +56,7 @@ public class JwtHandler
         return GenerateToken(claims, expires);
     }
 
-    private string GenerateToken(Claim[] claims, DateTime expires)
+    private string GenerateToken(IEnumerable<Claim> claims, DateTime expires)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secret));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

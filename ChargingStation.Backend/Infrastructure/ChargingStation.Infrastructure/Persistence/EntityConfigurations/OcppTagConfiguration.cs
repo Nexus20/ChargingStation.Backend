@@ -13,5 +13,11 @@ public class OcppTagConfiguration : IEntityTypeConfiguration<OcppTag>
         builder.Property(e => e.TagId).HasMaxLength(50);
 
         builder.Property(e => e.ParentTagId).HasMaxLength(50);
+
+        builder.HasOne(x => x.ApplicationUser)
+            .WithOne()
+            .HasForeignKey<OcppTag>(x => x.ApplicationUserId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 }

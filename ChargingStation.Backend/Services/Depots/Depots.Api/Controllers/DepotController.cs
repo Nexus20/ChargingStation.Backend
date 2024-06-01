@@ -2,7 +2,7 @@
 using ChargingStation.Common.Models.Depots.Responses;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Models.TimeZone;
-using ChargingStation.Common.Utility;
+using ChargingStation.Common.Rbac;
 using Depots.Application.Models.Requests;
 using Depots.Application.Services;
 using Microsoft.AspNetCore.Authorization;

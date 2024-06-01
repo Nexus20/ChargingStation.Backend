@@ -1,7 +1,7 @@
 ﻿using UserManagement.API.Initializers;
-using UserManagement.API.Persistence;
 using UserManagement.API.Services;
 using System.Reflection;
+using UserManagement.API.Utility;
 
 namespace UserManagement.API.Extensions;
 

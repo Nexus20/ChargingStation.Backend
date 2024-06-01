@@ -1,6 +1,6 @@
 ﻿using ChargingStation.Common.Exceptions;
 
-namespace ChargingStation.UserManagement.Middlewares;
+namespace UserManagement.API.Middlewares;
 
 public class ExceptionHandlingMiddleware
 {

@@ -1,7 +1,6 @@
 ﻿using ChargingStation.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using UserManagement.API.Models.Requests;
-using UserManagement.API.Persistence;
 using UserManagement.API.Models.Response;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Domain.Entities;
@@ -10,6 +9,11 @@ using AutoMapper;
 using ChargingStation.Mailing.Messages;
 using ChargingStation.Mailing.Services;
 using System.Security.Claims;
+using ChargingStation.Common.Models.General;
+using UserManagement.API.Specifications;
+using UserManagement.API.Utility;
+using LoginRequest = UserManagement.API.Models.Requests.LoginRequest;
+using RegisterRequest = UserManagement.API.Models.Requests.RegisterRequest;
 
 namespace UserManagement.API.Services;
 
@@ -21,10 +25,11 @@ public class AuthService : IAuthService
     private readonly JwtHandler _jwtHandler;
     private readonly IMapper _mapper;
     private readonly IEmailService _emailService;
+    private readonly IConfiguration _configuration;
 
     public AuthService(UserManager<InfrastructureUser> userManager, IRepository<ApplicationUser> applicationUserRepository, 
         IRepository<ApplicationUserDepot> applicationUserDepotRepository,JwtHandler jwtHandler, IMapper mapper, 
-        IEmailService emailService)
+        IEmailService emailService, IConfiguration configuration)
     {
         _userManager = userManager;
         _jwtHandler = jwtHandler;
@@ -32,7 +37,7 @@ public class AuthService : IAuthService
         _applicationUserDepotRepository = applicationUserDepotRepository;
         _mapper = mapper;
         _emailService = emailService;
-        
+        _configuration = configuration;
     }
 
     public async Task<TokenResponse> LoginAsync(LoginRequest loginRequest)
@@ -42,8 +47,9 @@ public class AuthService : IAuthService
         if (user != null && await _userManager.CheckPasswordAsync(user, loginRequest.Password))
         {
             var userRoles = await _userManager.GetRolesAsync(user);
+            var applicationUser = await _applicationUserRepository.GetByIdAsync(user.ApplicationUserId);
 
-            var token = _jwtHandler.GenerateToken(user, userRoles.FirstOrDefault(), DateTime.UtcNow.AddHours(1));
+            var token = _jwtHandler.GenerateToken(applicationUser!, userRoles.FirstOrDefault(), DateTime.UtcNow.AddHours(1));
 
             return new TokenResponse() { Token = token };
         }
@@ -51,7 +57,7 @@ public class AuthService : IAuthService
         throw new UnauthorizedException("Invalid credentials");
     }
 
-    public async Task<TokenResponse> RegisterAsync(RegisterRequest registerRequest)
+    public async Task RegisterAsync(RegisterRequest registerRequest)
     {
         var applicationUser = _mapper.Map<ApplicationUser>(registerRequest);
         await _applicationUserRepository.AddAsync(applicationUser);
@@ -61,22 +67,28 @@ public class AuthService : IAuthService
             UserName = registerRequest.FirstName + applicationUser.LastName,
             Email = registerRequest.Email,
             ApplicationUserId = applicationUser.Id,
+            PhoneNumber = registerRequest.Phone
         };
-        var result = await _userManager.CreateAsync(user, registerRequest.Password);
+        var result = await _userManager.CreateAsync(user);
 
         if (result.Succeeded)
         {
             await _userManager.AddToRoleAsync(user, registerRequest.Role);
 
-            var token = _jwtHandler.GenerateToken(user, registerRequest.Role, DateTime.UtcNow.AddHours(1));
+            var token = _jwtHandler.GenerateToken(applicationUser, registerRequest.Role, DateTime.UtcNow.AddHours(1));
+            
+            var clientApplicationHost = _configuration["ClientApplicationHost"]!;
+            var registrationLink = $"https://{clientApplicationHost}/register?token={token}"; 
+            var emailMessage = new RegistrationEmailMessage(registrationLink, registerRequest.FirstName);
 
-            return new TokenResponse() { Token = token };
+            await _emailService.SendMessageAsync(emailMessage, registerRequest.Email);
         }
-
-        throw new BadRequestException("Registration failed");
+        else
+        {
+            throw new BadRequestException("Registration failed");
+        }
     }
-
-
+    
     public string GenerateInvitationToken(InviteRequest inviteRequest)
     {
         var invitationToken = _jwtHandler.GenerateInviteToken(inviteRequest);
@@ -140,5 +152,28 @@ public class AuthService : IAuthService
 
         await _applicationUserDepotRepository.AddAsync(userDepot);
         await _applicationUserDepotRepository.SaveChangesAsync();
+    }
+
+    public async Task ConfirmRegistration(ConfirmRegistrationRequest confirmRegistrationRequest)
+    {
+        var infrastructureUser = await _userManager.FindByEmailAsync(confirmRegistrationRequest.Email);
+
+        if (infrastructureUser is null)
+            throw new NotFoundException(nameof(InfrastructureUser), confirmRegistrationRequest.Email);
+
+        await _userManager.AddPasswordAsync(infrastructureUser, confirmRegistrationRequest.Password);
+    }
+
+    public async Task<IPagedCollection<UserResponse>> GetUsers(GetUserRequest request, CancellationToken cancellationToken)
+    {
+        var specification = new GetUsersSpecification(request);
+
+        var users = await _applicationUserRepository.GetPagedCollectionAsync(specification, request.PagePredicate?.Page, request.PagePredicate?.PageSize, cancellationToken: cancellationToken);
+
+        if (!users.Collection.Any())
+            return PagedCollection<UserResponse>.Empty;
+
+        var result = _mapper.Map<IPagedCollection<UserResponse>>(users);
+        return result;
     }
 }

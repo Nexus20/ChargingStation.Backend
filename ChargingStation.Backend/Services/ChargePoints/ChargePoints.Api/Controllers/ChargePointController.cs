@@ -3,7 +3,7 @@ using ChargePoints.Application.Services;
 using ChargingStation.Common.Models.ChargePoints.Requests;
 using ChargingStation.Common.Models.ChargePoints.Responses;
 using ChargingStation.Common.Models.General;
-using ChargingStation.Common.Utility;
+using ChargingStation.Common.Rbac;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
