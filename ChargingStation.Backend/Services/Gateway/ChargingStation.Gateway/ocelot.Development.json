@@ -1,21 +1,76 @@
 {
   "Routes": [
     {
-      "DownstreamPathTemplate": "/api/auth/{everything}",
+      "DownstreamPathTemplate": "/api/auth/login",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "usermanagement.api",
-          "Port": 8010
+          "Port": 8080
         }
       ],
-      "UpstreamPathTemplate": "/api/auth/{everything}",
-      "UpstreamHttpMethod": [
-        "GET",
-        "POST",
-        "PUT",
-        "DELETE"
-      ]
+      "UpstreamPathTemplate": "/api/auth/login",
+      "UpstreamHttpMethod": ["POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/auth/register",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "usermanagement.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/auth/register",
+      "UpstreamHttpMethod": ["POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/auth/invite",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "usermanagement.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/auth/invite",
+      "UpstreamHttpMethod": ["POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/auth/confirm-invite",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "usermanagement.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/auth/confirm-invite",
+      "UpstreamHttpMethod": ["POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/auth/confirm-registration",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "usermanagement.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/auth/confirm-registration",
+      "UpstreamHttpMethod": ["POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/auth/getall",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "usermanagement.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/auth/getall",
+      "UpstreamHttpMethod": ["POST"]
     },
     {
       "DownstreamPathTemplate": "/api/aggregator/Depot/getall",

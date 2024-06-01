@@ -79,7 +79,7 @@ public class AuthController : ControllerBase
     }
 
 
-    [HttpPost("getAllUsers")]
+    [HttpPost("getall")]
     [Produces("application/json")]
     [ProducesResponseType(typeof(IPagedCollection<UserResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetUsers([FromBody] GetUserRequest request, CancellationToken cancellationToken = default)
