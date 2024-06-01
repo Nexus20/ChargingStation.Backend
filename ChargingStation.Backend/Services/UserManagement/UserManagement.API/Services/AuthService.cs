@@ -1,7 +1,6 @@
 ﻿using ChargingStation.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity;
 using UserManagement.API.Models.Requests;
-using UserManagement.API.Persistence;
 using UserManagement.API.Models.Response;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Domain.Entities;
@@ -12,7 +11,7 @@ using ChargingStation.Mailing.Services;
 using System.Security.Claims;
 using ChargingStation.Common.Models.General;
 using UserManagement.API.Specifications;
-using Microsoft.AspNetCore.Identity.Data;
+using UserManagement.API.Utility;
 using LoginRequest = UserManagement.API.Models.Requests.LoginRequest;
 using RegisterRequest = UserManagement.API.Models.Requests.RegisterRequest;
 

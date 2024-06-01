@@ -1,4 +1,4 @@
-﻿using ChargingStation.Common.Utility;
+﻿using ChargingStation.Common.Rbac;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Identity;
 using ChargingStation.Infrastructure.Persistence;

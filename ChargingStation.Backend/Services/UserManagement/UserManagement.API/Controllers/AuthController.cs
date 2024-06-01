@@ -1,5 +1,5 @@
 ﻿using ChargingStation.Common.Models.General;
-using ChargingStation.Common.Utility;
+using ChargingStation.Common.Rbac;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.API.Models.Requests;

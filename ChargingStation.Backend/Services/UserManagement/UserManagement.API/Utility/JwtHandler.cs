@@ -1,15 +1,13 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using ChargingStation.Common.Exceptions;
-using ChargingStation.Infrastructure.Identity;
-using ChargingStation.Common.Utility;
-using UserManagement.API.Models.Requests;
-using System.Data;
+using ChargingStation.Common.Rbac;
 using ChargingStation.Domain.Entities;
+using Microsoft.IdentityModel.Tokens;
+using UserManagement.API.Models.Requests;
 
-namespace UserManagement.API.Persistence;
+namespace UserManagement.API.Utility;
 
 public class JwtHandler
 {

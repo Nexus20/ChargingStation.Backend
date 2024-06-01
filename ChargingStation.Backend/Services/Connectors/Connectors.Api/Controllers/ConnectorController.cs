@@ -1,6 +1,6 @@
 using ChargingStation.Common.Models.Connectors.Requests;
 using ChargingStation.Common.Models.Connectors.Responses;
-using ChargingStation.Common.Utility;
+using ChargingStation.Common.Rbac;
 using Connectors.Application.Models.Requests;
 using Connectors.Application.Services;
 using Microsoft.AspNetCore.Authorization;

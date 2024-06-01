@@ -1,4 +1,4 @@
-﻿namespace ChargingStation.Common.Utility;
+﻿namespace ChargingStation.Common.Rbac;
 
 public class CustomRoles
 {

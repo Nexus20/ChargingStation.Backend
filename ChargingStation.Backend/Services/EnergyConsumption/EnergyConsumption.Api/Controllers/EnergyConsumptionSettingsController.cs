@@ -1,5 +1,5 @@
-using ChargingStation.Common.Models.DepotEnergyConsumption;
-using ChargingStation.Common.Utility;
+﻿using ChargingStation.Common.Models.DepotEnergyConsumption;
+using ChargingStation.Common.Rbac;
 using EnergyConsumption.Application.Models.Requests;
 using EnergyConsumption.Application.Services;
 using Microsoft.AspNetCore.Authorization;
