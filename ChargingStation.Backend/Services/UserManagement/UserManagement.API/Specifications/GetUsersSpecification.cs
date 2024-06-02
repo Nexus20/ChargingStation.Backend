@@ -6,7 +6,7 @@ namespace UserManagement.API.Specifications;
 
 public class GetUsersSpecification : Specification<ApplicationUser>
 {
-    public GetUsersSpecification(GetUserRequest request)
+    public GetUsersSpecification(GetUsersRequest request)
     {
         AddInclude(nameof(ApplicationUser.ApplicationUserDepots));
         AddFilters(request);
@@ -15,7 +15,7 @@ public class GetUsersSpecification : Specification<ApplicationUser>
             AddSorting(request.OrderPredicates);
     }
 
-    private void AddFilters(GetUserRequest request)
+    private void AddFilters(GetUsersRequest request)
     {
         if (!string.IsNullOrEmpty(request.FirstName))
             AddFilter(d => d.FirstName.Contains(request.FirstName));

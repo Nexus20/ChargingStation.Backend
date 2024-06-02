@@ -1,6 +1,42 @@
 {
   "Routes": [
     {
+      "DownstreamPathTemplate": "/api/user/getall",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5010
+        }
+      ],
+      "UpstreamPathTemplate": "/api/user/getall",
+      "UpstreamHttpMethod": ["POST"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/user/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5010
+        }
+      ],
+      "UpstreamPathTemplate": "/api/user/{id}",
+      "UpstreamHttpMethod": ["Get"]
+    },
+    {
+      "DownstreamPathTemplate": "/api/user/profile",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5010
+        }
+      ],
+      "UpstreamPathTemplate": "/api/user/profile",
+      "UpstreamHttpMethod": ["Get"]
+    },
+    {
       "DownstreamPathTemplate": "/api/auth/login",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
@@ -58,18 +94,6 @@
         }
       ],
       "UpstreamPathTemplate": "/api/auth/confirm-registration",
-      "UpstreamHttpMethod": ["POST"]
-    },
-    {
-      "DownstreamPathTemplate": "/api/auth/getall",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 5010
-        }
-      ],
-      "UpstreamPathTemplate": "/api/auth/getall",
       "UpstreamHttpMethod": ["POST"]
     },
     {

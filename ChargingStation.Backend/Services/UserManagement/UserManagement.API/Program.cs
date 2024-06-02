@@ -1,16 +1,20 @@
 using ChargingStation.Infrastructure;
 using ChargingStation.Mailing.Extensions;
 using UserManagement.API.Extensions;
+using UserManagement.API.Middlewares;
 
 // Add services to the container.
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
 
-builder.Services.AddUserManagementServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddUserManagementServices(builder.Configuration);
 builder.Services.AddMailingServices(builder.Configuration);
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});;
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCustomSwaggerGen();
@@ -24,6 +28,7 @@ builder.Services.AddCors(o =>
 
 // Configure the HTTP request pipeline.
 var app = builder.Build();
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Local"))
 {
@@ -31,12 +36,9 @@ if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Local"))
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
-
 
 app.MapControllers();
 

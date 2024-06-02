@@ -1,21 +1,19 @@
-﻿using ChargingStation.Infrastructure.Identity;
+﻿using System.Security.Claims;
+using AutoMapper;
+using ChargingStation.Common.Exceptions;
+using ChargingStation.Domain.Entities;
+using ChargingStation.Infrastructure.Identity;
+using ChargingStation.Infrastructure.Repositories;
+using ChargingStation.Mailing.Messages;
+using ChargingStation.Mailing.Services;
 using Microsoft.AspNetCore.Identity;
 using UserManagement.API.Models.Requests;
 using UserManagement.API.Models.Response;
-using ChargingStation.Common.Exceptions;
-using ChargingStation.Domain.Entities;
-using ChargingStation.Infrastructure.Repositories;
-using AutoMapper;
-using ChargingStation.Mailing.Messages;
-using ChargingStation.Mailing.Services;
-using System.Security.Claims;
-using ChargingStation.Common.Models.General;
-using UserManagement.API.Specifications;
 using UserManagement.API.Utility;
 using LoginRequest = UserManagement.API.Models.Requests.LoginRequest;
 using RegisterRequest = UserManagement.API.Models.Requests.RegisterRequest;
 
-namespace UserManagement.API.Services;
+namespace UserManagement.API.Services.Auth;
 
 public class AuthService : IAuthService
 {
@@ -49,7 +47,7 @@ public class AuthService : IAuthService
             var userRoles = await _userManager.GetRolesAsync(user);
             var applicationUser = await _applicationUserRepository.GetByIdAsync(user.ApplicationUserId);
 
-            var token = _jwtHandler.GenerateToken(applicationUser!, userRoles.FirstOrDefault(), DateTime.UtcNow.AddHours(1));
+            var token = _jwtHandler.GenerateAuthToken(applicationUser!, userRoles.FirstOrDefault(), DateTime.UtcNow.AddHours(1));
 
             return new TokenResponse() { Token = token };
         }
@@ -75,7 +73,7 @@ public class AuthService : IAuthService
         {
             await _userManager.AddToRoleAsync(user, registerRequest.Role);
 
-            var token = _jwtHandler.GenerateToken(applicationUser, registerRequest.Role, DateTime.UtcNow.AddHours(1));
+            var token = _jwtHandler.GenerateAuthToken(applicationUser, registerRequest.Role, DateTime.UtcNow.AddHours(1));
             
             var clientApplicationHost = _configuration["ClientApplicationHost"]!;
             var registrationLink = $"https://{clientApplicationHost}/register?token={token}"; 
@@ -162,18 +160,5 @@ public class AuthService : IAuthService
             throw new NotFoundException(nameof(InfrastructureUser), confirmRegistrationRequest.Email);
 
         await _userManager.AddPasswordAsync(infrastructureUser, confirmRegistrationRequest.Password);
-    }
-
-    public async Task<IPagedCollection<UserResponse>> GetUsers(GetUserRequest request, CancellationToken cancellationToken)
-    {
-        var specification = new GetUsersSpecification(request);
-
-        var users = await _applicationUserRepository.GetPagedCollectionAsync(specification, request.PagePredicate?.Page, request.PagePredicate?.PageSize, cancellationToken: cancellationToken);
-
-        if (!users.Collection.Any())
-            return PagedCollection<UserResponse>.Empty;
-
-        var result = _mapper.Map<IPagedCollection<UserResponse>>(users);
-        return result;
     }
 }

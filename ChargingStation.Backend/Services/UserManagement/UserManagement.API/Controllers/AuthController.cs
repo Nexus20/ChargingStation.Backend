@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.API.Models.Requests;
 using UserManagement.API.Models.Response;
-using UserManagement.API.Services;
+using UserManagement.API.Services.Auth;
 
 namespace UserManagement.API.Controllers;
 
@@ -76,16 +76,5 @@ public class AuthController : ControllerBase
         await _authService.ConfirmRegistration(confirmRegistrationRequest);
 
         return NoContent();
-    }
-
-
-    [HttpPost("getall")]
-    [Produces("application/json")]
-    [ProducesResponseType(typeof(IPagedCollection<UserResponse>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetUsers([FromBody] GetUserRequest request, CancellationToken cancellationToken = default)
-    {
-        var users = await _authService.GetUsers(request, cancellationToken);
-
-        return Ok(users);
     }
 }
