@@ -76,6 +76,9 @@ else
                             <div class="row">
                             @foreach (var activeTransaction in _activeTransactions)
                             {
+                                @if(activeTransaction is null)
+                                    continue;
+                                
                                 <div class="col-3">
                                     <p>Active transactions info</p>
                                     <p>Id: @activeTransaction.TransactionId</p>

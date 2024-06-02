@@ -6,6 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Transactions.Application.Repositories.ConnectorMeterValues;
 
+public class SoCDateTime
+{
+    public DateTime MeterValueTimestamp { get; set; }
+    public double SoCValue { get; set; }
+}
+
 public class ConnectorMeterValueRepository : Repository<ConnectorMeterValue>, IConnectorMeterValueRepository
 {
     public ConnectorMeterValueRepository(ApplicationDbContext dbContext) : base(dbContext)
@@ -37,5 +43,22 @@ public class ConnectorMeterValueRepository : Repository<ConnectorMeterValue>, IC
         
         var consumedEnergy = meterValues.Sum(x => double.Parse(x.Value));
         return consumedEnergy;
+    }
+    
+    public async Task<List<SoCDateTime>> GetSoCForTransactionAsync(Guid transactionId, CancellationToken cancellationToken = default)
+    {
+        var socValues = await DbSet
+            .Where(x => x.TransactionId == transactionId
+                        && x.Measurand == SampledValueMeasurand.SoC.ToString())
+            .OrderBy(x => x.MeterValueTimestamp)
+            .Select(x =>
+                new SoCDateTime
+                {
+                    MeterValueTimestamp = x.MeterValueTimestamp,
+                    SoCValue = double.Parse(x.Value)
+                })
+            .ToListAsync(cancellationToken: cancellationToken);
+        
+        return socValues;
     }
 }
