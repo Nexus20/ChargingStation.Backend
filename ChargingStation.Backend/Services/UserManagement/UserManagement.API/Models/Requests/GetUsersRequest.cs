@@ -2,7 +2,7 @@
 
 namespace UserManagement.API.Models.Requests;
 
-public class GetUserRequest : BaseCollectionRequest
+public class GetUsersRequest : BaseCollectionRequest
 {
     public string? FirstName { get; set; }
     public string? LastName { get; set; }

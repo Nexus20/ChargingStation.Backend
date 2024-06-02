@@ -39,11 +39,12 @@ public class JwtHandler
         return GenerateToken(claims, inviteRequest.Expiration);
     }
 
-    public string GenerateToken(ApplicationUser user, string role, DateTime expires)
+    public string GenerateAuthToken(ApplicationUser user, string role, DateTime expires)
     {
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
             new Claim(ClaimTypes.Email, user.Email),
             new Claim(ClaimTypes.Role, role)
         };

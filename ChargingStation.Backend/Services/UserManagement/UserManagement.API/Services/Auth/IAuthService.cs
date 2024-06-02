@@ -1,8 +1,7 @@
-﻿using ChargingStation.Common.Models.General;
-using UserManagement.API.Models.Requests;
+﻿using UserManagement.API.Models.Requests;
 using UserManagement.API.Models.Response;
 
-namespace UserManagement.API.Services;
+namespace UserManagement.API.Services.Auth;
 
 public interface IAuthService
 {
@@ -12,5 +11,4 @@ public interface IAuthService
     Task SendInvitationEmailAsync(InviteRequest inviteRequest, string invitationLink);
     Task ConfirmInvite(string token);
     Task ConfirmRegistration(ConfirmRegistrationRequest confirmRegistrationRequest);
-    Task<IPagedCollection<UserResponse>> GetUsers(GetUserRequest request, CancellationToken cancellationToken);
 }
