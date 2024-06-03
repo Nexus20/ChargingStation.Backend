@@ -7,6 +7,7 @@ public class UserResponse
     public required string LastName { get; set; }
     public required string Email { get; set; }
     public required string Phone { get; set; }
+    public required List<string> Roles { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
     public Guid? OcppTagId { get; set; }

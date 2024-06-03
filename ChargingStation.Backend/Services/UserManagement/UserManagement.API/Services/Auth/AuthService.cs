@@ -1,6 +1,6 @@
-﻿using System.Security.Claims;
-using AutoMapper;
+﻿using AutoMapper;
 using ChargingStation.Common.Exceptions;
+using ChargingStation.Common.Rbac;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Identity;
 using ChargingStation.Infrastructure.Repositories;
@@ -19,20 +19,17 @@ public class AuthService : IAuthService
 {
     private readonly UserManager<InfrastructureUser> _userManager;
     private readonly IRepository<ApplicationUser> _applicationUserRepository;
-    private readonly IRepository<ApplicationUserDepot> _applicationUserDepotRepository;
     private readonly JwtHandler _jwtHandler;
     private readonly IMapper _mapper;
     private readonly IEmailService _emailService;
     private readonly IConfiguration _configuration;
 
-    public AuthService(UserManager<InfrastructureUser> userManager, IRepository<ApplicationUser> applicationUserRepository, 
-        IRepository<ApplicationUserDepot> applicationUserDepotRepository,JwtHandler jwtHandler, IMapper mapper, 
-        IEmailService emailService, IConfiguration configuration)
+    public AuthService(UserManager<InfrastructureUser> userManager, IRepository<ApplicationUser> applicationUserRepository,
+        JwtHandler jwtHandler, IMapper mapper, IEmailService emailService, IConfiguration configuration)
     {
         _userManager = userManager;
         _jwtHandler = jwtHandler;
         _applicationUserRepository = applicationUserRepository;
-        _applicationUserDepotRepository = applicationUserDepotRepository;
         _mapper = mapper;
         _emailService = emailService;
         _configuration = configuration;
@@ -47,7 +44,7 @@ public class AuthService : IAuthService
             var userRoles = await _userManager.GetRolesAsync(user);
             var applicationUser = await _applicationUserRepository.GetByIdAsync(user.ApplicationUserId);
 
-            var token = _jwtHandler.GenerateAuthToken(applicationUser!, userRoles.FirstOrDefault(), DateTime.UtcNow.AddHours(1));
+            var token = _jwtHandler.GenerateAuthToken(applicationUser!, userRoles.ToList(), DateTime.UtcNow.AddHours(1));
 
             return new TokenResponse() { Token = token };
         }
@@ -57,6 +54,8 @@ public class AuthService : IAuthService
 
     public async Task RegisterAsync(RegisterRequest registerRequest)
     {
+        ValidateRole(registerRequest.Role);
+
         var applicationUser = _mapper.Map<ApplicationUser>(registerRequest);
         await _applicationUserRepository.AddAsync(applicationUser);
 
@@ -73,10 +72,13 @@ public class AuthService : IAuthService
         {
             await _userManager.AddToRoleAsync(user, registerRequest.Role);
 
-            var token = _jwtHandler.GenerateAuthToken(applicationUser, registerRequest.Role, DateTime.UtcNow.AddHours(1));
+            var roles = new List<string> { registerRequest.Role };
+            await AssignAdditionalRolesAsync(user, registerRequest.Role, roles);
+
+            var token = _jwtHandler.GenerateAuthToken(applicationUser, roles, DateTime.UtcNow.AddHours(1));
             
             var clientApplicationHost = _configuration["ClientApplicationHost"]!;
-            var registrationLink = $"https://{clientApplicationHost}/register?token={token}"; 
+            var registrationLink = $"https://{clientApplicationHost}/auth/password-confirmation/?token={token}"; 
             var emailMessage = new RegistrationEmailMessage(registrationLink, registerRequest.FirstName);
 
             await _emailService.SendMessageAsync(emailMessage, registerRequest.Email);
@@ -85,71 +87,6 @@ public class AuthService : IAuthService
         {
             throw new BadRequestException("Registration failed");
         }
-    }
-    
-    public string GenerateInvitationToken(InviteRequest inviteRequest)
-    {
-        var invitationToken = _jwtHandler.GenerateInviteToken(inviteRequest);
-
-        return invitationToken;
-    }
-
-    public async Task SendInvitationEmailAsync(InviteRequest inviteRequest, string invitationLink)
-    {
-        var emailMessage = new InvitationEmailMessage(invitationLink, inviteRequest.Role);
-
-        await _emailService.SendMessageAsync(emailMessage, inviteRequest.Email);
-    }
-
-    public async Task ConfirmInvite(string token)
-    {
-        var principal = _jwtHandler.ValidateToken(token);
-
-        var email = principal.FindFirst(ClaimTypes.Email)?.Value;
-        var depotId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(depotId))
-        {
-            throw new BadRequestException("Invalid token data");
-        }
-
-        var user = await _userManager.FindByEmailAsync(email);
-
-        if (user == null)
-        {
-            throw new NotFoundException(nameof(ApplicationUser), email);
-        }
-
-        var userDepot = new ApplicationUserDepot
-        {
-            ApplicationUserId = Guid.Parse(user.Id),
-            DepotId = Guid.Parse(depotId)
-        };
-
-        var roles = principal.Claims
-            .Where(c => c.Type == ClaimTypes.Role)
-            .Select(c => c.Value)
-            .ToList();
-
-        var userRoles = await _userManager.GetRolesAsync(user);
-        foreach (var role in userRoles)
-        {
-            if (!roles.Contains(role))
-            {
-                await _userManager.RemoveFromRoleAsync(user, role);
-            }
-        }
-
-        foreach (var role in roles)
-        {
-            if (!await _userManager.IsInRoleAsync(user, role))
-            {
-                await _userManager.AddToRoleAsync(user, role);
-            }
-        }
-
-        await _applicationUserDepotRepository.AddAsync(userDepot);
-        await _applicationUserDepotRepository.SaveChangesAsync();
     }
 
     public async Task ConfirmRegistration(ConfirmRegistrationRequest confirmRegistrationRequest)
@@ -160,5 +97,35 @@ public class AuthService : IAuthService
             throw new NotFoundException(nameof(InfrastructureUser), confirmRegistrationRequest.Email);
 
         await _userManager.AddPasswordAsync(infrastructureUser, confirmRegistrationRequest.Password);
+    }
+
+    private void ValidateRole(string role)
+    {
+        var validRoles = new[]
+        {
+            CustomRoles.SuperAdministrator,
+            CustomRoles.Administrator,
+            CustomRoles.Employee,
+            CustomRoles.Driver
+        };
+
+        if (!validRoles.Contains(role))
+        {
+            throw new BadRequestException($"Invalid role: {role}");
+        }
+    }
+
+    private async Task AssignAdditionalRolesAsync(InfrastructureUser user, string role, List<string> roles)
+    {
+        if (role == CustomRoles.SuperAdministrator)
+        {
+            await _userManager.AddToRoleAsync(user, CustomRoles.Administrator);
+            roles.Add(CustomRoles.Administrator);
+        }
+        else if (role == CustomRoles.Administrator)
+        {
+            await _userManager.AddToRoleAsync(user, CustomRoles.Employee);
+            roles.Add(CustomRoles.Employee);
+        }
     }
 }

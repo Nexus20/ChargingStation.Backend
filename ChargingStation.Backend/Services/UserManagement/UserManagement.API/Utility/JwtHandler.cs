@@ -24,37 +24,37 @@ public class JwtHandler
 
     public string GenerateInviteToken(InviteRequest inviteRequest)
     {
-        var claims = new[]
+        var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, inviteRequest.DepotId.ToString()),
             new Claim(ClaimTypes.Email, inviteRequest.Email),
             new Claim(ClaimTypes.Role, inviteRequest.Role)
         };
 
-        if (inviteRequest.Role == CustomRoles.Administrator)
-        {
-            claims = claims.Append(new Claim(ClaimTypes.Role, CustomRoles.Employee)).ToArray();
-        }
+        if(inviteRequest.Role == CustomRoles.SuperAdministrator)
+            claims.Add(new Claim(ClaimTypes.Role, CustomRoles.Administrator));
+        else if (inviteRequest.Role == CustomRoles.Administrator)
+            claims.Add(new Claim(ClaimTypes.Role, CustomRoles.Employee));
+        
 
         return GenerateToken(claims, inviteRequest.Expiration);
     }
 
-    public string GenerateAuthToken(ApplicationUser user, string role, DateTime expires)
+    public string GenerateAuthToken(ApplicationUser user, List<string> roles, DateTime expires)
     {
-        var claims = new[]
+        var claims = new List<Claim>
         {
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, role)
+            new Claim(ClaimTypes.Email, user.Email)
         };
 
-        if (role == CustomRoles.Administrator)
+        foreach (var role in roles)
         {
-            claims = claims.Append(new Claim(ClaimTypes.Role, CustomRoles.Employee)).ToArray();
+            claims.Add(new Claim(ClaimTypes.Role, role));
         }
 
-        return GenerateToken(claims, expires);
+        return GenerateToken(claims.ToArray(), expires);
     }
 
     private string GenerateToken(IEnumerable<Claim> claims, DateTime expires)

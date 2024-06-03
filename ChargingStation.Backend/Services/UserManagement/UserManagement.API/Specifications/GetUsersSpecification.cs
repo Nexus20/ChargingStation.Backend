@@ -17,6 +17,10 @@ public class GetUsersSpecification : Specification<ApplicationUser>
 
     private void AddFilters(GetUsersRequest request)
     {
+
+        if (request.DepotId.HasValue)
+            AddFilter(d => d.ApplicationUserDepots != null && d.ApplicationUserDepots.Any(ad => ad.DepotId == request.DepotId));
+
         if (!string.IsNullOrEmpty(request.FirstName))
             AddFilter(d => d.FirstName.Contains(request.FirstName));
 
