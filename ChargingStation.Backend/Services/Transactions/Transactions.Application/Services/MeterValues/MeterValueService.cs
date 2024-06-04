@@ -13,6 +13,7 @@ using MassTransit;
 using MathNet.Numerics;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Transactions.Application.Models.Dtos;
 using Transactions.Application.Models.Requests;
 using Transactions.Application.Repositories.ConnectorMeterValues;
 using Transactions.Application.Specifications;
@@ -228,7 +229,7 @@ public class MeterValueService : IMeterValueService
         
         var endTime = transactionStartTime.AddSeconds(times[^1] + timeToFullCharge);
         return endTime;
-    } 
+    }
     
     private async Task CheckEnergyConsumptionLimitAndWarnAsync(Guid chargePointId,
         CancellationToken cancellationToken = default)

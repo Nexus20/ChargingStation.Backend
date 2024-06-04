@@ -1,6 +1,5 @@
 using ChargingStation.Heartbeats.Extensions;
 using ChargingStation.Heartbeats.Middlewares;
-using ChargingStation.Infrastructure;
 using ChargingStation.InternalCommunication.Extensions;
 
 // Add services to the container.
@@ -8,7 +7,6 @@ using ChargingStation.InternalCommunication.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
 
-builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddHeartbeatServices(builder.Configuration);
 builder.Services.AddChargePointsGrpcClient(builder.Configuration);
 builder.Services.AddCustomSwaggerGen();

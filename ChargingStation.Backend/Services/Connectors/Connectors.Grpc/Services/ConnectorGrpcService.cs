@@ -69,4 +69,18 @@ public class ConnectorGrpcService : ConnectorsGrpc.ConnectorsGrpcBase
         var grpcResponse = response.ToGrpcResponse();
         return grpcResponse;
     }
+
+    public override async Task<ConnectorGrpcResponses> GetByChargePointsIds(GetConnectorsByChargePointsIdsGrpcRequest request, ServerCallContext context)
+    {
+        var chargePointsIds = request.ChargePointsIds.Select(Guid.Parse).ToList();
+        
+        var connectors = await _connectorService.GetByChargePointsIdsAsync(chargePointsIds, context.CancellationToken);
+
+        var grpcResponse = new ConnectorGrpcResponses
+        {
+            Connectors = { connectors.Select(x => x.ToGrpcResponse()) }
+        };
+        
+        return grpcResponse;
+    }
 }

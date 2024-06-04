@@ -10,9 +10,8 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Services/Heartbeats/ChargingStation.Heartbeats/ChargingStation.Heartbeats.csproj", "Services/Heartbeats/ChargingStation.Heartbeats/"]
 COPY ["Domain/ChargingStation.Common/ChargingStation.Common.csproj", "Domain/ChargingStation.Common/"]
-COPY ["Infrastructure/ChargingStation.Infrastructure/ChargingStation.Infrastructure.csproj", "Infrastructure/ChargingStation.Infrastructure/"]
-COPY ["Domain/ChargingStation.Domain/ChargingStation.Domain.csproj", "Domain/ChargingStation.Domain/"]
 COPY ["Infrastructure/ChargingStation.InternalCommunication/ChargingStation.InternalCommunication.csproj", "Infrastructure/ChargingStation.InternalCommunication/"]
+COPY ["Infrastructure/ChargingStation.TableStorage/ChargingStation.TableStorage.csproj", "Infrastructure/ChargingStation.TableStorage/"]
 RUN dotnet restore "./Services/Heartbeats/ChargingStation.Heartbeats/ChargingStation.Heartbeats.csproj"
 COPY . .
 WORKDIR "/src/Services/Heartbeats/ChargingStation.Heartbeats"
