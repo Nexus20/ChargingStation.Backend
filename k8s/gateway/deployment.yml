@@ -1,35 +1,30 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: depotsgrpc-deployment
+  name: gateway-deployment
   labels:
-    app: depotsgrpc
+    app: gateway
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: depotsgrpc
+      app: gateway
   template:
     metadata:
       labels:
-        app: depotsgrpc
+        app: gateway
     spec:
       containers:
-      - name: depotsgrpc
-        image: yevhen0825/depotsgrpc:latest
+      - name: gateway
+        image: yevhen0825/gateway:latest
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
         env:
           - name: ASPNETCORE_ENVIRONMENT
-            value: Development
+            value: Kubernetes
           - name: ASPNETCORE_HTTP_PORTS
             value: "8080"
-          - name: ConnectionStrings__DefaultConnection
-            valueFrom:
-              secretKeyRef:
-                name: mssql-db-secret
-                key: mssql-main-db-connection-string
         resources:
             requests:
               memory: "256Mi"
@@ -41,14 +36,15 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: depotsgrpc-service
+  name: gateway-service
   labels:
-    app: depotsgrpc
-spec:  
+    app: gateway
+spec:
+  type: LoadBalancer
   selector:
-    app: depotsgrpc
+    app: gateway
   ports:
     - protocol: TCP
       name: http
-      port: 8080
+      port: 8000
       targetPort: 8080

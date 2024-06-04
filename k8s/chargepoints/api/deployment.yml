@@ -59,11 +59,10 @@ metadata:
   labels:
     app: chargepointsapi
 spec:
-  type: LoadBalancer
   selector:
     app: chargepointsapi
   ports:
     - protocol: TCP
       name: http
-      port: 8002
+      port: 8080
       targetPort: 8080

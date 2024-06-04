@@ -55,11 +55,10 @@ metadata:
   labels:
     app: energyconsumptionsettingsgrpc
 spec:
-  type: LoadBalancer
   selector:
     app: energyconsumptionsettingsgrpc
   ports:
     - protocol: TCP
       name: http
-      port: 8059
+      port: 8080
       targetPort: 8080

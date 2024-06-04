@@ -45,11 +45,10 @@ metadata:
   labels:
     app: depotsapi
 spec:
-  type: LoadBalancer
   selector:
     app: depotsapi
   ports:
     - protocol: TCP
       name: http
-      port: 8001
+      port: 8080
       targetPort: 8080

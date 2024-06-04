@@ -65,11 +65,10 @@ metadata:
   labels:
     app: aggregator
 spec:
-  type: LoadBalancer
   selector:
     app: aggregator
   ports:
     - protocol: TCP
       name: http
-      port: 8025
+      port: 8080
       targetPort: 8080
