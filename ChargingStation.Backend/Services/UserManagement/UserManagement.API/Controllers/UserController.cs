@@ -90,7 +90,7 @@ public class UserController : ControllerBase
     [Authorize(Roles = $"{CustomRoles.SuperAdministrator}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteUserWithDepot([FromBody] DeleteUserWitDepotRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteUserWithDepot([FromBody] DeleteUserFromDepotRequest request, CancellationToken cancellationToken)
     {
         await _userService.DeleteUserFromDepotAsync(request, cancellationToken);
 
