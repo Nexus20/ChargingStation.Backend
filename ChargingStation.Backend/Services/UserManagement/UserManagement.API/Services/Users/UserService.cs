@@ -193,7 +193,7 @@ public class UserService : IUserService
         return result;
     }
 
-    public async Task DeleteUserWithDepotAsync(DeleteUserWitDepotRequest request, CancellationToken cancellationToken = default)
+    public async Task DeleteUserFromDepotAsync(DeleteUserWitDepotRequest request, CancellationToken cancellationToken = default)
     {
         var applicationUserDepotToRemove =
             await _applicationUserDepotRepository.GetAllAsync(x =>

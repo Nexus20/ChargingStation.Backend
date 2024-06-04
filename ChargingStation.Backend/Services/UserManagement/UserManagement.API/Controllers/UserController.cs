@@ -92,7 +92,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteUserWithDepot([FromBody] DeleteUserWitDepotRequest request, CancellationToken cancellationToken)
     {
-        await _userService.DeleteUserWithDepotAsync(request, cancellationToken);
+        await _userService.DeleteUserFromDepotAsync(request, cancellationToken);
 
         return NoContent();
     }
