@@ -9,4 +9,10 @@ public interface IUserService
     Task<IPagedCollection<UserResponse>> GetAsync(GetUsersRequest request, CancellationToken cancellationToken = default);
     Task<UserResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<UserResponse> GetPersonalInfoAsync(Guid id, CancellationToken cancellationToken = default);
+    string GenerateInvitationToken(InviteRequest inviteRequest);
+    Task SendInvitationEmailAsync(InviteRequest inviteRequest, string invitationLink);
+    Task ConfirmInvite(string token);
+    Task<UserResponse> UpdateAsync(UpdateUserRequest request, CancellationToken cancellationToken = default);
+    Task DeleteUserAsync(Guid id, CancellationToken cancellationToken = default);
+    Task DeleteUserFromDepotAsync(DeleteUserFromDepotRequest request, CancellationToken cancellationToken = default);
 }

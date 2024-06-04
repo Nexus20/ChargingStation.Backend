@@ -1,5 +1,4 @@
-﻿using ChargingStation.Common.Models.General;
-using ChargingStation.Common.Rbac;
+﻿using ChargingStation.Common.Rbac;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.API.Models.Requests;
@@ -39,31 +38,6 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> Register([FromBody] RegisterRequest registerRequest)
     {
         await _authService.RegisterAsync(registerRequest);
-
-        return NoContent();
-    }
-
-    [HttpPost("invite")]
-    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> Invite([FromBody] InviteRequest inviteRequest)
-    {
-        var invitationToken = _authService.GenerateInvitationToken(inviteRequest);
-
-        var invitationLink = Url.Action("ConfirmInvite", "Auth", new { token = invitationToken }, Request.Scheme);
-
-        await _authService.SendInvitationEmailAsync(inviteRequest, invitationLink);
-
-        return NoContent();
-    }
-
-    [HttpGet("confirm-invite")]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> ConfirmInvite([FromQuery] string token)
-    {
-        await _authService.ConfirmInvite(token);
 
         return NoContent();
     }

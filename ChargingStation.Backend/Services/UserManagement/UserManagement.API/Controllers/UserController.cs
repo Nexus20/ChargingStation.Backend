@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
+using ChargingStation.Common.Models.Depots.Responses;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Rbac;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UserManagement.API.Models.Requests;
@@ -59,5 +59,64 @@ public class UserController : ControllerBase
         var user = await _userService.GetPersonalInfoAsync(userGuid, cancellationToken);
 
         return Ok(user);
+    }
+
+    [HttpPost("invite")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> Invite([FromBody] InviteRequest inviteRequest)
+    {
+        var invitationToken = _userService.GenerateInvitationToken(inviteRequest);
+
+        var invitationLink = Url.Action("ConfirmInvite", "User", new { token = invitationToken }, Request.Scheme);
+
+        await _userService.SendInvitationEmailAsync(inviteRequest, invitationLink);
+
+        return NoContent();
+    }
+
+    [HttpGet("confirm-invite")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> ConfirmInvite([FromQuery] string token)
+    {
+        await _userService.ConfirmInvite(token);
+
+        return NoContent();
+    }
+
+    [HttpDelete("deleteUserWithDepot")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteUserWithDepot([FromBody] DeleteUserFromDepotRequest request, CancellationToken cancellationToken)
+    {
+        await _userService.DeleteUserFromDepotAsync(request, cancellationToken);
+
+        return NoContent();
+    }
+
+    [HttpPut]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}")]
+    [Produces("application/json")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Put([FromBody] UpdateUserRequest request, CancellationToken cancellationToken = default)
+    {
+        var updatedUser = await _userService.UpdateAsync(request, cancellationToken);
+
+        return Ok(updatedUser);
+    }
+
+    [HttpDelete("{id}")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteUser(Guid id, CancellationToken cancellationToken)
+    {
+        await _userService.DeleteUserAsync(id, cancellationToken);
+
+        return NoContent();
     }
 }

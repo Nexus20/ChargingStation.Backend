@@ -1,7 +1,6 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Rbac;
 using ChargingStation.Domain.Entities;
 using Microsoft.IdentityModel.Tokens;
@@ -24,37 +23,36 @@ public class JwtHandler
 
     public string GenerateInviteToken(InviteRequest inviteRequest)
     {
-        var claims = new[]
+        var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, inviteRequest.DepotId.ToString()),
-            new Claim(ClaimTypes.Email, inviteRequest.Email),
-            new Claim(ClaimTypes.Role, inviteRequest.Role)
+            new(ClaimTypes.NameIdentifier, inviteRequest.DepotId.ToString()),
+            new(ClaimTypes.Email, inviteRequest.Email),
+            new(ClaimTypes.Role, inviteRequest.Role)
         };
 
-        if (inviteRequest.Role == CustomRoles.Administrator)
-        {
-            claims = claims.Append(new Claim(ClaimTypes.Role, CustomRoles.Employee)).ToArray();
-        }
+        if(inviteRequest.Role == CustomRoles.SuperAdministrator)
+            claims.Add(new Claim(ClaimTypes.Role, CustomRoles.Administrator));
+        else if (inviteRequest.Role == CustomRoles.Administrator)
+            claims.Add(new Claim(ClaimTypes.Role, CustomRoles.Employee));
 
         return GenerateToken(claims, inviteRequest.Expiration);
     }
 
-    public string GenerateAuthToken(ApplicationUser user, string role, DateTime expires)
+    public string GenerateAuthToken(ApplicationUser user, List<string> roles, DateTime expires)
     {
-        var claims = new[]
+        var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, role)
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
+            new(ClaimTypes.Email, user.Email)
         };
 
-        if (role == CustomRoles.Administrator)
+        foreach (var role in roles)
         {
-            claims = claims.Append(new Claim(ClaimTypes.Role, CustomRoles.Employee)).ToArray();
+            claims.Add(new Claim(ClaimTypes.Role, role));
         }
 
-        return GenerateToken(claims, expires);
+        return GenerateToken(claims.ToArray(), expires);
     }
 
     private string GenerateToken(IEnumerable<Claim> claims, DateTime expires)
@@ -89,21 +87,7 @@ public class JwtHandler
             ClockSkew = TimeSpan.Zero
         };
 
-        return tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
-    }
-
-    public ClaimsPrincipal DecodeToken(string token)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var jwtToken = tokenHandler.ReadToken(token) as JwtSecurityToken;
-
-        if (jwtToken == null)
-            throw new BadRequestException("Invalid token");
-
-        var identity = new ClaimsIdentity(jwtToken.Claims, "jwt");
-        var principal = new ClaimsPrincipal(identity);
-
-        return principal;
+        return tokenHandler.ValidateToken(token, validationParameters, out _);
     }
 }
 
