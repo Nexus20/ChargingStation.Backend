@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Transactions.Application.Repositories.ConnectorMeterValues;
 using Transactions.Application.Repositories.Transactions;
+using Transactions.Application.Services.EnergyConsumption;
 using Transactions.Application.Services.MeterValues;
 using Transactions.Application.Services.Transactions;
 
@@ -21,6 +22,7 @@ public static class ServicesExtensions
         
         services.AddScoped<ITransactionService, TransactionService>();
         services.AddScoped<IMeterValueService, MeterValueService>();
+        services.AddScoped<IEnergyConsumptionService, EnergyConsumptionService>();
         
         services.AddEnergyConsumptionSettingsGrpcClient(configuration);
         services.AddChargePointsGrpcClient(configuration);

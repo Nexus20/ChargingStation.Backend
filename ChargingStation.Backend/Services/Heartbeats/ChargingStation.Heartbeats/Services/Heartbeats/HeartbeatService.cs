@@ -3,8 +3,8 @@ using ChargingStation.Common.Messages_OCPP16.Requests;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Heartbeats.Models;
 using ChargingStation.Heartbeats.Models.Request;
-using ChargingStation.Infrastructure.AzureTableStorage;
 using ChargingStation.InternalCommunication.GrpcClients;
+using ChargingStation.TableStorage.Managers;
 
 namespace ChargingStation.Heartbeats.Services.Heartbeats;
 

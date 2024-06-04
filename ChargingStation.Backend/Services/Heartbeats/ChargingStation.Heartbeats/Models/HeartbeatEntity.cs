@@ -1,5 +1,5 @@
 ﻿using Azure;
-using ChargingStation.Infrastructure.AzureTableStorage;
+using ChargingStation.TableStorage.Models;
 
 namespace ChargingStation.Heartbeats.Models;
 

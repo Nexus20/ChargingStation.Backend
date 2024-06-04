@@ -104,9 +104,11 @@ public class ChargingStation : IAsyncDisposable
             
             await SendMessageAsync(textMessage, cancellationToken);
             State.PendingRequests.TryAdd(messageId, ocppMessage);
-            if (!State.Connectors.TryAdd(connectorId,
-                    new ConnectorState
-                        { ConnectorId = connectorId, Status = StatusNotificationRequestStatus.Charging }))
+            if (!State.Connectors.TryAdd(connectorId, new ConnectorState
+                {
+                    ConnectorId = connectorId,
+                    Status = StatusNotificationRequestStatus.Charging
+                }))
             {
                 State.Connectors[connectorId].Status = StatusNotificationRequestStatus.Charging;
             };
@@ -123,10 +125,12 @@ public class ChargingStation : IAsyncDisposable
     {
         try
         {
-            var mockRequests = GenerateMeterValuesForChargingSession(connectorId, transactionId, 60, 10);
+            var mockRequests = GenerateMeterValuesForChargingSession(connectorId, transactionId, 10, 10);
             
             foreach (var request in mockRequests)
             {
+                await Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+                
                 var jsonPayload = JsonConvert.SerializeObject(request);
                 var messageId = Guid.NewGuid().ToString();
                 var ocppMessage = new OcppMessage(OcppMessageTypes.Call, messageId, Ocpp16ActionTypes.MeterValues, jsonPayload);
@@ -136,7 +140,6 @@ public class ChargingStation : IAsyncDisposable
                 State.Connectors[connectorId].LastTransaction?.MeterValues.Add(request);
                 State.PendingRequests.TryAdd(messageId, ocppMessage);
                 await SaveStateAsync(cancellationToken);
-                await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
             }
         }
         catch (Exception e)
@@ -184,6 +187,12 @@ public class ChargingStation : IAsyncDisposable
                         Measurand = SampledValueMeasurand.Current_Import,
                         Format = SampledValueFormat.Raw,
                         Unit = SampledValueUnit.A
+                    },
+                    new(Value: (100 / totalIntervals * (i + 1)).ToString()) // Пример изменения SoC
+                    {
+                        Measurand = SampledValueMeasurand.SoC,
+                        Format = SampledValueFormat.Raw,
+                        Unit = SampledValueUnit.Percent
                     }
                 }
             );

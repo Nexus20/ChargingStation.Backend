@@ -1,9 +1,9 @@
 ﻿using Azure.Data.Tables;
-using ChargingStation.Infrastructure.AzureTableStorage;
+using ChargingStation.TableStorage.Managers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ChargingStation.Infrastructure.Extensions;
+namespace ChargingStation.TableStorage.Extensions;
 
 public static class ServicesExtensions
 {

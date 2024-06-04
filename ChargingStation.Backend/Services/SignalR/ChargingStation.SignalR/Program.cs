@@ -13,7 +13,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalRServices(builder.Configuration);
 builder.Services.AddCors(o =>
     o.AddPolicy("AllowAll", b => b
-        .WithOrigins("http://localhost:4200")
+        .WithOrigins("http://localhost:4200", "https://ev-charging-station.onrender.com", "https://ev-charging-proxy.onrender.com")
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials()

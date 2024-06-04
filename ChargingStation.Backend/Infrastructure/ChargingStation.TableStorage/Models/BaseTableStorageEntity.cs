@@ -1,7 +1,7 @@
 ﻿using Azure;
 using Azure.Data.Tables;
 
-namespace ChargingStation.Infrastructure.AzureTableStorage;
+namespace ChargingStation.TableStorage.Models;
 
 public abstract class BaseTableStorageEntity : ITableEntity
 {

@@ -12,6 +12,7 @@ service ConnectorsGrpc {
   // Get connector by id
   rpc GetById (GetConnectorByIdGrpcRequest) returns (ConnectorGrpcResponse);
   rpc GetByChargePointId (GetConnectorByChargePointIdGrpcRequest) returns (ConnectorGrpcResponse);
+  rpc GetByChargePointsIds (GetConnectorsByChargePointsIdsGrpcRequest) returns (ConnectorGrpcResponses);
   rpc UpdateConnectorStatus (UpdateConnectorStatusGrpcRequest) returns (google.protobuf.Empty);
   rpc GetOrCreateConnector (GetOrCreateConnectorGrpcRequest) returns (ConnectorGrpcResponse);
 }
@@ -37,9 +38,17 @@ message GetConnectorByChargePointIdGrpcRequest {
   int32 connector_id = 2;
 }
 
+message GetConnectorsByChargePointsIdsGrpcRequest {
+  repeated string charge_points_ids = 1;
+}
+
 // The request message containing the id of the connector.
 message GetConnectorByIdGrpcRequest {
   string id = 1;
+}
+
+message ConnectorGrpcResponses {
+  repeated ConnectorGrpcResponse connectors = 1;
 }
 
 // The response message containing the connector info.

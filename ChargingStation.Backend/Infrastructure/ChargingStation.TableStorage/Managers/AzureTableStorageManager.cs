@@ -1,6 +1,7 @@
 ﻿using Azure.Data.Tables;
+using ChargingStation.TableStorage.Models;
 
-namespace ChargingStation.Infrastructure.AzureTableStorage;
+namespace ChargingStation.TableStorage.Managers;
 
 public class AzureTableStorageManager<T> : ITableManager<T> where T : BaseTableStorageEntity
 {

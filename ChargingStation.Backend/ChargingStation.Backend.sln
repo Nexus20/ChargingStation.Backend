@@ -115,6 +115,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Depots.Grpc", "Services\Dep
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Depots.Application", "Services\Depots\Depots.Application\Depots.Application.csproj", "{B6FEEDE6-519C-4596-83B0-836934DC32CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.TableStorage", "Infrastructure\ChargingStation.TableStorage\ChargingStation.TableStorage.csproj", "{1BD5236A-8FB3-4F7C-9EBE-90A74305835C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -273,6 +275,10 @@ Global
 		{B6FEEDE6-519C-4596-83B0-836934DC32CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B6FEEDE6-519C-4596-83B0-836934DC32CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B6FEEDE6-519C-4596-83B0-836934DC32CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BD5236A-8FB3-4F7C-9EBE-90A74305835C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BD5236A-8FB3-4F7C-9EBE-90A74305835C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BD5236A-8FB3-4F7C-9EBE-90A74305835C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BD5236A-8FB3-4F7C-9EBE-90A74305835C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -329,6 +335,7 @@ Global
 		{7C823C69-2FCD-4E28-B4FD-EE5256153866} = {1CF7F656-7CEA-456F-A32B-30A9F6E8A493}
 		{8CB89D15-B86A-49A2-8773-9CDF5B294E81} = {5925A1D8-932A-4DC6-866B-3F0F8F874E32}
 		{B6FEEDE6-519C-4596-83B0-836934DC32CA} = {5925A1D8-932A-4DC6-866B-3F0F8F874E32}
+		{1BD5236A-8FB3-4F7C-9EBE-90A74305835C} = {9FDB02E9-D1A7-4632-A2D9-A4A91EE4D4A5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A063F0C5-38BF-495E-8B72-2E7F00C1C4DE}

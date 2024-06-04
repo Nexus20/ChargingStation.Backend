@@ -10,8 +10,10 @@ using ChargingStation.InternalCommunication.SignalRModels;
 using ChargingStation.Mailing.Messages;
 using ChargingStation.Mailing.Services;
 using MassTransit;
+using MathNet.Numerics;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Transactions.Application.Models.Dtos;
 using Transactions.Application.Models.Requests;
 using Transactions.Application.Repositories.ConnectorMeterValues;
 using Transactions.Application.Specifications;
@@ -69,8 +71,8 @@ public class MeterValueService : IMeterValueService
             var meterValuesToAdd = new List<ConnectorMeterValue>();
             
             // Known charge station => process meter values
-            DateTimeOffset? meterTime = null;
             double? valueToSave = null;
+            var calculateApproximateChargingEndTime = true;
             foreach (var meterValue in request.MeterValue)
             {
                 foreach (var sampleValue in meterValue.SampledValue)
@@ -126,7 +128,6 @@ public class MeterValueService : IMeterValueService
                             {
                                 _logger.LogWarning("MeterValues => Value: unexpected unit: '{Unit}' (Value={Value})", sampleValue.Unit, sampleValue.Value);
                             }
-                            meterTime = meterValue.Timestamp;
                         }
                         else
                         {
@@ -138,7 +139,10 @@ public class MeterValueService : IMeterValueService
                         // state of charge (battery status)
                         if (double.TryParse(sampleValue.Value, NumberStyles.Float, CultureInfo.InvariantCulture, out var stateOfCharge))
                         {
-                            connectorChangesMessage.SoC = (int)stateOfCharge;
+                            if(stateOfCharge == 100)
+                                calculateApproximateChargingEndTime = false;
+                            
+                            connectorChangesMessage.SoC = stateOfCharge;
                             valueToSave = stateOfCharge;
                             _logger.LogTrace("MeterValues => SoC: '{0:0.0}'%", stateOfCharge);
                         }
@@ -160,31 +164,37 @@ public class MeterValueService : IMeterValueService
                             Phase = sampleValue.Phase.ToString(),
                             Format = sampleValue.Format.ToString(),
                             Unit = sampleValue.Unit.ToString(),
-                            MeterValueTimestamp = meterTime?.UtcDateTime ?? DateTime.UtcNow
+                            MeterValueTimestamp = meterValue.Timestamp.UtcDateTime,
                         };
                     
                         meterValuesToAdd.Add(meterValueToAdd);
                     }
                 }
                 
-                if (meterValuesToAdd.Count == 0)
+                if (meterValuesToAdd.Count > 0)
                 {
-                    _logger.LogWarning("MeterValues => No values to save");
-                    
                     await _connectorMeterValueRepository.AddRangeAsync(meterValuesToAdd, cancellationToken);
                     await _connectorMeterValueRepository.SaveChangesAsync(cancellationToken);
-
+                    
                     connectorChangesMessage.ChargePointId = chargePointId;
                     connectorChangesMessage.ConnectorId = connector.Id;
                     connectorChangesMessage.TransactionId = transaction.TransactionId;
 
+                    if (calculateApproximateChargingEndTime)
+                    {
+                        var endTime = await CalculateChargingEndTime(transaction.Id, transaction.StartTime, cancellationToken);
+                        connectorChangesMessage.ApproximateChargingEndTime = endTime;
+                    }
+
                     var signalRMessage = new SignalRMessage(JsonConvert.SerializeObject(connectorChangesMessage), nameof(ConnectorChangesMessage));
                     await _publishEndpoint.Publish(signalRMessage, cancellationToken);
+                 
+                    await CheckEnergyConsumptionLimitAndWarnAsync(chargePointId, cancellationToken);
                     
                     return response;
                 }
-                
-                await CheckEnergyConsumptionLimitAndWarnAsync(chargePointId, cancellationToken);
+
+                _logger.LogWarning("MeterValues => No values to save");
             }
         }
         catch (Exception exp)
@@ -194,7 +204,33 @@ public class MeterValueService : IMeterValueService
 
         return response;
     }
-
+    
+    private async Task<DateTime> CalculateChargingEndTime(Guid transactionId, DateTime transactionStartTime, CancellationToken cancellationToken = default)
+    {
+        var meterValues = new List<SoCDateTime>
+        {
+            new()
+            {
+                MeterValueTimestamp = transactionStartTime,
+                SoCValue = 0
+            }
+        };
+        
+        var meterValuesFromDb = await _connectorMeterValueRepository.GetSoCForTransactionAsync(transactionId, cancellationToken);
+        meterValues.AddRange(meterValuesFromDb);
+        
+        var times = meterValues.Select(x => (x.MeterValueTimestamp - transactionStartTime).TotalSeconds).ToArray();
+        var charges = meterValues.Select(x => x.SoCValue).ToArray();
+        
+        var (intercept, slope) = Fit.Line(times, charges);
+        
+        var remainingCharge = 100 - charges[^1];
+        var timeToFullCharge = (remainingCharge - intercept) / slope;
+        
+        var endTime = transactionStartTime.AddSeconds(times[^1] + timeToFullCharge);
+        return endTime;
+    }
+    
     private async Task CheckEnergyConsumptionLimitAndWarnAsync(Guid chargePointId,
         CancellationToken cancellationToken = default)
     {

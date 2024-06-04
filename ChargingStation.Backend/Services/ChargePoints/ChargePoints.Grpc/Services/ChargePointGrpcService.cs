@@ -50,4 +50,18 @@ public class ChargePointGrpcService : ChargePointsGrpc.ChargePointsGrpcBase
         await _chargePointService.ChangeAvailabilityAsync(changeAvailabilityRequest, context.CancellationToken);
         return new Empty();
     }
+
+    public override async Task<ChargePointGrpcResponses> GetByDepots(GetChargePointByDepotsGrpcRequest request, ServerCallContext context)
+    {
+        var depotsIds = request.DepotsIds.Select(Guid.Parse).ToList();
+        
+        var chargePoints = await _chargePointService.GetByDepotsIdsAsync(depotsIds, context.CancellationToken);
+        
+        var grpcResponse = new ChargePointGrpcResponses
+        {
+            ChargePoints = { chargePoints.Select(x => x.ToGrpcResponse()) }
+        };
+        
+        return grpcResponse;
+    }
 }
