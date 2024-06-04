@@ -77,11 +77,10 @@ metadata:
   labels:
     app: reservationsapi
 spec:
-  type: LoadBalancer
   selector:
     app: reservationsapi
   ports:
     - protocol: TCP
       name: http
-      port: 8007
+      port: 8080
       targetPort: 8080

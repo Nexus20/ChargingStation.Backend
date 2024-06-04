@@ -74,11 +74,10 @@ metadata:
   labels:
     app: chargingprofilesapi
 spec:
-  type: LoadBalancer
   selector:
     app: chargingprofilesapi
   ports:
     - protocol: TCP
       name: http
-      port: 8008
+      port: 8080
       targetPort: 8080

@@ -59,11 +59,10 @@ metadata:
   labels:
     app: connectorsapi
 spec:
-  type: LoadBalancer
   selector:
     app: connectorsapi
   ports:
     - protocol: TCP
       name: http
-      port: 8004
+      port: 8080
       targetPort: 8080

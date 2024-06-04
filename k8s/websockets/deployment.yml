@@ -57,10 +57,11 @@ metadata:
   labels:
     app: websockets
 spec:
+  type: LoadBalancer
   selector:
     app: websockets
   ports:
     - protocol: TCP
       name: http
-      port: 8080
+      port: 8020
       targetPort: 8080

@@ -82,11 +82,10 @@ metadata:
   labels:
     app: transactionsgrpc
 spec:
-  type: LoadBalancer
   selector:
     app: transactionsgrpc
   ports:
     - protocol: TCP
       name: http
-      port: 8055
+      port: 8080
       targetPort: 8080

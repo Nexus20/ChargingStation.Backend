@@ -57,11 +57,10 @@ metadata:
   labels:
     app: ocpptagsgrpc
 spec:
-  type: LoadBalancer
   selector:
     app: ocpptagsgrpc
   ports:
     - protocol: TCP
       name: http
-      port: 8053
+      port: 8080
       targetPort: 8080

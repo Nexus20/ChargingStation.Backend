@@ -67,11 +67,10 @@ metadata:
   labels:
     app: heartbeatsapi
 spec:
-  type: LoadBalancer
   selector:
     app: heartbeatsapi
   ports:
     - protocol: TCP
       name: http
-      port: 8006
+      port: 8080
       targetPort: 8080
