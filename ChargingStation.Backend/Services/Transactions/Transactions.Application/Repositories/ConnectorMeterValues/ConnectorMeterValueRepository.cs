@@ -3,14 +3,10 @@ using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Persistence;
 using ChargingStation.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Transactions.Application.Models.Dtos;
+using Transactions.Application.Models.EnergyConsumption.Responses;
 
 namespace Transactions.Application.Repositories.ConnectorMeterValues;
-
-public class SoCDateTime
-{
-    public DateTime MeterValueTimestamp { get; set; }
-    public double SoCValue { get; set; }
-}
 
 public class ConnectorMeterValueRepository : Repository<ConnectorMeterValue>, IConnectorMeterValueRepository
 {
@@ -55,10 +51,34 @@ public class ConnectorMeterValueRepository : Repository<ConnectorMeterValue>, IC
                 new SoCDateTime
                 {
                     MeterValueTimestamp = x.MeterValueTimestamp,
-                    SoCValue = double.Parse(x.Value)
+                    SoCValue = Convert.ToDouble(x.Value)
                 })
             .ToListAsync(cancellationToken: cancellationToken);
         
         return socValues;
+    }
+
+    public async Task<List<ChargePointConnectorEnergyConsumptionResponse>> GetChargePointsConnectorsEnergyConsumptionByDepotAsync(List<Guid> connectorsIds, DateTime? startTime, DateTime? endTime)
+    {
+        var query = DbSet
+            .Include(x => x.Connector)
+            .Where(x => x.Measurand == SampledValueMeasurand.Energy_Active_Import_Register.ToString() && connectorsIds.Contains(x.ConnectorId));
+        
+        if(startTime.HasValue)
+            query = query.Where(x => x.MeterValueTimestamp >= startTime);
+        
+        if(endTime.HasValue)
+            query = query.Where(x => x.MeterValueTimestamp <= endTime);
+
+        var connectorsEnergyConsumption = await query.GroupBy(x => new { x.Connector!.Id, x.Connector.ConnectorId })
+            .Select(x => new ChargePointConnectorEnergyConsumptionResponse()
+            {
+                ConnectorId = x.Key.Id,
+                ConnectorNumber = x.Key.ConnectorId,
+                EnergyConsumed = x.Sum(y => Convert.ToDouble(y.Value))
+            })
+            .ToListAsync();
+        
+        return connectorsEnergyConsumption;
     }
 }

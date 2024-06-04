@@ -1,4 +1,6 @@
-﻿namespace ChargingStation.Infrastructure.AzureTableStorage;
+﻿using ChargingStation.TableStorage.Models;
+
+namespace ChargingStation.TableStorage.Managers;
 
 public interface ITableManager<T> where T : BaseTableStorageEntity
 {

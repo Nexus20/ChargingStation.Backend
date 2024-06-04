@@ -12,6 +12,11 @@ service ChargePointsGrpc {
   rpc GetById (GetChargePointByIdGrpcRequest) returns (ChargePointGrpcResponse);
   rpc GetByIds (GetChargePointByIdsGrpcRequest) returns (ChargePointGrpcResponses);
   rpc ChangeAvailability (ChangeChargePointAvailabilityGrpcRequest) returns (google.protobuf.Empty);
+  rpc GetByDepots (GetChargePointByDepotsGrpcRequest) returns (ChargePointGrpcResponses);
+}
+
+message GetChargePointByDepotsGrpcRequest {
+  repeated string depots_ids = 1;
 }
 
 message GetChargePointByIdGrpcRequest {

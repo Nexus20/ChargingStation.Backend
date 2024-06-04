@@ -24,6 +24,19 @@ public class ConnectorGrpcClientService
         return response;
     }
 
+    public async Task<List<ConnectorResponse>> GetByChargePointsIdsAsync(IEnumerable<Guid> chargePointsIds, CancellationToken cancellationToken = default)
+    {
+        var request = new GetConnectorsByChargePointsIdsGrpcRequest
+        {
+            ChargePointsIds = { chargePointsIds.Select(id => id.ToString()) }
+        };
+        
+        var grpcResponse = await _connectorsGrpcClient.GetByChargePointsIdsAsync(request, cancellationToken: cancellationToken);
+        
+        var connectors = grpcResponse.Connectors.Select(connector => connector.ToResponse()).ToList();
+        return connectors;
+    }
+    
     public async Task<ConnectorResponse> GetByChargePointIdAsync(Guid chargePointId, int connectorId,
         CancellationToken cancellationToken = default)
     {

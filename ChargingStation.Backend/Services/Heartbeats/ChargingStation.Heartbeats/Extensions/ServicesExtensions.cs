@@ -2,7 +2,7 @@
 using System.Text;
 using ChargingStation.Heartbeats.EventConsumers;
 using ChargingStation.Heartbeats.Services.Heartbeats;
-using ChargingStation.Infrastructure.Extensions;
+using ChargingStation.TableStorage.Extensions;
 using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;

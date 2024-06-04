@@ -77,6 +77,7 @@ public static class GrpcResponseExtensions
             ChargePointId = Guid.Parse(grpcResponse.ChargePointId),
             ConnectorId = grpcResponse.ConnectorId,
             CreatedAt = grpcResponse.CreatedAt.ToDateTime(),
+            UpdatedAt = grpcResponse.UpdatedAt?.ToDateTime(),
             CurrentStatus = grpcResponse.CurrentStatus != null ? new ConnectorStatusResponse
             {
                 ConnectorId = Guid.Parse(grpcResponse.CurrentStatus.ConnectorId),

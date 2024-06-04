@@ -14,6 +14,15 @@ public class ChargePointGrpcClientService
         _chargePointsGrpcClient = chargePointsGrpcClient;
     }
     
+    public async Task<List<ChargePointResponse>> GetByDepotsIdsAsync(IEnumerable<Guid> depotsIds, CancellationToken cancellationToken = default)
+    {
+        var request = new GetChargePointByDepotsGrpcRequest { DepotsIds = { depotsIds.Select(id => id.ToString()) } };
+        var grpcResponse = await _chargePointsGrpcClient.GetByDepotsAsync(request, cancellationToken: cancellationToken);
+        
+        var response = grpcResponse.ChargePoints.Select(c => c.ToResponse()).ToList();
+        return response;
+    }
+    
     public async Task<ChargePointResponse> GetByIdAsync(Guid chargePointId, CancellationToken cancellationToken = default)
     {
         var request = new GetChargePointByIdGrpcRequest { Id = chargePointId.ToString() };
