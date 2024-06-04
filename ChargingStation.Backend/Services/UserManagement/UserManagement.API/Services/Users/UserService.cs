@@ -195,14 +195,14 @@ public class UserService : IUserService
 
     public async Task DeleteUserFromDepotAsync(DeleteUserFromDepotRequest request, CancellationToken cancellationToken = default)
     {
-        var applicationUserDepotToRemove =
-            await _applicationUserDepotRepository.GetAllAsync(x =>
-                x.DepotId == request.DepotId && x.ApplicationUserId == request.UserId, cancellationToken: cancellationToken);
+        var specification = new GetApplicationUserDepotSpecification(request.DepotId, request.UserId);
+        
+        var applicationUserDepotToRemove = await _applicationUserDepotRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
 
         if (applicationUserDepotToRemove is null)
-            throw new NotFoundException(nameof(ApplicationUserDepot), $"DepotId: {request.DepotId}, UserId: {request.UserId}");
+            throw new NotFoundException($"User with id {request.UserId} not found in depot with id {request.DepotId}");
 
-        _applicationUserDepotRepository.RemoveRange(applicationUserDepotToRemove);
+        _applicationUserDepotRepository.Remove(applicationUserDepotToRemove);
         await _applicationUserDepotRepository.SaveChangesAsync(cancellationToken);
     }
 
