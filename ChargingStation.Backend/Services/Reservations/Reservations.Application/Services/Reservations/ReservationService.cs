@@ -1,3 +1,4 @@
+using System.Text;
 using AutoMapper;
 using ChargingStation.Common.Constants;
 using ChargingStation.Common.Exceptions;
@@ -111,12 +112,7 @@ public class ReservationService : BaseReservationService, IReservationService
             
             reservation.ConnectorId = connector.Id;
             
-            var conflictingReservations = await GetConflictingReservationsAsync(request.StartDateTime, request.ExpiryDateTime, request.ChargePointId, connector.Id, TimeSpan.FromMinutes(30), cancellationToken);
-            
-            if (conflictingReservations.Count != 0)
-            {
-                throw new BadRequestException("Conflicting reservation found");
-            }
+            await CheckAndThrowIfConflictingReservationsFoundAsync(request.StartDateTime, request.ExpiryDateTime, request.ChargePointId, connector.Id, TimeSpan.FromMinutes(30), cancellationToken);
         }
         
         await ReservationRepository.AddAsync(reservation, cancellationToken);
@@ -130,17 +126,32 @@ public class ReservationService : BaseReservationService, IReservationService
         _logger.LogInformation("Reservation created for charge point with id {ChargePointId} and connector id {ConnectorId}", request.ChargePointId, request.ConnectorId);
     }
 
-    private async Task<List<Reservation>> GetConflictingReservationsAsync(DateTime startDateTime, DateTime expiryDateTime, Guid chargePointId, Guid connectorId, TimeSpan gapBetweenReservations, CancellationToken cancellationToken = default)
+    private async Task CheckAndThrowIfConflictingReservationsFoundAsync(DateTime startDateTime, DateTime expiryDateTime, Guid chargePointId, Guid connectorId, TimeSpan gapBetweenReservations, CancellationToken cancellationToken = default)
     {
         var conflictingReservationsSpecification = new GetConflictingReservationsSpecification(chargePointId, connectorId);
         var reservationsWithSameConnector = await ReservationRepository.GetAsync(conflictingReservationsSpecification, cancellationToken: cancellationToken);
         
         var conflictingReservations = reservationsWithSameConnector.Where(r =>
-            (r.StartDateTime >= startDateTime && startDateTime <= r.ExpiryDateTime + gapBetweenReservations) ||
-            (r.ExpiryDateTime <= expiryDateTime + gapBetweenReservations && expiryDateTime >= r.StartDateTime))
+                (startDateTime <= r.StartDateTime && expiryDateTime >= r.StartDateTime && expiryDateTime <= r.ExpiryDateTime)
+                || (startDateTime >= r.StartDateTime && startDateTime <= r.ExpiryDateTime && expiryDateTime >= r.ExpiryDateTime)
+                || (startDateTime >= r.StartDateTime && expiryDateTime <= r.ExpiryDateTime)
+                || (startDateTime >= r.ExpiryDateTime && startDateTime <= r.ExpiryDateTime + gapBetweenReservations)
+                || (expiryDateTime <= r.StartDateTime && expiryDateTime >= r.StartDateTime - gapBetweenReservations)
+                )
             .ToList();
         
-        return conflictingReservations;
+        if (conflictingReservations.Count != 0)
+        {
+            var exceptionMessageStringBuilder = new StringBuilder();
+            exceptionMessageStringBuilder.AppendLine("Conflicting reservation found:\n");
+                
+            foreach (var conflictingReservation in conflictingReservations)
+            {
+                exceptionMessageStringBuilder.AppendLine($"Reservation id: {conflictingReservation.ReservationId} Start date time: {conflictingReservation.StartDateTime} Expiry date time: {conflictingReservation.ExpiryDateTime}\n");
+            }
+                
+            throw new BadRequestException(exceptionMessageStringBuilder.ToString());
+        }
     }
 
     /// <remarks>This method must be public, because Hangfire works only with public methods.</remarks>
@@ -183,12 +194,7 @@ public class ReservationService : BaseReservationService, IReservationService
             throw new NotFoundException($"Connector with id {request.ConnectorId} not found");
         }
         
-        var conflictingReservations = await GetConflictingReservationsAsync(request.StartDateTime, request.ExpiryDateTime, request.ChargePointId, connector.Id, TimeSpan.FromMinutes(30), cancellationToken);
-        
-        if (conflictingReservations.Count != 0)
-        {
-            throw new BadRequestException("Conflicting reservation found");
-        }
+        await CheckAndThrowIfConflictingReservationsFoundAsync(request.StartDateTime, request.ExpiryDateTime, request.ChargePointId, connector.Id, TimeSpan.FromMinutes(30), cancellationToken);
 
         _mapper.Map(request, reservationToUpdate);
         reservationToUpdate.ConnectorId = connector.Id;
