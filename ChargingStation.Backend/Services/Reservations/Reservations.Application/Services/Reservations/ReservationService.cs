@@ -111,8 +111,7 @@ public class ReservationService : BaseReservationService, IReservationService
             
             reservation.ConnectorId = connector.Id;
             
-            var conflictingReservationsSpecification = new GetConflictingReservationsSpecification(request.StartDateTime, request.ExpiryDateTime, TimeSpan.FromMinutes(30), request.ChargePointId, connector.Id);
-            var conflictingReservations = await ReservationRepository.GetAsync(conflictingReservationsSpecification, cancellationToken: cancellationToken);
+            var conflictingReservations = await GetConflictingReservationsAsync(request.StartDateTime, request.ExpiryDateTime, request.ChargePointId, connector.Id, TimeSpan.FromMinutes(30), cancellationToken);
             
             if (conflictingReservations.Count != 0)
             {
@@ -129,6 +128,19 @@ public class ReservationService : BaseReservationService, IReservationService
             );
         
         _logger.LogInformation("Reservation created for charge point with id {ChargePointId} and connector id {ConnectorId}", request.ChargePointId, request.ConnectorId);
+    }
+
+    private async Task<List<Reservation>> GetConflictingReservationsAsync(DateTime startDateTime, DateTime expiryDateTime, Guid chargePointId, Guid connectorId, TimeSpan gapBetweenReservations, CancellationToken cancellationToken = default)
+    {
+        var conflictingReservationsSpecification = new GetConflictingReservationsSpecification(chargePointId, connectorId);
+        var reservationsWithSameConnector = await ReservationRepository.GetAsync(conflictingReservationsSpecification, cancellationToken: cancellationToken);
+        
+        var conflictingReservations = reservationsWithSameConnector.Where(r =>
+            (r.StartDateTime >= startDateTime && startDateTime <= r.ExpiryDateTime + gapBetweenReservations) ||
+            (r.ExpiryDateTime <= expiryDateTime + gapBetweenReservations && expiryDateTime >= r.StartDateTime))
+            .ToList();
+        
+        return conflictingReservations;
     }
 
     /// <remarks>This method must be public, because Hangfire works only with public methods.</remarks>
@@ -171,8 +183,7 @@ public class ReservationService : BaseReservationService, IReservationService
             throw new NotFoundException($"Connector with id {request.ConnectorId} not found");
         }
         
-        var conflictingReservationsSpecification = new GetConflictingReservationsSpecification(request.StartDateTime, request.ExpiryDateTime, TimeSpan.FromMinutes(30), reservationToUpdate.ChargePointId, connector.Id);
-        var conflictingReservations = await ReservationRepository.GetAsync(conflictingReservationsSpecification, cancellationToken: cancellationToken);
+        var conflictingReservations = await GetConflictingReservationsAsync(request.StartDateTime, request.ExpiryDateTime, request.ChargePointId, connector.Id, TimeSpan.FromMinutes(30), cancellationToken);
         
         if (conflictingReservations.Count != 0)
         {
