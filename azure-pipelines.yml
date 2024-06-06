@@ -17,48 +17,70 @@ parameters:
   default:
     - path: "Services/Depots/Depots.Api"
       imageName: "depotsapi"
+      k8sManifestPath: "aks/depots/api/deployment.yaml"
     - path: "Services/Depots/Depots.Grpc"
       imageName: "depotsgrpc"
+      k8sManifestPath: "aks/depots/grpc/deployment.yaml"
     - path: "Services/Aggregator/Aggregator"
       imageName: "aggregator"
+      k8sManifestPath: "aks/aggregator/deployment.yaml"
     - path: "Services/Gateway/ChargingStation.Gateway"
       imageName: "gateway"
+      k8sManifestPath: "aks/gateway/deployment.yaml"
     - path: "Services/ChargePoints/ChargePoints.Api"
       imageName: "chargepointsapi"
+      k8sManifestPath: "aks/chargepoints/api/deployment.yaml"
     - path: "Services/ChargePoints/ChargePoints.Grpc"
       imageName: "chargepointsgrpc"
+      k8sManifestPath: "aks/chargepoints/grpc/deployment.yaml"
     - path: "Services/Connectors/Connectors.Api"
       imageName: "connectorsapi"
+      k8sManifestPath: "aks/connectors/api/deployment.yaml"
     - path: "Services/Connectors/Connectors.Grpc"
       imageName: "connectorsgrpc"
+      k8sManifestPath: "aks/connectors/grpc/deployment.yaml"
     - path: "Services/EnergyConsumption/EnergyConsumption.Api"
       imageName: "energyconsumptionapi"
+      k8sManifestPath: "aks/energyconsumption/api/deployment.yaml"
     - path: "Services/EnergyConsumption/EnergyConsumption.Grpc"
       imageName: "energyconsumptiongrpc"
+      k8sManifestPath: "aks/energyconsumption/grpc/deployment.yaml"
     - path: "Services/Transactions/Transactions.Api"
       imageName: "transactionsapi"
+      k8sManifestPath: "aks/transactions/api/deployment.yaml"
     - path: "Services/Transactions/Transactions.Grpc"
       imageName: "transactionsgrpc"
+      k8sManifestPath: "aks/transactions/grpc/deployment.yaml"
     - path: "Services/Reservations/Reservations.Api"
       imageName: "reservationsapi"
+      k8sManifestPath: "aks/reservations/api/deployment.yaml"
     - path: "Services/Reservations/Reservations.Grpc"
       imageName: "reservationsgrpc"
+      k8sManifestPath: "aks/reservations/grpc/deployment.yaml"
     - path: "Services/OcppTags/OcppTags.Api"
       imageName: "ocpptagsapi"
+      k8sManifestPath: "aks/ocpptags/api/deployment.yaml"
     - path: "Services/OcppTags/OcppTags.Grpc"
       imageName: "ocpptagsgrpc"
+      k8sManifestPath: "aks/ocpptags/grpc/deployment.yaml"
     - path: "Services/SignalR/ChargingStation.SignalR"
       imageName: "signalr"
+      k8sManifestPath: "aks/signalr/deployment.yaml"
     - path: "Services/UserManagement/UserManagement.API"
       imageName: "usermanagement"
+      k8sManifestPath: "aks/usermanagement/api/deployment.yaml"
     - path: "Services/WebSockets/ChargingStation.WebSockets"
       imageName: "websockets"
+      k8sManifestPath: "aks/websockets/deployment.yaml"
     - path: "Services/ChargingProfiles/ChargingStation.ChargingProfiles"
       imageName: "chargingprofilesapi"
+      k8sManifestPath: "aks/chargingprofiles/api/deployment.yaml"
     - path: "Services/Heartbeats/ChargingStation.Heartbeats"
       imageName: "heartbeatsapi"
+      k8sManifestPath: "aks/heartbeats/api/deployment.yaml"
     - path: "Emulator/ChargePointEmulator.UI"
       imageName: "emulator"
+      k8sManifestPath: "aks/emulator/deployment.yaml"
 
 variables:
   # Container registry service connection established during pipeline creation
@@ -71,6 +93,7 @@ variables:
   vmImageName: 'ubuntu-latest'
   infrastructureProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Infrastructure'
   domainProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Domain'
+  imagePullSecret: 'csmsacr08252120d50d-auth'
 
 pool:
   vmImage: $(vmImageName)
@@ -139,4 +162,35 @@ stages:
           buildContext: $(dockerBuildContext)
           tags: |
             $(tag)
-    
+  
+  - stage: 'Deploy_${{project.imageName}}'
+    displayName: Deploy stage
+    dependsOn: 'Build_${{project.imageName}}'
+  
+    jobs:
+    - deployment: 'Deploy_${{project.imageName}}'
+      displayName: 'Deploy_${{project.imageName}}'
+      pool:
+        vmImage: $(vmImageName)
+      environment: 'Nexus20ChargingStationBackend-1790.csms'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - task: KubernetesManifest@0
+              displayName: Create imagePullSecret
+              inputs:
+                action: createSecret
+                secretName: $(imagePullSecret)
+                dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+  
+            - task: KubernetesManifest@0
+              displayName: Deploy to Kubernetes cluster
+              inputs:
+                action: deploy
+                manifests: |
+                  $(Pipeline.Workspace)/${{ project.k8sManifestPath }}
+                imagePullSecrets: |
+                  $(imagePullSecret)
+                containers: |
+                  $(containerRegistry)/${{ project.imageName }}:$(tag)

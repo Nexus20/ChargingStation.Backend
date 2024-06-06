@@ -82,7 +82,7 @@ spec:
         name: mongo-volume
       spec:
         accessModes: ["ReadWriteOnce"]
-        storageClassName: "hostpath"
+        storageClassName: "default"
         resources:
           requests:
             storage: 512Mi
