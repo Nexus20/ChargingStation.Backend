@@ -100,42 +100,42 @@ stages:
     displayName: 'Build and push ${{project.imageName}}'
     jobs:
 
-    - job: 'DetectChanges'
-      displayName: 'Detecting changes for ${{ project.imageName }}'
-      condition: eq(parameters.forceBuild, false)
-      
-      steps:
+    - ${{ if not(parameters.forceBuild) }}:
+      - job: 'DetectChanges'
+        displayName: 'Detecting changes for ${{ project.imageName }}'
+        
+        steps:
 
-      - checkout: self
-        fetchDepth: 2
+        - checkout: self
+          fetchDepth: 2
 
-      - bash: |
-          # Get microservice project changes
-          MicroserviceProjectChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ project.path }}")
-          if [ ! -z "$MicroserviceProjectChanged" ]; then
-            echo "##vso[task.setvariable variable=MicroserviceProjectChanged;isOutput=true]true"
-            echo "Changes detected in ${{ project.imageName }}, image will be built..."
-          else
-            echo "##vso[task.setvariable variable=MicroserviceProjectChanged;isOutput=true]false"
-            echo "No changes detected in ${{ project.imageName }}, image build will be skipped..."
-          fi
-        name: 'MicroserviceChanges'
-        displayName: 'Detecting changes in ${{ project.imageName }}'
-      
-      - bash: |
-          # Get common projects changes
-          InfrastructurePorjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ variables.infrastructureProjectsPath }}")
-          DomainProjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ variables.domainProjectsPath }}")
+        - bash: |
+            # Get microservice project changes
+            MicroserviceProjectChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ project.path }}")
+            if [ ! -z "$MicroserviceProjectChanged" ]; then
+              echo "##vso[task.setvariable variable=MicroserviceProjectChanged;isOutput=true]true"
+              echo "Changes detected in ${{ project.imageName }}, image will be built..."
+            else
+              echo "##vso[task.setvariable variable=MicroserviceProjectChanged;isOutput=true]false"
+              echo "No changes detected in ${{ project.imageName }}, image build will be skipped..."
+            fi
+          name: 'MicroserviceChanges'
+          displayName: 'Detecting changes in ${{ project.imageName }}'
+        
+        - bash: |
+            # Get common projects changes
+            InfrastructurePorjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ variables.infrastructureProjectsPath }}")
+            DomainProjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ variables.domainProjectsPath }}")
 
-          if [ ! -z "$InfrastructurePorjectsChanged" ] || [ ! -z "$DomainProjectsChanged" ]; then
-            echo "##vso[task.setvariable variable=CommonProjectsChanged;isOutput=true]true"
-            echo "Changes detected in common projects, ${{ project.imageName }} image will be built..."
-          else
-            echo "##vso[task.setvariable variable=CommonProjectsChanged;isOutput=true]false"
-            echo "No changes detected in common projects, ${{ project.imageName }} image build will be skipped..."
-          fi
-        name: 'CommonProjectsChanges'
-        displayName: 'Detecting changes in common projects'
+            if [ ! -z "$InfrastructurePorjectsChanged" ] || [ ! -z "$DomainProjectsChanged" ]; then
+              echo "##vso[task.setvariable variable=CommonProjectsChanged;isOutput=true]true"
+              echo "Changes detected in common projects, ${{ project.imageName }} image will be built..."
+            else
+              echo "##vso[task.setvariable variable=CommonProjectsChanged;isOutput=true]false"
+              echo "No changes detected in common projects, ${{ project.imageName }} image build will be skipped..."
+            fi
+          name: 'CommonProjectsChanges'
+          displayName: 'Detecting changes in common projects'
 
     - job: 'BuildImageAndPushToAcr'
       displayName: 'Build and push image ${{ project.imageName }} into ACR'
