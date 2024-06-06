@@ -102,6 +102,18 @@ stages:
         name: 'MicroserviceChanges'
         displayName: 'Detecting changes in ${{ project.imageName }}'
 
+    - job: 'Build_${{ project.imageName }}'
+      displayName: 'Build and push image ${{ project.imageName }} into ACR'
+  
+      ${{ if not(parameters.forceBuild) }}:
+        dependsOn: 'DetectChanges'
+        condition: eq(dependencies.DetectChanges.outputs['MicroserviceChanges.MicroserviceProjectChanged'], 'true')
+        
+      steps:
+  
+      - checkout: self
+        fetchDepth: 2
+
       - task: Docker@2
         displayName: Build and push an image to container registry
         inputs:
