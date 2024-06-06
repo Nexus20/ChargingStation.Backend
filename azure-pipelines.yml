@@ -101,6 +101,13 @@ stages:
           fi
         name: 'MicroserviceChanges'
         displayName: 'Detecting changes in ${{ project.imageName }}'
+      
+      - bash: |
+          # Get common projects changes
+          InfrastructurePorjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ infrastructureProjectsPath }}")
+          DomainProjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ domainProjectsPath }}")
+        name: 'CommonProjectsChanges'
+        displayName: 'Detecting changes in common projects'
 
     - job: 'Build_${{ project.imageName }}'
       displayName: 'Build and push image ${{ project.imageName }} into ACR'
