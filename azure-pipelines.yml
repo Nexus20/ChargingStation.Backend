@@ -169,7 +169,7 @@ stages:
           artifact: aks
           targetPath: '$(Build.ArtifactStagingDirectory)/aks'
   
-    - deployment: 'Deploy_${{project.imageName}}'
+    - deployment: 'DeployToAKS'
       displayName: 'Deploy ${{project.imageName}}'
 
       dependsOn: 'BuildImageAndPushToAcr'
