@@ -102,6 +102,7 @@ stages:
 
     - job: 'DetectChanges'
       displayName: 'Detecting changes for ${{ project.imageName }}'
+      condition: eq(parameters.forceBuild, false)
       
       steps:
 
@@ -159,11 +160,11 @@ stages:
           tags: |
             $(tag)
 
-      - task: PublishPipelineArtifact@1
-        displayName: 'Publish artifact: ${{ project.imageName }}'
-        inputs:
-          artifact: aks
-          targetPath: '$(Build.ArtifactStagingDirectory)/aks'
+      # - task: PublishPipelineArtifact@1
+      #   displayName: 'Publish artifact: ${{ project.imageName }}'
+      #   inputs:
+      #     artifact: aks
+      #     targetPath: '$(Build.ArtifactStagingDirectory)/aks'
   
     - deployment: 'DeployToAKS'
       displayName: 'Deploy ${{project.imageName}}'
