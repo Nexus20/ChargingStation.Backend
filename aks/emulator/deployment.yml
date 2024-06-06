@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: emulator-deployment
+  labels:
+    app: emulator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: emulator
+  template:
+    metadata:
+      labels:
+        app: emulator
+    spec:
+      containers:
+      - name: emulator
+        image: csmsacr0825.azurecr.io/emulator:104
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Development
+          - name: ASPNETCORE_HTTP_PORTS
+            value: "8080"
+          - name: ConnectionStrings__DefaultConnection
+            valueFrom:
+              secretKeyRef:
+                name: mssql-db-secret
+                key: mssql-main-db-connection-string
+          - name: ConnectionStrings__MongoDBConnection
+            # value: "mongodb://root:root@mongo-0.mongo.csms.svc.cluster.local:27017"
+            value: "mongodb://mongo-0.mongo.csms.svc.cluster.local:27017"
+          - name: MessageBrokerSettings__RabbitMqHost
+            value: "rabbitmq-0.rabbitmq.csms.svc.cluster.local"
+          - name: MessageBrokerSettings__RabbitMqUsername
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq-secret
+                key: rabbitmq-username
+          - name: MessageBrokerSettings__RabbitMqPassword
+            valueFrom:
+              secretKeyRef:
+                name: rabbitmq-secret
+                key: rabbitmq-password
+          - name: ApiSettings__ReservationServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: reservations-config
+                key: reservations-api-url
+          - name: ApiSettings__AuthServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: usermanagement-config
+                key: usermanagement-api-url
+          - name: CentralSystemEndpoint
+            valueFrom:
+              configMapKeyRef:
+                name: websockets-config
+                key: websockets-endpoint-url
+          - name: HubEndpoint
+            valueFrom:
+              configMapKeyRef:
+                name: emulator-config
+                key: hub-endpoint-url
+        resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: emulator-service
+  labels:
+    app: emulator
+spec:
+  type: LoadBalancer
+  selector:
+    app: emulator
+  ports:
+    - protocol: TCP
+      name: http
+      port: 8500
+      targetPort: 8080
