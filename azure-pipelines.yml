@@ -79,13 +79,11 @@ parameters:
       k8sManifestPath: "aks/emulator/deployment.yaml"
 
 variables:
-  # Container registry service connection established during pipeline creation
   dockerRegistryServiceConnection: '9b0814d5-f32c-4e81-966e-e60f137ff9b2'
   imageRepository: 'depotsapi'
   containerRegistry: 'csmsacr0825.azurecr.io'
   dockerBuildContext: '$(Build.SourcesDirectory)/ChargingStation.Backend'
   tag: '$(Build.BuildId)'
-  # Agent VM image name
   vmImageName: 'ubuntu-latest'
   infrastructureProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Infrastructure'
   domainProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Domain'
@@ -159,12 +157,6 @@ stages:
           buildContext: $(dockerBuildContext)
           tags: |
             $(tag)
-
-      # - task: PublishPipelineArtifact@1
-      #   displayName: 'Publish artifact: ${{ project.imageName }}'
-      #   inputs:
-      #     artifact: aks
-      #     targetPath: '$(Build.ArtifactStagingDirectory)/aks'
   
     - deployment: 'DeployToAKS'
       displayName: 'Deploy ${{project.imageName}}'
