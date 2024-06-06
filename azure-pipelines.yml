@@ -164,12 +164,12 @@ stages:
             $(tag)
   
   - stage: 'Deploy_${{project.imageName}}'
-    displayName: Deploy stage
+    displayName: 'Deploy ${{project.imageName}}'
     dependsOn: 'Build_${{project.imageName}}'
   
     jobs:
     - deployment: 'Deploy_${{project.imageName}}'
-      displayName: 'Deploy_${{project.imageName}}'
+      displayName: 'Deploy ${{project.imageName}}'
       pool:
         vmImage: $(vmImageName)
       environment: 'Nexus20ChargingStationBackend-1790.csms'
@@ -185,7 +185,7 @@ stages:
                 dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
   
             - task: KubernetesManifest@0
-              displayName: Deploy to Kubernetes cluster
+              displayName: 'Deploy ${{project.imageName}} to Kubernetes cluster'
               inputs:
                 action: deploy
                 manifests: |
