@@ -171,8 +171,10 @@ stages:
   
   - stage: 'Deploy_${{project.imageName}}'
     displayName: 'Deploy ${{project.imageName}}'
-    dependsOn: 'Build_${{project.imageName}}'
-    condition: succeeded()
+
+    ${{ if not(parameters.forceBuild) }}:
+      dependsOn: 'Build_${{project.imageName}}'
+      condition: or(eq(stageDependencies.Build_${{project.imageName}}.DetectChanges.outputs['MicroserviceChanges.MicroserviceProjectChanged'], 'true'), eq(stageDependencies.Build_${{project.imageName}}.DetectChanges.outputs['CommonProjectsChanges.CommonProjectsChanged'], 'true'))
   
     jobs:
     - deployment: 'Deploy_${{project.imageName}}'
