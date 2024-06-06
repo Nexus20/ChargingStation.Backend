@@ -104,8 +104,8 @@ stages:
       
       - bash: |
           # Get common projects changes
-          InfrastructurePorjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ infrastructureProjectsPath }}")
-          DomainProjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ domainProjectsPath }}")
+          InfrastructurePorjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ variables.infrastructureProjectsPath }}")
+          DomainProjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ variables.domainProjectsPath }}")
         name: 'CommonProjectsChanges'
         displayName: 'Detecting changes in common projects'
 
