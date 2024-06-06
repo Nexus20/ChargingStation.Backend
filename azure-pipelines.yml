@@ -81,8 +81,8 @@ stages:
     displayName: 'Build and push ${{project.imageName}}'
     jobs:
 
-    - job: 'Build_${{ project.imageName }}'
-      displayName: 'Build and push image ${{ project.imageName }} into ACR'
+    - job: 'DetectChanges'
+      displayName: 'Detecting changes for ${{ project.imageName }}'
       
       steps:
 
