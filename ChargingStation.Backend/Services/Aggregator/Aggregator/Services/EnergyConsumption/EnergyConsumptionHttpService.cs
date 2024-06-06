@@ -1,8 +1,7 @@
 ﻿using System.Net;
-using System.Net.Http.Json;
 using ChargingStation.Common.Models.DepotEnergyConsumption;
 
-namespace ChargingStation.InternalCommunication.Services.EnergyConsumption;
+namespace Aggregator.Services.EnergyConsumption;
 
 public class EnergyConsumptionHttpService : IEnergyConsumptionHttpService
 {

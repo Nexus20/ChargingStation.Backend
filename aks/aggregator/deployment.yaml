@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: aggregator
-        image: csmsacr0825.azurecr.io/aggregator:104
+        image: csmsacr0825.azurecr.io/aggregator:121
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

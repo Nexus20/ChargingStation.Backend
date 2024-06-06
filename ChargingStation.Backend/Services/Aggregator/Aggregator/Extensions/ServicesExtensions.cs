@@ -3,6 +3,7 @@ using System.Text;
 using Aggregator.Services;
 using Aggregator.Services.ChargePoints;
 using Aggregator.Services.Connectors;
+using Aggregator.Services.EnergyConsumption;
 using ChargingStation.InternalCommunication.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -39,7 +40,14 @@ public static class ServicesExtensions
 
         services.AddHttpContextAccessor();
         services.AddDepotsHttpClient(configuration);
-        services.AddEnergyConsumptionSettingsHttpClient(configuration);
+        services.AddHttpClient<IEnergyConsumptionHttpService, EnergyConsumptionHttpService>((sp, c) =>
+        {
+            var contextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+            var authorizationHeader = contextAccessor.HttpContext!.Request.Headers.Authorization.ToString();
+            
+            c.BaseAddress = new Uri($"{configuration["ApiSettings:EnergyConsumptionSettingsServiceAddress"]!}/api/EnergyConsumptionSettings/");
+            c.DefaultRequestHeaders.Add("Authorization", authorizationHeader);
+        });
         
         services.AddHttpClient<IChargePointsHttpService, ChargePointsHttpService>((sp, c) =>
         {
