@@ -15,8 +15,10 @@ parameters:
 - name: 'projectsToBuild'
   type: object
   default:
-    - path: "Services/Depots/ChargingStation.Depots"
+    - path: "Services/Depots/Depots.Api"
       imageName: "depotsapi"
+    - path: "Services/Depots/Depots.Grpc"
+      imageName: "depotsgrpc"
     - path: "Services/Aggregator/Aggregator"
       imageName: "aggregator"
     - path: "Services/Gateway/ChargingStation.Gateway"
@@ -33,12 +35,36 @@ parameters:
       imageName: "energyconsumptionapi"
     - path: "Services/EnergyConsumption/EnergyConsumption.Grpc"
       imageName: "energyconsumptiongrpc"
+    - path: "Services/Transactions/Transactions.Api"
+      imageName: "transactionsapi"
+    - path: "Services/Transactions/Transactions.Grpc"
+      imageName: "transactionsgrpc"
+    - path: "Services/Reservations/Reservations.Api"
+      imageName: "reservationsapi"
+    - path: "Services/Reservations/Reservations.Grpc"
+      imageName: "reservationsgrpc"
+    - path: "Services/OcppTags/OcppTags.Api"
+      imageName: "ocpptagsapi"
+    - path: "Services/OcppTags/OcppTags.Grpc"
+      imageName: "ocpptagsgrpc"
+    - path: "Services/SignalR/ChargingStation.SignalR"
+      imageName: "signalr"
+    - path: "Services/UserManagement/UserManagement.API"
+      imageName: "usermanagement"
+    - path: "Services/WebSockets/ChargingStation.WebSockets"
+      imageName: "websockets"
+    - path: "Services/ChargingProfiles/ChargingStation.ChargingProfiles"
+      imageName: "chargingprofilesapi"
+    - path: "Services/Heartbeats/ChargingStation.Heartbeats"
+      imageName: "heartbeatsapi"
+    - path: "Emulator/ChargePointEmulator.UI"
+      imageName: "emulator"
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '71b76521-feff-48e9-aef4-f0dd85171cdf'
+  dockerRegistryServiceConnection: '9b0814d5-f32c-4e81-966e-e60f137ff9b2'
   imageRepository: 'depotsapi'
-  containerRegistry: 'yechuacr2508.azurecr.io'
+  containerRegistry: 'csmsacr0825.azurecr.io'
   dockerBuildContext: '$(Build.SourcesDirectory)/ChargingStation.Backend'
   tag: '$(Build.BuildId)'
   # Agent VM image name
