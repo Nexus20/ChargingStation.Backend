@@ -162,10 +162,17 @@ stages:
           buildContext: $(dockerBuildContext)
           tags: |
             $(tag)
+
+      - task: PublishPipelineArtifact@1
+        displayName: 'Publish artifact: ${{ project.imageName }}'
+        inputs:
+          artifact: aks
+          targetPath: '$(Build.ArtifactStagingDirectory)/aks'
   
   - stage: 'Deploy_${{project.imageName}}'
     displayName: 'Deploy ${{project.imageName}}'
     dependsOn: 'Build_${{project.imageName}}'
+    condition: succeeded()
   
     jobs:
     - deployment: 'Deploy_${{project.imageName}}'
