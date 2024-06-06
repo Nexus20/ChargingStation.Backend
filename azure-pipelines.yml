@@ -140,7 +140,7 @@ stages:
         name: 'CommonProjectsChanges'
         displayName: 'Detecting changes in common projects'
 
-    - job: 'Build_${{ project.imageName }}'
+    - job: 'BuildImageAndPushToAcr'
       displayName: 'Build and push image ${{ project.imageName }} into ACR'
   
       ${{ if not(parameters.forceBuild) }}:
@@ -169,18 +169,12 @@ stages:
           artifact: aks
           targetPath: '$(Build.ArtifactStagingDirectory)/aks'
   
-  - stage: 'Deploy_${{project.imageName}}'
-    displayName: 'Deploy ${{project.imageName}}'
-
-    ${{ if not(parameters.forceBuild) }}:
-      dependsOn: 'Build_${{project.imageName}}'
-      condition: or(eq(stageDependencies.Build_${{project.imageName}}.DetectChanges.outputs['MicroserviceChanges.MicroserviceProjectChanged'], 'true'), eq(stageDependencies.Build_${{project.imageName}}.DetectChanges.outputs['CommonProjectsChanges.CommonProjectsChanged'], 'true'))
-  
-    jobs:
     - deployment: 'Deploy_${{project.imageName}}'
       displayName: 'Deploy ${{project.imageName}}'
-      pool:
-        vmImage: $(vmImageName)
+
+      dependsOn: 'BuildImageAndPushToAcr'
+      condition: succeeded()
+
       environment: 'Nexus20ChargingStationBackend-1790.csms'
       strategy:
         runOnce:
