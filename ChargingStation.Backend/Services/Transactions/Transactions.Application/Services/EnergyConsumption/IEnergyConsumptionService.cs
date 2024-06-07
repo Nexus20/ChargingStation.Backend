@@ -5,5 +5,7 @@ namespace Transactions.Application.Services.EnergyConsumption;
 
 public interface IEnergyConsumptionService
 {
-    public Task<ChargePointsEnergyConsumptionResponse> GetChargePointsEnergyConsumptionByDepotAsync(GetChargePointsEnergyConsumptionByDepotRequest request, CancellationToken cancellationToken = default);
+    Task<ChargePointsEnergyConsumptionResponse> GetChargePointsEnergyConsumptionByDepotAsync(GetChargePointsEnergyConsumptionByDepotRequest request, CancellationToken cancellationToken = default);
+
+    Task<List<DepotEnergyConsumptionStatisticsResponse>> GetDepotEnergyConsumption(GetDepotEnergyConsumptionStatisticsRequest request, CancellationToken cancellationToken = default);
 }

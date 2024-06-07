@@ -57,4 +57,16 @@ public class EnergyConsumptionService : IEnergyConsumptionService
         
         return response;
     }
+
+    public async Task<List<DepotEnergyConsumptionStatisticsResponse>> GetDepotEnergyConsumption(GetDepotEnergyConsumptionStatisticsRequest request, CancellationToken cancellationToken = default)
+    {
+        var chargePoints = await _chargePointGrpcClientService.GetByDepotsIdsAsync(new List<Guid> { request.DepotId }, cancellationToken);
+        var chargePointsIds = chargePoints.Select(x => x.Id).ToList();
+        var connectors = await _connectorGrpcClientService.GetByChargePointsIdsAsync(chargePointsIds, cancellationToken);
+        var connectorsIds = connectors.Select(x => x.Id).ToList();
+        
+        var depotEnergyConsumption = await _connectorMeterValueRepository.GetDepotEnergyConsumptionAsync(connectorsIds, request.AggregationInterval, request.StartTime, request.EndTime, cancellationToken);
+        
+        return depotEnergyConsumption;
+    }
 }

@@ -1,4 +1,5 @@
-﻿using ChargingStation.Common.Messages_OCPP16.Enums;
+﻿using System.Data;
+using ChargingStation.Common.Messages_OCPP16.Enums;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Persistence;
 using ChargingStation.Infrastructure.Repositories;
@@ -58,7 +59,7 @@ public class ConnectorMeterValueRepository : Repository<ConnectorMeterValue>, IC
         return socValues;
     }
 
-    public async Task<List<ChargePointConnectorEnergyConsumptionResponse>> GetChargePointsConnectorsEnergyConsumptionByDepotAsync(List<Guid> connectorsIds, DateTime? startTime, DateTime? endTime)
+    public async Task<List<ChargePointConnectorEnergyConsumptionResponse>> GetChargePointsConnectorsEnergyConsumptionByDepotAsync(List<Guid> connectorsIds, DateTime? startTime, DateTime? endTime, CancellationToken cancellationToken = default)
     {
         var query = DbSet
             .Include(x => x.Connector)
@@ -77,8 +78,87 @@ public class ConnectorMeterValueRepository : Repository<ConnectorMeterValue>, IC
                 ConnectorNumber = x.Key.ConnectorId,
                 EnergyConsumed = x.Sum(y => Convert.ToDouble(y.Value))
             })
-            .ToListAsync();
+            .ToListAsync(cancellationToken: cancellationToken);
         
         return connectorsEnergyConsumption;
     }
+    
+    public async Task<List<DepotEnergyConsumptionStatisticsResponse>> GetDepotEnergyConsumptionAsync(List<Guid> connectorsIds, TimeSpan aggregationInterval, DateTime? startTime, DateTime? endTime, CancellationToken cancellationToken = default)
+    {
+        var connectorsIdsString = string.Join(",", connectorsIds.Select(id => $"'{id}'"));
+        var intervalMinutes = (int)aggregationInterval.TotalMinutes;
+
+        var sqlQuery = $@"
+            WITH AggregatedData AS (
+                SELECT 
+                    DATEADD(MINUTE, (DATEDIFF(MINUTE, 0, cmv.MeterValueTimestamp) / {intervalMinutes}) * {intervalMinutes}, 0) AS TimeInterval,
+                    SUM(CAST(cmv.Value AS DECIMAL(10, 2))) AS AggregatedValue
+                FROM 
+                    ConnectorMeterValue cmv
+                    JOIN Connectors c ON cmv.ConnectorId = c.Id
+                    JOIN ChargePoints cp ON c.ChargePointId = cp.Id
+                    JOIN Depots d ON cp.DepotId = d.Id
+                WHERE 
+                    d.Id = 'ABB20DF1-A7BE-41B4-1B09-08DC76A4496B'
+                    AND cmv.Measurand = 'Energy_Active_Import_Register'
+                    AND cmv.ConnectorId IN ({connectorsIdsString})" +
+                    (startTime.HasValue ? " AND cmv.MeterValueTimestamp >= @StartTime" : "") +
+                    (endTime.HasValue ? " AND cmv.MeterValueTimestamp <= @EndTime" : "") + $@"
+                GROUP BY 
+                    DATEADD(MINUTE, (DATEDIFF(MINUTE, 0, cmv.MeterValueTimestamp) / {intervalMinutes}) * {intervalMinutes}, 0)
+            )
+            SELECT 
+                TimeInterval,
+                AggregatedValue,
+                SUM(AggregatedValue) OVER (ORDER BY TimeInterval) AS CumulativeSum
+            FROM 
+                AggregatedData
+            ORDER BY 
+                TimeInterval;";
+
+        await using var connection = DbContext.Database.GetDbConnection();
+        
+        await connection.OpenAsync(cancellationToken);
+
+        using (var command = connection.CreateCommand())
+        {
+            command.CommandText = sqlQuery;
+            command.CommandType = CommandType.Text;
+
+            if (startTime.HasValue)
+            {
+                var startTimeParam = command.CreateParameter();
+                startTimeParam.ParameterName = "@StartTime";
+                startTimeParam.Value = startTime.Value;
+                startTimeParam.DbType = DbType.DateTime;
+                command.Parameters.Add(startTimeParam);
+            }
+
+            if (endTime.HasValue)
+            {
+                var endTimeParam = command.CreateParameter();
+                endTimeParam.ParameterName = "@EndTime";
+                endTimeParam.Value = endTime.Value;
+                endTimeParam.DbType = DbType.DateTime;
+                command.Parameters.Add(endTimeParam);
+            }
+
+            using (var reader = await command.ExecuteReaderAsync(cancellationToken))
+            {
+                var statisticsResponse = new List<DepotEnergyConsumptionStatisticsResponse>();
+                while (await reader.ReadAsync(cancellationToken))
+                {
+                    var result = new DepotEnergyConsumptionStatisticsResponse
+                    {
+                        DateTime = reader.GetDateTime(reader.GetOrdinal("TimeInterval")),
+                        AggregatedValue = reader.GetDecimal(reader.GetOrdinal("AggregatedValue")),
+                        CumulativeValue = reader.GetDecimal(reader.GetOrdinal("CumulativeSum"))
+                    };
+                    statisticsResponse.Add(result);
+                }
+                return statisticsResponse;
+            }
+        }
+    }
 }
+
