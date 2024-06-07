@@ -559,6 +559,18 @@
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
+      "DownstreamPathTemplate": "/api/energyconsumption/depot-consumption-statistics",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "transactionsapi-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/energyconsumption/chargepoints-consumption",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
       "DownstreamPathTemplate": "/api/transaction/getall",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

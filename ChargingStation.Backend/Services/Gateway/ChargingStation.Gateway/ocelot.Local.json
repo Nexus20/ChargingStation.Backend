@@ -609,6 +609,18 @@
       ]
     },
     {
+      "DownstreamPathTemplate": "/api/energyconsumption/depot-consumption-statistics",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5005
+        }
+      ],
+      "UpstreamPathTemplate": "/api/energyconsumption/chargepoints-consumption",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
       "DownstreamPathTemplate": "/api/energyconsumption/chargepoints-consumption",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
