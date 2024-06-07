@@ -111,11 +111,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargePointEmulator.Applica
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargePointEmulator.Persistence", "Emulator\ChargePointEmulator.Persistence\ChargePointEmulator.Persistence.csproj", "{7C823C69-2FCD-4E28-B4FD-EE5256153866}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Depots.Grpc", "Services\Depots\Depots.Grpc\Depots.Grpc.csproj", "{8CB89D15-B86A-49A2-8773-9CDF5B294E81}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Depots.Grpc", "Services\Depots\Depots.Grpc\Depots.Grpc.csproj", "{8CB89D15-B86A-49A2-8773-9CDF5B294E81}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Depots.Application", "Services\Depots\Depots.Application\Depots.Application.csproj", "{B6FEEDE6-519C-4596-83B0-836934DC32CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Depots.Application", "Services\Depots\Depots.Application\Depots.Application.csproj", "{B6FEEDE6-519C-4596-83B0-836934DC32CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChargingStation.TableStorage", "Infrastructure\ChargingStation.TableStorage\ChargingStation.TableStorage.csproj", "{1BD5236A-8FB3-4F7C-9EBE-90A74305835C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChargingStation.TableStorage", "Infrastructure\ChargingStation.TableStorage\ChargingStation.TableStorage.csproj", "{1BD5236A-8FB3-4F7C-9EBE-90A74305835C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

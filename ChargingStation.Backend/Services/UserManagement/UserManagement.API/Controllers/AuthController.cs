@@ -42,7 +42,7 @@ public class AuthController : ControllerBase
         return NoContent();
     }
 
-    [HttpGet("confirm-registration")]
+    [HttpPost("confirm-registration")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> ConfirmRegistration([FromBody] ConfirmRegistrationRequest confirmRegistrationRequest)

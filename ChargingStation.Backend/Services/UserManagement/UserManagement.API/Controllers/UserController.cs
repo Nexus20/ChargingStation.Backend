@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using ChargingStation.Common.Models.Depots.Responses;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Rbac;
 using Microsoft.AspNetCore.Authorization;
@@ -86,11 +85,11 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("deleteUserWithDepot")]
+    [HttpDelete("deleteUserFromDepot")]
     [Authorize(Roles = $"{CustomRoles.SuperAdministrator}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteUserWithDepot([FromBody] DeleteUserFromDepotRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteUserFromDepot([FromBody] DeleteUserFromDepotRequest request, CancellationToken cancellationToken)
     {
         await _userService.DeleteUserFromDepotAsync(request, cancellationToken);
 

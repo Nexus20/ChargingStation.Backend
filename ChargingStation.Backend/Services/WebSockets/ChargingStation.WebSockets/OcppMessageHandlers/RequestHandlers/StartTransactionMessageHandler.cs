@@ -10,7 +10,8 @@ public class StartTransactionMessageHandler : Ocpp16MessageHandler
 {
     private readonly IPublishEndpoint _publishEndpoint;
     
-    public StartTransactionMessageHandler(IConfiguration configuration, ILogger<StartTransactionMessageHandler> logger, IPublishEndpoint publishEndpoint) : base(configuration, logger)
+    public StartTransactionMessageHandler(IConfiguration configuration, ILogger<StartTransactionMessageHandler> logger, IPublishEndpoint publishEndpoint) 
+        : base(configuration, logger)
     {
         _publishEndpoint = publishEndpoint;
     }
