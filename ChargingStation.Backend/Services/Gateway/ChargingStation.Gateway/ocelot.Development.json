@@ -555,7 +555,7 @@
           "Port": 8080
         }
       ],
-      "UpstreamPathTemplate": "/api/energyconsumption/chargepoints-consumption",
+      "UpstreamPathTemplate": "/api/energyconsumption/depot-consumption-statistics",
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
