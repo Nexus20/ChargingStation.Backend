@@ -30,4 +30,15 @@ public class EnergyConsumptionController : ControllerBase
 
         return Ok(energyConsumptions);
     }
+    
+    [HttpPost("depot-consumption-statistics")]
+    [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
+    [ProducesResponseType(typeof(List<DepotEnergyConsumptionStatisticsResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetDepotEnergyConsumption([FromBody]GetDepotEnergyConsumptionStatisticsRequest request, CancellationToken cancellationToken = default)
+    {
+        var energyConsumptions = await _energyConsumptionService.GetDepotEnergyConsumption(request, cancellationToken);
+
+        return Ok(energyConsumptions);
+    }
 }

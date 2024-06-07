@@ -10,12 +10,12 @@ namespace ChargingStation.Infrastructure.Repositories;
 
 public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
 {
-    private readonly ApplicationDbContext _dbContext;
+    protected readonly ApplicationDbContext DbContext;
     protected readonly DbSet<TEntity> DbSet;
 
     public Repository(ApplicationDbContext dbContext)
     {
-        _dbContext = dbContext;
+        DbContext = dbContext;
         DbSet = dbContext.Set<TEntity>();
     }
 
@@ -129,6 +129,6 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : Entity
     
     public Task SaveChangesAsync(CancellationToken cancellationToken = default)
     {
-        return _dbContext.SaveChangesAsync(cancellationToken);
+        return DbContext.SaveChangesAsync(cancellationToken);
     }
 }

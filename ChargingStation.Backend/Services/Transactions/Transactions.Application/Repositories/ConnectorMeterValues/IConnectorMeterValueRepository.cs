@@ -16,5 +16,10 @@ public interface IConnectorMeterValueRepository : IRepository<ConnectorMeterValu
     Task<List<SoCDateTime>> GetSoCForTransactionAsync(Guid transactionId, CancellationToken cancellationToken = default);
 
     Task<List<ChargePointConnectorEnergyConsumptionResponse>> GetChargePointsConnectorsEnergyConsumptionByDepotAsync(
-        List<Guid> connectorsIds, DateTime? startTime, DateTime? endTime);
+        List<Guid> connectorsIds, DateTime? startTime, DateTime? endTime,
+        CancellationToken cancellationToken = default);
+    
+    Task<List<DepotEnergyConsumptionStatisticsResponse>> GetDepotEnergyConsumptionAsync(List<Guid> connectorsIds,
+        TimeSpan aggregationInterval, DateTime? startTime, DateTime? endTime,
+        CancellationToken cancellationToken = default);
 }
