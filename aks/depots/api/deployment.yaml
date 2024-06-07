@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: depotsapi-deployment
+  labels:
+    app: depotsapi
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: depotsapi
+  template:
+    metadata:
+      labels:
+        app: depotsapi
+    spec:
+      containers:
+      - name: depotsapi
+        image: csmsacr0825.azurecr.io/depotsapi:104
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Development
+          - name: ASPNETCORE_HTTP_PORTS
+            value: "8080"
+          - name: ConnectionStrings__DefaultConnection
+            valueFrom:
+              secretKeyRef:
+                name: mssql-db-secret
+                key: mssql-main-db-connection-string
+        resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: depotsapi-service
+  labels:
+    app: depotsapi
+spec:
+  selector:
+    app: depotsapi
+  ports:
+    - protocol: TCP
+      name: http
+      port: 8080
+      targetPort: 8080

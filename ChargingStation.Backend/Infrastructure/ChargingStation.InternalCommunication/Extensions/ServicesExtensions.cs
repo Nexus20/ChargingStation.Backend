@@ -1,7 +1,6 @@
 ﻿using ChargePoints.Grpc.Protos;
 using ChargingStation.InternalCommunication.GrpcClients;
 using ChargingStation.InternalCommunication.Services.Depots;
-using ChargingStation.InternalCommunication.Services.EnergyConsumption;
 using Connectors.Grpc.Protos;
 using Depots.Grpc.Protos;
 using EnergyConsumption.Grpc.Protos;
@@ -96,22 +95,6 @@ public static class ServicesExtensions
             var authorizationHeader = contextAccessor.HttpContext!.Request.Headers.Authorization.ToString();
             
             c.BaseAddress = new Uri(configuration["ApiSettings:DepotServiceAddress"]!);
-            c.DefaultRequestHeaders.Add("Authorization", authorizationHeader);
-        });
-
-        return services;
-    }
-
-    public static IServiceCollection AddEnergyConsumptionSettingsHttpClient(this IServiceCollection services,
-        IConfiguration configuration)
-    {
-        services.AddHttpContextAccessor();
-        services.AddHttpClient<IEnergyConsumptionHttpService, EnergyConsumptionHttpService>((sp, c) =>
-        {
-            var contextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
-            var authorizationHeader = contextAccessor.HttpContext!.Request.Headers.Authorization.ToString();
-            
-            c.BaseAddress = new Uri(configuration["ApiSettings:EnergyConsumptionSettingsServiceAddress"]!);
             c.DefaultRequestHeaders.Add("Authorization", authorizationHeader);
         });
 

@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reservationsgrpc-deployment
+  labels:
+    app: reservationsgrpc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reservationsgrpc
+  template:
+    metadata:
+      labels:
+        app: reservationsgrpc
+    spec:
+      containers:
+      - name: reservationsgrpc
+        image: csmsacr0825.azurecr.io/reservationsgrpc:104
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 8080
+        env:
+          - name: ASPNETCORE_ENVIRONMENT
+            value: Development
+          - name: ASPNETCORE_HTTP_PORTS
+            value: "8080"
+          - name: ConnectionStrings__DefaultConnection
+            valueFrom:
+              secretKeyRef:
+                name: mssql-db-secret
+                key: mssql-main-db-connection-string
+        resources:
+            requests:
+              memory: "256Mi"
+              cpu: "250m"
+            limits:
+              memory: "512Mi"
+              cpu: "500m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: reservationsgrpc-service
+  labels:
+    app: reservationsgrpc
+spec:
+  selector:
+    app: reservationsgrpc
+  ports:
+    - protocol: TCP
+      name: http
+      port: 8080
+      targetPort: 8080

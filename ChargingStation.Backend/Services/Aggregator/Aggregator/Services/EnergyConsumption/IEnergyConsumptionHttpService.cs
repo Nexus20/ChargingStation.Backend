@@ -1,6 +1,6 @@
 ﻿using ChargingStation.Common.Models.DepotEnergyConsumption;
 
-namespace ChargingStation.InternalCommunication.Services.EnergyConsumption;
+namespace Aggregator.Services.EnergyConsumption;
 
 public interface IEnergyConsumptionHttpService
 {

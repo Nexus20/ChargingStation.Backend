@@ -6,9 +6,7 @@ option csharp_namespace = "EnergyConsumption.Grpc.Protos";
 
 package energyconsumption;
 
-// The greeting service definition.
 service EnergyConsumptionSettingsGrpc {
-  // Sends a greeting
   rpc GetEnergyConsumptionSettingsByDepotId (GetByDepotIdGrpcRequest) returns (DepotEnergyConsumptionSettingsGrpcResponse);
   rpc GetEnergyConsumptionSettingsByChargePointId (GetByChargePointIdGrpcRequest) returns (DepotEnergyConsumptionSettingsGrpcResponse);
 }
@@ -21,7 +19,6 @@ message GetByChargePointIdGrpcRequest {
   string charge_point_id = 1;
 }
 
-// The response message containing the greetings.
 message DepotEnergyConsumptionSettingsGrpcResponse {
   string id = 1;
   string depot_id = 2;

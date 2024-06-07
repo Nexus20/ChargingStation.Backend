@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: depots-config
+data:
+  depots-api-url: "http://depotsapi-service:8080"
+  depots-grpc-url: "http://depotsgrpc-service:8080"

@@ -1,6 +1,7 @@
 ﻿using Aggregator.Models.Responses;
 using Aggregator.Services.ChargePoints;
 using Aggregator.Services.Connectors;
+using Aggregator.Services.EnergyConsumption;
 using AutoMapper;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Messages_OCPP16.Requests.Enums;
@@ -8,7 +9,6 @@ using ChargingStation.Common.Models.Connectors.Responses;
 using ChargingStation.Common.Models.Depots.Requests;
 using ChargingStation.Common.Models.General;
 using ChargingStation.InternalCommunication.Services.Depots;
-using ChargingStation.InternalCommunication.Services.EnergyConsumption;
 
 namespace Aggregator.Services;
 

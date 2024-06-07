@@ -1,7 +1,3 @@
-# Docker
-# Build and push an image to Azure Container Registry
-# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
-
 trigger:
 - main
 
@@ -15,36 +11,83 @@ parameters:
 - name: 'projectsToBuild'
   type: object
   default:
-    - path: "Services/Depots/ChargingStation.Depots"
+    - path: "Services/Depots/Depots.Api"
       imageName: "depotsapi"
+      k8sManifestPath: "aks/depots/api/deployment.yaml"
+    - path: "Services/Depots/Depots.Grpc"
+      imageName: "depotsgrpc"
+      k8sManifestPath: "aks/depots/grpc/deployment.yaml"
     - path: "Services/Aggregator/Aggregator"
       imageName: "aggregator"
+      k8sManifestPath: "aks/aggregator/deployment.yaml"
     - path: "Services/Gateway/ChargingStation.Gateway"
       imageName: "gateway"
+      k8sManifestPath: "aks/gateway/deployment.yaml"
     - path: "Services/ChargePoints/ChargePoints.Api"
       imageName: "chargepointsapi"
+      k8sManifestPath: "aks/chargepoints/api/deployment.yaml"
     - path: "Services/ChargePoints/ChargePoints.Grpc"
       imageName: "chargepointsgrpc"
+      k8sManifestPath: "aks/chargepoints/grpc/deployment.yaml"
     - path: "Services/Connectors/Connectors.Api"
       imageName: "connectorsapi"
+      k8sManifestPath: "aks/connectors/api/deployment.yaml"
     - path: "Services/Connectors/Connectors.Grpc"
       imageName: "connectorsgrpc"
+      k8sManifestPath: "aks/connectors/grpc/deployment.yaml"
     - path: "Services/EnergyConsumption/EnergyConsumption.Api"
-      imageName: "energyconsumptionapi"
+      imageName: "energyconsumptionsettingsapi"
+      k8sManifestPath: "aks/energyconsumptionsettings/api/deployment.yaml"
     - path: "Services/EnergyConsumption/EnergyConsumption.Grpc"
-      imageName: "energyconsumptiongrpc"
+      imageName: "energyconsumptionsettingsgrpc"
+      k8sManifestPath: "aks/energyconsumptionsettings/grpc/deployment.yaml"
+    - path: "Services/Transactions/Transactions.Api"
+      imageName: "transactionsapi"
+      k8sManifestPath: "aks/transactions/api/deployment.yaml"
+    - path: "Services/Transactions/Transactions.Grpc"
+      imageName: "transactionsgrpc"
+      k8sManifestPath: "aks/transactions/grpc/deployment.yaml"
+    - path: "Services/Reservations/Reservations.Api"
+      imageName: "reservationsapi"
+      k8sManifestPath: "aks/reservations/api/deployment.yaml"
+    - path: "Services/Reservations/Reservations.Grpc"
+      imageName: "reservationsgrpc"
+      k8sManifestPath: "aks/reservations/grpc/deployment.yaml"
+    - path: "Services/OcppTags/OcppTags.Api"
+      imageName: "ocpptagsapi"
+      k8sManifestPath: "aks/ocpptags/api/deployment.yaml"
+    - path: "Services/OcppTags/OcppTags.Grpc"
+      imageName: "ocpptagsgrpc"
+      k8sManifestPath: "aks/ocpptags/grpc/deployment.yaml"
+    - path: "Services/SignalR/ChargingStation.SignalR"
+      imageName: "signalr"
+      k8sManifestPath: "aks/signalr/deployment.yaml"
+    - path: "Services/UserManagement/UserManagement.API"
+      imageName: "usermanagement"
+      k8sManifestPath: "aks/usermanagement/api/deployment.yaml"
+    - path: "Services/WebSockets/ChargingStation.WebSockets"
+      imageName: "websockets"
+      k8sManifestPath: "aks/websockets/deployment.yaml"
+    - path: "Services/ChargingProfiles/ChargingStation.ChargingProfiles"
+      imageName: "chargingprofilesapi"
+      k8sManifestPath: "aks/chargingprofiles/api/deployment.yaml"
+    - path: "Services/Heartbeats/ChargingStation.Heartbeats"
+      imageName: "heartbeatsapi"
+      k8sManifestPath: "aks/heartbeats/api/deployment.yaml"
+    - path: "Emulator/ChargePointEmulator.UI"
+      imageName: "emulator"
+      k8sManifestPath: "aks/emulator/deployment.yaml"
 
 variables:
-  # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: '71b76521-feff-48e9-aef4-f0dd85171cdf'
+  dockerRegistryServiceConnection: '9b0814d5-f32c-4e81-966e-e60f137ff9b2'
   imageRepository: 'depotsapi'
-  containerRegistry: 'yechuacr2508.azurecr.io'
+  containerRegistry: 'csmsacr0825.azurecr.io'
   dockerBuildContext: '$(Build.SourcesDirectory)/ChargingStation.Backend'
   tag: '$(Build.BuildId)'
-  # Agent VM image name
   vmImageName: 'ubuntu-latest'
   infrastructureProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Infrastructure'
   domainProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Domain'
+  imagePullSecret: 'csmsacr08252120d50d-auth'
 
 pool:
   vmImage: $(vmImageName)
@@ -54,51 +97,53 @@ stages:
   - stage: 'Build_${{project.imageName}}'
     displayName: 'Build and push ${{project.imageName}}'
     jobs:
-    - job: 'DetectChanges'
-      displayName: 'Detecting changes for ${{ project.imageName }}'
-      
-      steps:
 
-      - checkout: self
-        fetchDepth: 2
+    - ${{ if not(parameters.forceBuild) }}:
+      - job: 'DetectChanges'
+        displayName: 'Detecting changes for ${{ project.imageName }}'
+        
+        steps:
 
-      - bash: |
-          # Get microservice project changes
-          MicroserviceProjectChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ project.path }}")
-          if [ ! -z "$MicroserviceProjectChanged" ]; then
-            echo "##vso[task.setvariable variable=MicroserviceProjectChanged;isOutput=true]true"
-            echo "Changes detected in ${{ project.imageName }}, image will be built..."
-          else
-            echo "##vso[task.setvariable variable=MicroserviceProjectChanged;isOutput=true]false"
-            echo "No changes detected in ${{ project.imageName }}, image build will be skipped..."
-          fi
-        name: 'MicroserviceChanges'
-        displayName: 'Detecting changes in ${{ project.imageName }}'
+        - checkout: self
+          fetchDepth: 2
 
-      - bash: |
-          # Get common projects changes
-          InfrastructurePorjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ infrastructureProjectsPath }}")
-          DomainProjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ domainProjectsPath }}")
+        - bash: |
+            # Get microservice project changes
+            MicroserviceProjectChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ project.path }}")
+            if [ ! -z "$MicroserviceProjectChanged" ]; then
+              echo "##vso[task.setvariable variable=MicroserviceProjectChanged;isOutput=true]true"
+              echo "Changes detected in ${{ project.imageName }}, image will be built..."
+            else
+              echo "##vso[task.setvariable variable=MicroserviceProjectChanged;isOutput=true]false"
+              echo "No changes detected in ${{ project.imageName }}, image build will be skipped..."
+            fi
+          name: 'MicroserviceChanges'
+          displayName: 'Detecting changes in ${{ project.imageName }}'
+        
+        - bash: |
+            # Get common projects changes
+            InfrastructurePorjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ variables.infrastructureProjectsPath }}")
+            DomainProjectsChanged=$(git diff HEAD~ HEAD --name-only | grep -e "^${{ variables.domainProjectsPath }}")
 
-          if [ ! -z "$InfrastructurePorjectsChanged" ] || [ ! -z "$DomainProjectsChanged" ]; then
-            echo "##vso[task.setvariable variable=CommonProjectsChanged;isOutput=true]true"
-            echo "Changes detected in common projects, ${{ project.imageName }} image will be built..."
-          else
-            echo "##vso[task.setvariable variable=CommonProjectsChanged;isOutput=true]false"
-            echo "No changes detected in common projects, ${{ project.imageName }} image build will be skipped..."
-          fi
-        name: 'CommonProjectsChanges'
-        displayName: 'Detecting changes in common projects'
+            if [ ! -z "$InfrastructurePorjectsChanged" ] || [ ! -z "$DomainProjectsChanged" ]; then
+              echo "##vso[task.setvariable variable=CommonProjectsChanged;isOutput=true]true"
+              echo "Changes detected in common projects, ${{ project.imageName }} image will be built..."
+            else
+              echo "##vso[task.setvariable variable=CommonProjectsChanged;isOutput=true]false"
+              echo "No changes detected in common projects, ${{ project.imageName }} image build will be skipped..."
+            fi
+          name: 'CommonProjectsChanges'
+          displayName: 'Detecting changes in common projects'
 
-    - job: 'Build_${{ project.imageName }}'
+    - job: 'BuildImageAndPushToAcr'
       displayName: 'Build and push image ${{ project.imageName }} into ACR'
-
+  
       ${{ if not(parameters.forceBuild) }}:
         dependsOn: 'DetectChanges'
         condition: or(eq(dependencies.DetectChanges.outputs['MicroserviceChanges.MicroserviceProjectChanged'], 'true'), eq(dependencies.DetectChanges.outputs['CommonProjectsChanges.CommonProjectsChanged'], 'true'))
-      
+        
       steps:
-
+  
       - checkout: self
         fetchDepth: 2
 
@@ -112,4 +157,35 @@ stages:
           buildContext: $(dockerBuildContext)
           tags: |
             $(tag)
-    
+  
+    - deployment: 'DeployToAKS'
+      displayName: 'Deploy ${{project.imageName}}'
+
+      dependsOn: 'BuildImageAndPushToAcr'
+      condition: succeeded()
+
+      environment: 'Nexus20ChargingStationBackend-1790.csms'
+      strategy:
+        runOnce:
+          deploy:
+            steps:
+            - checkout: self
+              fetchDepth: 2
+
+            - task: KubernetesManifest@0
+              displayName: Create imagePullSecret
+              inputs:
+                action: createSecret
+                secretName: $(imagePullSecret)
+                dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+  
+            - task: KubernetesManifest@0
+              displayName: 'Deploy ${{project.imageName}} to Kubernetes cluster'
+              inputs:
+                action: deploy
+                manifests: |
+                  $(Build.SourcesDirectory)/${{ project.k8sManifestPath }}
+                imagePullSecrets: |
+                  $(imagePullSecret)
+                containers: |
+                  $(containerRegistry)/${{ project.imageName }}:$(tag)
