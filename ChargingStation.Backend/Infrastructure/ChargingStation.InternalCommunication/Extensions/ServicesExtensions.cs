@@ -112,7 +112,9 @@ public static class ServicesExtensions
             var authorizationHeader = contextAccessor.HttpContext!.Request.Headers.Authorization.ToString();
             
             c.BaseAddress = new Uri(configuration["ApiSettings:UserServiceAddress"]!);
-            c.DefaultRequestHeaders.Add("Authorization", authorizationHeader);
+            
+            if(!string.IsNullOrWhiteSpace(authorizationHeader))
+                c.DefaultRequestHeaders.Add("Authorization", authorizationHeader);
         });
 
         return services;
