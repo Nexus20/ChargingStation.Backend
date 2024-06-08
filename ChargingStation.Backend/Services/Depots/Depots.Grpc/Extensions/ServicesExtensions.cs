@@ -5,7 +5,7 @@ namespace Depots.Grpc.Extensions;
 
 public static class ServicesExtensions
 {
-    public static IServiceCollection AddDepotGrpcServices(this IServiceCollection services)
+    public static IServiceCollection AddDepotGrpcServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddGrpc(options =>
         {
@@ -13,7 +13,7 @@ public static class ServicesExtensions
             options.EnableDetailedErrors = true;
         });
 
-        services.AddDepotApplicationServices();
+        services.AddDepotApplicationServices(configuration);
         
         return services;
     }

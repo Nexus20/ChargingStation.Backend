@@ -6,6 +6,7 @@ using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Models.TimeZone;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
+using ChargingStation.InternalCommunication.Services.UserManagement;
 using Depots.Application.Models.Requests;
 using Depots.Application.Specifications;
 using TimeZone = ChargingStation.Domain.Entities.TimeZone;
@@ -17,17 +18,31 @@ public class DepotService : IDepotService
     private readonly IRepository<Depot> _depotRepository;
     private readonly IRepository<TimeZone> _timeZoneRepository;
     private readonly IMapper _mapper;
+    private readonly IUserHttpService _userHttpService;
 
-    public DepotService(IRepository<Depot> depotRepository, IRepository<TimeZone> timeZoneRepository, IMapper mapper)
+    public DepotService(IRepository<Depot> depotRepository, IRepository<TimeZone> timeZoneRepository, IMapper mapper, IUserHttpService userHttpService)
     {
         _depotRepository = depotRepository;
         _timeZoneRepository = timeZoneRepository;
         _mapper = mapper;
+        _userHttpService = userHttpService;
     }
 
-    public async Task<IPagedCollection<DepotResponse>> GetAsync(GetDepotsRequest request, CancellationToken cancellationToken = default)
+    public async Task<IPagedCollection<DepotResponse>> GetAsync(GetDepotsRequest request, Guid userId, bool checkAccess, CancellationToken cancellationToken = default)
     {
-        var specification = new GetDepotsSpecification(request);
+        GetDepotsSpecification specification;
+        
+        if (checkAccess)
+        {
+            var accessibleDepotsIds = await _userHttpService.GetUserDepotAccessesAsync(userId, cancellationToken);
+            
+            if(accessibleDepotsIds.IsNullOrEmpty())
+                return PagedCollection<DepotResponse>.Empty;
+            
+            specification = new GetDepotsSpecification(request, accessibleDepotsIds);
+        }
+        else
+            specification = new GetDepotsSpecification(request);
         
         var depots = await _depotRepository.GetPagedCollectionAsync(specification, request.PagePredicate?.Page, request.PagePredicate?.PageSize, cancellationToken: cancellationToken);
         
@@ -38,8 +53,16 @@ public class DepotService : IDepotService
         return result;
     }
 
-    public async Task<DepotResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<DepotResponse> GetByIdAsync(Guid id, Guid userId, bool checkAccess, CancellationToken cancellationToken = default)
     {
+        if (checkAccess)
+        {
+            var accessibleDepotsIds = await _userHttpService.GetUserDepotAccessesAsync(userId, cancellationToken);
+            
+            if (!accessibleDepotsIds.Contains(id))
+                throw new ForbiddenException($"User with id {userId} does not have access to depot with id {id}");
+        }
+        
         var specification = new GetDepotSpecification(id);
 
         var depot = await _depotRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);

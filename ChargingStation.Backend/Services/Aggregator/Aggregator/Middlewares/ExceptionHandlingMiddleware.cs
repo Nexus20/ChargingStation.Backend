@@ -1,4 +1,5 @@
-﻿using ChargingStation.Common.Exceptions;
+﻿using System.Net;
+using ChargingStation.Common.Exceptions;
 
 namespace Aggregator.Middlewares;
 
@@ -20,22 +21,39 @@ public class ExceptionHandlingMiddleware
         catch (NotFoundException exception)
         {
             logger.LogInformation(exception, "Resource not found");
-            context.Response.StatusCode = StatusCodes.Status404NotFound;
+            await HandleExceptionAsync(context, exception, StatusCodes.Status404NotFound);
         }
         catch (BadRequestException exception)
         {
             logger.LogInformation(exception, "Bad request occurred: {Message}", exception.Message);
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await HandleExceptionAsync(context, exception, StatusCodes.Status400BadRequest);
+        }
+        catch (UnauthorizedException exception)
+        {
+            logger.LogInformation(exception, "Unauthorized request");
+            await HandleExceptionAsync(context, exception, StatusCodes.Status401Unauthorized);
+        }
+        catch (ForbiddenException exception)
+        {
+            logger.LogInformation(exception, "Forbidden request");
+            await HandleExceptionAsync(context, exception, StatusCodes.Status403Forbidden);
+        }
+        catch (HttpRequestException exception)
+        {
+            logger.LogError(exception, "An exception was thrown as a result of the request");
+            await HandleExceptionAsync(context, exception, (int)(exception.StatusCode ?? HttpStatusCode.InternalServerError));
         }
         catch (Exception exception)
         {
-            HandleStatus500Exception(context, exception, logger);
+            logger.LogError(exception, "An exception was thrown as a result of the request");
+            await HandleExceptionAsync(context, exception, StatusCodes.Status500InternalServerError);
         }
     }
-
-    private void HandleStatus500Exception(HttpContext context, Exception exception, ILogger logger)
+    
+    private async Task HandleExceptionAsync(HttpContext context, Exception exception, int statusCode)
     {
-        logger.LogError(exception, "An exception was thrown as a result of the request");
-        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        context.Response.StatusCode = statusCode;
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsync(new ErrorDetails(exception).ToString());
     }
 }

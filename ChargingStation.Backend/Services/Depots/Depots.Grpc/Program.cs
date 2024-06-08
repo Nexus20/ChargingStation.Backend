@@ -6,7 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddEnvironmentVariables();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddDepotGrpcServices();
+builder.Services.AddDepotGrpcServices(builder.Configuration);
 
 var app = builder.Build();
 

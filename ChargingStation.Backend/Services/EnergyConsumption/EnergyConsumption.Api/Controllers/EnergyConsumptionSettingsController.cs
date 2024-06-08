@@ -22,13 +22,13 @@ public class EnergyConsumptionSettingsController : ControllerBase
     
     [HttpPost("set")]
     [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}")]
-    [Produces("text/plain")]
+    [Produces("application/json")]
     [ProducesResponseType(typeof(Guid), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     public async Task<IActionResult> SetEnergyConsumptionSettingsAsync([FromBody] SetDepotEnergyConsumptionSettingsRequest request, CancellationToken cancellationToken = default)
     {
         var createdSettingsId = await _energyConsumptionSettingsService.SetEnergyConsumptionSettingsAsync(request, cancellationToken);
-        return StatusCode(StatusCodes.Status201Created, createdSettingsId);
+        return StatusCode(StatusCodes.Status201Created, new { SettingsId = createdSettingsId });
     }
     
     [HttpGet("{id}")]

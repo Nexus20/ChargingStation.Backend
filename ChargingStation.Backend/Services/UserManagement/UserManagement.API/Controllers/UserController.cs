@@ -118,4 +118,13 @@ public class UserController : ControllerBase
 
         return NoContent();
     }
+    
+    [HttpGet("{userId}/depots-accesses")]
+    [ProducesResponseType(typeof(List<Guid>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUserDepotsAccesses(Guid userId, CancellationToken cancellationToken)
+    {
+        var depotsAccesses = await _userService.GetUserDepotsAccesses(userId, cancellationToken);
+
+        return Ok(depotsAccesses);
+    }
 }
