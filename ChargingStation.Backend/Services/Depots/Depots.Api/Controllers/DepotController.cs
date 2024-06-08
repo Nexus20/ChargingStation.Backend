@@ -1,4 +1,5 @@
-﻿using ChargingStation.Common.Models.Depots.Requests;
+﻿using System.Security.Claims;
+using ChargingStation.Common.Models.Depots.Requests;
 using ChargingStation.Common.Models.Depots.Responses;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Models.TimeZone;
@@ -27,7 +28,15 @@ public class DepotController : ControllerBase
     [ProducesResponseType(typeof(IPagedCollection<DepotResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> Get([FromBody]GetDepotsRequest request, CancellationToken cancellationToken = default)
     {
-        var depots = await _depotService.GetAsync(request, cancellationToken);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
+        if (string.IsNullOrEmpty(userId))
+            return BadRequest("Invalid claims");
+        
+        var userRoles = User.FindAll(ClaimTypes.Role);
+        var checkAccess = userRoles.FirstOrDefault(x => x.Value == CustomRoles.SuperAdministrator) == null;
+        
+        var depots = await _depotService.GetAsync(request, Guid.Parse(userId), checkAccess, cancellationToken);
 
         return Ok(depots);
     }
@@ -39,7 +48,15 @@ public class DepotController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken = default)
     {
-        var depot = await _depotService.GetByIdAsync(id, cancellationToken);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        
+        if (string.IsNullOrEmpty(userId))
+            return BadRequest("Invalid claims");
+        
+        var userRoles = User.FindAll(ClaimTypes.Role);
+        var checkAccess = userRoles.FirstOrDefault(x => x.Value == CustomRoles.SuperAdministrator) == null;
+        
+        var depot = await _depotService.GetByIdAsync(id, Guid.Parse(userId), checkAccess, cancellationToken);
 
         return Ok(depot);
     }

@@ -30,6 +30,11 @@ spec:
               secretKeyRef:
                 name: mssql-db-secret
                 key: mssql-main-db-connection-string
+          - name: ApiSettings__UserServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: usermanagement-config
+                key: usermanagement-api-url
         resources:
             requests:
               memory: "256Mi"

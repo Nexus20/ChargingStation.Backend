@@ -206,6 +206,15 @@ public class UserService : IUserService
         await _applicationUserDepotRepository.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task<List<Guid>> GetUserDepotsAccesses(Guid userId, CancellationToken cancellationToken)
+    {
+        var specification = new GetUserDepotsSpecification(userId);
+
+        var userDepots = await _applicationUserDepotRepository.GetAsync(specification, cancellationToken: cancellationToken);
+        
+        return userDepots.Select(ud => ud.DepotId).ToList();
+    }
+
     public async Task DeleteUserAsync(Guid id, CancellationToken cancellationToken = default)
     {
         var applicationUserToRemove = await _applicationUserRepository.GetByIdAsync(id, cancellationToken);
