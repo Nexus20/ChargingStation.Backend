@@ -15,10 +15,12 @@ namespace UserManagement.API.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IConfiguration _configuration;
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, IConfiguration configuration)
     {
         _userService = userService;
+        _configuration = configuration;
     }
 
     [HttpPost("getall")]
@@ -67,8 +69,9 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Invite([FromBody] InviteRequest inviteRequest)
     {
         var invitationToken = _userService.GenerateInvitationToken(inviteRequest);
+        var clientApplicationHost = _configuration["ClientApplicationHost"]!;
 
-        var invitationLink = Url.Action("ConfirmInvite", "User", new { token = invitationToken }, Request.Scheme);
+        var invitationLink = $"https://{clientApplicationHost}/auth/confirm-invite/?token={invitationToken}";
 
         await _userService.SendInvitationEmailAsync(inviteRequest, invitationLink);
 
