@@ -1,11 +1,13 @@
 ﻿using AutoMapper;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Models.DepotEnergyConsumption;
+using ChargingStation.Common.Models.DepotEnergyConsumption.Dtos;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using ChargingStation.InternalCommunication.GrpcClients;
 using EnergyConsumption.Application.Models.Requests;
+using EnergyConsumption.Application.Models.Responses;
 using EnergyConsumption.Application.Specifications;
 using Microsoft.Extensions.Logging;
 
@@ -99,5 +101,46 @@ public class EnergyConsumptionSettingsService : IEnergyConsumptionSettingsServic
         
         var result = _mapper.Map<DepotEnergyConsumptionSettingsResponse>(depotEnergyConsumptionSettings);
         return result;
+    }
+    
+    public async Task<DepotEnergyConsumptionSettingsStatisticsResponse?> GetDepotEnergyConsumptionStatisticsAsync(GetDepotEnergyConsumptionSettingsStatisticsRequest request, CancellationToken cancellationToken = default)
+    {
+        var specification = new GetDepotEnergyConsumptionSettingsStatisticsByDepotSpecification(request);
+        
+        var depotsEnergyConsumptionSettings = await _depotEnergyConsumptionSettingsRepository.GetAsync(specification, cancellationToken: cancellationToken);
+
+        if (depotsEnergyConsumptionSettings.IsNullOrEmpty())
+            return null;
+
+        var chargePointsLimits = depotsEnergyConsumptionSettings.SelectMany(x => x.ChargePointsLimits).ToList();
+        var intervals = depotsEnergyConsumptionSettings.SelectMany(x => x.Intervals).ToList();
+        
+        var chargePoints = await _chargePointGrpcClientService.GetByDepotsIdsAsync(new List<Guid> { request.DepotId }, cancellationToken);
+        
+        var response = new DepotEnergyConsumptionSettingsStatisticsResponse
+        {
+            ChargePointsLimits = [],
+            Intervals = _mapper.Map<List<EnergyConsumptionIntervalSettingsDto>>(intervals)
+        };
+        
+        foreach (var chargePointEnergyConsumptionSettings in chargePointsLimits)
+        {
+            var chargePoint = chargePoints.FirstOrDefault(x => x.Id == chargePointEnergyConsumptionSettings.ChargePointId);
+            
+            if(chargePoint is null)
+                continue;
+            
+            var chargePointEnergyConsumptionSettingsDto = new ChargePointEnergyConsumptionSettingsStatisticsDto
+            {
+                ChargePointId = chargePointEnergyConsumptionSettings.ChargePointId,
+                ChargePointEnergyLimit = chargePointEnergyConsumptionSettings.ChargePointEnergyLimit,
+                ChargePointName = chargePoint.Name,
+                ValidFrom = chargePointEnergyConsumptionSettings.DepotEnergyConsumptionSettings.ValidFrom,
+                ValidTo = chargePointEnergyConsumptionSettings.DepotEnergyConsumptionSettings.ValidTo
+            };
+            response.ChargePointsLimits.Add(chargePointEnergyConsumptionSettingsDto);
+        }
+        
+        return response;
     }
 }
