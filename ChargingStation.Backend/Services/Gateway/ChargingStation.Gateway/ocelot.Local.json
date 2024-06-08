@@ -601,6 +601,20 @@
       ]
     },
     {
+      "DownstreamPathTemplate": "/api/energyconsumptionsettings/statistics",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5009
+        }
+      ],
+      "UpstreamPathTemplate": "/api/energyconsumptionsettings/statistics",
+      "UpstreamHttpMethod": [
+        "POST"
+      ]
+    },
+    {
       "DownstreamPathTemplate": "/api/energyconsumptionsettings/set",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

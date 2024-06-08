@@ -535,6 +535,20 @@
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
+      "DownstreamPathTemplate": "/api/energyconsumptionsettings/statistics",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "energyconsumptionsettings.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/energyconsumptionsettings/statistics",
+      "UpstreamHttpMethod": [
+        "POST"
+      ]
+    },
+    {
       "DownstreamPathTemplate": "/api/energyconsumptionsettings/set",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

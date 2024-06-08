@@ -1,6 +1,7 @@
 ﻿using ChargingStation.Common.Models.DepotEnergyConsumption;
 using ChargingStation.Common.Rbac;
 using EnergyConsumption.Application.Models.Requests;
+using EnergyConsumption.Application.Models.Responses;
 using EnergyConsumption.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -69,5 +70,20 @@ public class EnergyConsumptionSettingsController : ControllerBase
             return NoContent();
         
         return Ok(settings);
+    }
+    
+    [HttpPost("statistics")]
+    [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
+    [ProducesResponseType(typeof(DepotEnergyConsumptionSettingsStatisticsResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> GetDepotEnergyConsumptionStatisticsAsync([FromBody] GetDepotEnergyConsumptionSettingsStatisticsRequest request, CancellationToken cancellationToken)
+    {
+        var statistics = await _energyConsumptionSettingsService.GetDepotEnergyConsumptionStatisticsAsync(request, cancellationToken);
+        
+        if(statistics is null)
+            return NoContent();
+        
+        return Ok(statistics);
     }
 }
