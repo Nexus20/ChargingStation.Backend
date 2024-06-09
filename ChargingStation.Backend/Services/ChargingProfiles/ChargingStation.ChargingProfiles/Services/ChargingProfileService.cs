@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Text;
+using AutoMapper;
 using ChargingStation.CacheManager;
 using ChargingStation.ChargingProfiles.Models.Requests;
 using ChargingStation.ChargingProfiles.Models.Responses;
@@ -98,7 +99,7 @@ public class ChargingProfileService : IChargingProfileService
                     break;
             }
             
-            var energyLimitExceededMessage = new ChargingProfileSetMessage
+            var chargingProfileSetMessage = new ChargingProfileSetMessage
             {
                 ChargePointId = chargePointId,
                 ConnectorId = pendingSetChargingProfileRequest.ConnectorId,
@@ -106,8 +107,8 @@ public class ChargingProfileService : IChargingProfileService
                 ChargingProfileId = chargingProfile.Id,
             };
 
-            var energyLimitExceededSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(energyLimitExceededMessage), nameof(ChargingProfileSetMessage));
-            await _publishEndpoint.Publish(energyLimitExceededSignalRMessage, cancellationToken);
+            var chargingProfileSetSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(chargingProfileSetMessage), nameof(ChargingProfileSetMessage));
+            await _publishEndpoint.Publish(chargingProfileSetSignalRMessage, cancellationToken);
             
             await _cacheManager.RemoveAsync(ocppMessageId);
         }
@@ -190,7 +191,7 @@ public class ChargingProfileService : IChargingProfileService
                     _connectorChargingProfileRepository.Remove(connectorChargingProfile);
                     await _connectorChargingProfileRepository.SaveChangesAsync(cancellationToken);
                     _logger.LogInformation("Charging profile {ChargingProfileId} cleared from connector {ConnectorId}", chargingProfile.Id, connector.Id);
-                    return;
+                    break;
                 }
                 case ClearChargingProfileResponseStatus.Unknown:
                     _logger.LogWarning("Clear charging profile request for charging profile {ChargingProfileId} and charge point {ChargePointId} with connector {ConnectorId} returned unknown status because no charging profile found with given criteria",
@@ -198,7 +199,7 @@ public class ChargingProfileService : IChargingProfileService
                     break;
             }
             
-            var energyLimitExceededMessage = new ChargingProfileClearedMessage
+            var chargingProfileClearedMessage = new ChargingProfileClearedMessage
             {
                 ChargePointId = chargePointId,
                 ConnectorId = pendingClearChargingProfileRequest.ConnectorId,
@@ -208,8 +209,8 @@ public class ChargingProfileService : IChargingProfileService
                 ChargingProfilePurpose = pendingClearChargingProfileRequest.ChargingProfilePurpose
             };
 
-            var energyLimitExceededSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(energyLimitExceededMessage), nameof(ChargingProfileClearedMessage));
-            await _publishEndpoint.Publish(energyLimitExceededSignalRMessage, cancellationToken);
+            var chargingProfileClearedSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(chargingProfileClearedMessage), nameof(ChargingProfileClearedMessage));
+            await _publishEndpoint.Publish(chargingProfileClearedSignalRMessage, cancellationToken);
             
             await _cacheManager.RemoveAsync(ocppMessageId);
         }
@@ -226,19 +227,44 @@ public class ChargingProfileService : IChargingProfileService
         var chargingProfile = await _chargingProfileRepository.GetFirstOrDefaultAsync(specification, cancellationToken: cancellationToken);
         
         if (chargingProfile == null)
-        {
             throw new NotFoundException(nameof(ChargingProfile), request.ChargingProfileId);
-        }
+        
+        if(chargingProfile.ValidTo < DateTime.UtcNow)
+            throw new BadRequestException("Charging profile is not valid yet");
         
         var connector = await _connectorGrpcClientService.GetByIdAsync(request.ConnectorId, cancellationToken);
         
         if (connector == null)
-        {
             throw new NotFoundException(nameof(Connector), request.ConnectorId);
-        }
 
-        var chargingProfileKind = Enum.Parse<CsChargingProfilesChargingProfileKind>(chargingProfile.ChargingProfileKind.ToString());
         var chargingProfilePurpose = Enum.Parse<CsChargingProfilesChargingProfilePurpose>(chargingProfile.ChargingProfilePurpose.ToString());
+        
+        var sameStackLevelAndPurposeProfilesSpecification = new GetChargingProfileWithSchedulesByStackLevelAndPurposeSpecification(chargingProfile.StackLevel, chargingProfile.ChargingProfilePurpose);
+        var sameStackLevelAndPurposeProfiles = await _chargingProfileRepository.GetAsync(sameStackLevelAndPurposeProfilesSpecification, cancellationToken: cancellationToken);
+
+        if (sameStackLevelAndPurposeProfiles.Count > 0)
+        {
+            var getConnectorChargingProfilesSpecification = new GetConnectorChargingProfilesSpecification(connector.Id);
+            var connectorChargingProfiles = await _connectorChargingProfileRepository.GetAsync(getConnectorChargingProfilesSpecification, cancellationToken: cancellationToken);
+            
+            var sameStackLevelAndPurposeProfilesIds = sameStackLevelAndPurposeProfiles.Select(x => x.Id).ToList();
+            
+            var conflictingProfiles = connectorChargingProfiles.Where(x => sameStackLevelAndPurposeProfilesIds.Contains(x.ChargingProfileId)).ToList();
+
+            if (conflictingProfiles.Count > 0)
+            {
+                var exceptionMessageStringBuilder = new StringBuilder();
+                exceptionMessageStringBuilder.AppendLine($"Connector {connector.Id} already has charging profile with same stack level {chargingProfile.StackLevel} and purpose {chargingProfile.ChargingProfilePurpose.ToString()}");
+                exceptionMessageStringBuilder.AppendLine("Conflicting profiles:");
+                
+                foreach (var conflictingProfile in conflictingProfiles) 
+                    exceptionMessageStringBuilder.AppendLine($"Charging profile {conflictingProfile.ChargingProfileId}");
+                
+                throw new BadRequestException(exceptionMessageStringBuilder.ToString());
+            }
+        }
+        
+        var chargingProfileKind = Enum.Parse<CsChargingProfilesChargingProfileKind>(chargingProfile.ChargingProfileKind.ToString());
 
         var chargingRateUnit = Enum.Parse<ChargingScheduleChargingRateUnit>(chargingProfile.SchedulingUnit.ToString());
         var ocppChargingSchedulePeriods = chargingProfile.ChargingSchedulePeriods.Select(x => new ChargingSchedulePeriod(x.Limit, x.NumberPhases, x.StartPeriod)).ToList();
@@ -292,6 +318,9 @@ public class ChargingProfileService : IChargingProfileService
 
     public async Task<ChargingProfileResponse> CreateAsync(CreateChargingProfileRequest request, CancellationToken cancellationToken = default)
     {
+        if(request.ValidTo < DateTime.UtcNow)
+            throw new BadRequestException("Valid to date must be in the future");
+        
         var chargingProfile = _mapper.Map<ChargingProfile>(request);
         
         await _chargingProfileRepository.AddAsync(chargingProfile, cancellationToken);

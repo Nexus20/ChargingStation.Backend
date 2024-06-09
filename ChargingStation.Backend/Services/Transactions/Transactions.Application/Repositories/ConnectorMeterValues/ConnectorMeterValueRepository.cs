@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using ChargingStation.Common.Messages_OCPP16.Enums;
+using ChargingStation.Common.Models.ConnectorEnergyConsumption;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Persistence;
 using ChargingStation.Infrastructure.Repositories;
@@ -159,6 +160,29 @@ public class ConnectorMeterValueRepository : Repository<ConnectorMeterValue>, IC
                 return statisticsResponse;
             }
         }
+    }
+    
+    public async Task<List<ConnectorEnergyConsumptionResponse>> GetConnectorsEnergyConsumptionAsync(List<Guid> connectorsIds, CancellationToken cancellationToken)
+    {
+        var connectorsEnergyConsumption = await DbSet
+            .Where(x => x.Measurand == SampledValueMeasurand.Energy_Active_Import_Register.ToString() && connectorsIds.Contains(x.ConnectorId))
+            .GroupBy(x => x.ConnectorId)
+            .Select(x => new
+            {
+                ConnectorId = x.Key,
+                ConsumedEnergy = x.Sum(y => Convert.ToDouble(y.Value)),
+                Power = x.OrderByDescending(y => y.MeterValueTimestamp).FirstOrDefault()
+            })
+            .ToListAsync(cancellationToken: cancellationToken);
+        
+        var result = connectorsEnergyConsumption.Select(x => new ConnectorEnergyConsumptionResponse
+        {
+            ConnectorId = x.ConnectorId,
+            ConsumedEnergy = x.ConsumedEnergy,
+            Power = x.Power != null ? double.Parse(x.Power.Value) : 0
+        }).ToList();
+        
+        return result;
     }
 }
 

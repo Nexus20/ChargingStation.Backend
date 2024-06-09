@@ -2,7 +2,7 @@
 using ChargingStation.Common.Models.Depots.Requests;
 using ChargingStation.Common.Models.General;
 
-namespace Aggregator.Services;
+namespace Aggregator.Services.Depots;
 
 public interface IDepotsAggregatorService
 {

@@ -37,6 +37,18 @@
       "UpstreamHttpMethod": [ "POST" ]
     },
     {
+      "DownstreamPathTemplate": "/api/aggregator/connector/GetByChargePoints",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "aggregator-service",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/aggregator/connector/GetByChargePoints",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
       "DownstreamPathTemplate": "/api/aggregator/Depot/getall",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [

@@ -212,7 +212,7 @@ public class TransactionService : ITransactionService
                 {
                     ChargePointId = chargePointId,
                     ConnectorId = connectorId,
-                    Status = "Occupied",
+                    Status = "Charging",
                     StatusTimestamp = request.Timestamp.UtcDateTime,
                 };
         

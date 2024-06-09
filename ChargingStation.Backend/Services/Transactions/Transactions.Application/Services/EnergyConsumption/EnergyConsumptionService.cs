@@ -1,4 +1,5 @@
-﻿using ChargingStation.InternalCommunication.GrpcClients;
+﻿using ChargingStation.Common.Models.ConnectorEnergyConsumption;
+using ChargingStation.InternalCommunication.GrpcClients;
 using Transactions.Application.Models.EnergyConsumption.Requests;
 using Transactions.Application.Models.EnergyConsumption.Responses;
 using Transactions.Application.Repositories.ConnectorMeterValues;
@@ -68,5 +69,11 @@ public class EnergyConsumptionService : IEnergyConsumptionService
         var depotEnergyConsumption = await _connectorMeterValueRepository.GetDepotEnergyConsumptionAsync(connectorsIds, request.AggregationInterval, request.StartTime, request.EndTime, cancellationToken);
         
         return depotEnergyConsumption;
+    }
+
+    public async Task<List<ConnectorEnergyConsumptionResponse>> GetConnectorsEnergyConsumptionAsync(List<Guid> connectorsIds, CancellationToken cancellationToken = default)
+    {
+        var result = await _connectorMeterValueRepository.GetConnectorsEnergyConsumptionAsync(connectorsIds, cancellationToken);
+        return result;
     }
 }

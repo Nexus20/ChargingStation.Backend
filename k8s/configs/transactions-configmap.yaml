@@ -4,3 +4,4 @@ metadata:
   name: transactions-config
 data:
   transactions-grpc-url: "http://transactionsgrpc-service:8080"
+  transactions-api-url: "http://transactionsapi-service:8080"

@@ -314,7 +314,8 @@ namespace ChargingStation.Infrastructure.Migrations
 
                     b.HasIndex("ChargingProfileId");
 
-                    b.HasIndex("ConnectorId");
+                    b.HasIndex("ConnectorId", "ChargingProfileId")
+                        .IsUnique();
 
                     b.ToTable("ConnectorChargingProfile");
                 });
