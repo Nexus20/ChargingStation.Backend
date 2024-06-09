@@ -1,6 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using ChargePointEmulator.Application.Interfaces;
 using ChargePointEmulator.Application.State;
+using ChargingStation.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -27,7 +28,7 @@ public class ChargingStationSimulatorManager
         
         var stateRepository = scope.ServiceProvider.GetRequiredService<IChargingStationStateRepository>();
         
-        var chargingStation = new ChargingStation(chargingStationId, stateRepository, $"{_hubEndpoint}/ChargePointHub");
+        var chargingStation = new ChargingStation(chargingStationId, stateRepository, _serviceScopeFactory, $"{_hubEndpoint}/ChargePointHub");
         
         return ChargingStations.TryAdd(chargingStationId, chargingStation);
     }

@@ -12,14 +12,20 @@ using ChargingStation.Common.Messages_OCPP16.Requests.Enums;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Messages_OCPP16.Responses.Enums;
 using ChargingStation.Common.Models.General;
+using ChargingStation.Infrastructure.Persistence;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using ChargingScheduleChargingRateUnit = ChargingStation.Common.Messages_OCPP16.Responses.Enums.ChargingScheduleChargingRateUnit;
+using ChargingSchedulePeriod = ChargingStation.Common.Messages_OCPP16.Responses.Enums.ChargingSchedulePeriod;
 
 namespace ChargePointEmulator.Application;
 
 public class ChargingStation : IAsyncDisposable
 {
     private readonly IChargingStationStateRepository _stateRepository;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
     private const string MessageRegExp = "^\\[\\s*(\\d)\\s*,\\s*\"([^\"]*)\"\\s*,(?:\\s*\"(\\w*)\"\\s*,)?\\s*(.*)\\s*\\]$";
     private const string OcppProtocol = "ocpp1.6";
     private readonly SemaphoreSlim _connectSemaphore = new(1, 1);
@@ -35,10 +41,12 @@ public class ChargingStation : IAsyncDisposable
 
     public ChargingStationState State { get; set; }
 
-    public ChargingStation(Guid id, IChargingStationStateRepository stateRepository, string? hubUri = null)
+    public ChargingStation(Guid id, IChargingStationStateRepository stateRepository, IServiceScopeFactory serviceScopeFactory,
+        string? hubUri = null)
     {
         Id = id;
         _stateRepository = stateRepository;
+        _serviceScopeFactory = serviceScopeFactory;
         State = new ChargingStationState { Id = id.ToString() };
         
         if (hubUri is not null)
@@ -272,6 +280,85 @@ public class ChargingStation : IAsyncDisposable
                 State = state;
             else
                 await _stateRepository.InsertAsync(State, cancellationToken);
+
+            try
+            {
+                using var scope = _serviceScopeFactory.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                
+                var chargePoint = await dbContext.ChargePoints
+                    .AsNoTracking()
+                    .Include(x => x.Connectors)
+                    .ThenInclude(x => x.ConnectorChargingProfiles)
+                    .ThenInclude(x => x.ChargingProfile)
+                    .ThenInclude(x => x.ChargingSchedulePeriods)
+                    .FirstOrDefaultAsync(x => x.Id == Id, cancellationToken: cancellationToken);
+
+                if (chargePoint is not null)
+                {
+                    var connectorChargingProfiles = chargePoint.Connectors
+                        .SelectMany(x => x.ConnectorChargingProfiles)
+                        .ToList();
+
+                    foreach (var connectorChargingProfile in connectorChargingProfiles)
+                    {
+                        if (!State.Connectors.TryGetValue(connectorChargingProfile.Connector.ConnectorId, out _)) 
+                            continue;
+                        
+                        var chargingProfile = connectorChargingProfile.ChargingProfile;
+                            
+                        var chargingProfileKind = Enum.Parse<CsChargingProfilesChargingProfileKind>(chargingProfile.ChargingProfileKind.ToString());
+                        var chargingProfilePurpose = Enum.Parse<CsChargingProfilesChargingProfilePurpose>(chargingProfile.ChargingProfilePurpose.ToString());
+                            
+                        var chargingRateUnit = Enum.Parse<ChargingScheduleChargingRateUnit>(chargingProfile.SchedulingUnit.ToString());
+                        var ocppChargingSchedulePeriods = chargingProfile.ChargingSchedulePeriods.Select(x => new ChargingSchedulePeriod(x.Limit, x.NumberPhases, x.StartPeriod)).ToList();
+                        var ocppChargingSchedule = new ChargingSchedule(chargingRateUnit, ocppChargingSchedulePeriods);
+                        var ocppChargingProfile = new CsChargingProfiles(ocppChargingSchedule, chargingProfile.ChargingProfileId, chargingProfile.StackLevel, chargingProfilePurpose, chargingProfileKind)
+                        {
+                            ValidFrom = chargingProfile.ValidFrom,
+                            ValidTo = chargingProfile.ValidTo,
+                            RecurrencyKind = Enum.Parse<CsChargingProfilesRecurrencyKind>(chargingProfile.RecurrencyKind.ToString()),
+                        };
+                            
+                        State.Connectors[connectorChargingProfile.Connector.ConnectorId].ChargingProfiles.TryAdd(connectorChargingProfile.ChargingProfile.ChargingProfileId, ocppChargingProfile);
+                    }
+                }
+                
+                chargePoint = await dbContext.ChargePoints
+                    .AsNoTracking()
+                    .Include(x => x.Connectors)
+                    .ThenInclude(x => x.ConnectorStatuses)
+                    .FirstOrDefaultAsync(x => x.Id == Id, cancellationToken: cancellationToken);
+
+                if (chargePoint is not null)
+                {
+                    foreach (var connector in chargePoint.Connectors)
+                    {
+                        if(connector.ConnectorStatuses.IsNullOrEmpty())
+                            continue;
+                        
+                        var lastStatus = connector.ConnectorStatuses.MaxBy(cs => cs.StatusUpdatedTimestamp);
+                        
+                        if (lastStatus is not null)
+                        {
+                            var connectorState = new ConnectorState()
+                            {
+                                ConnectorId = connector.ConnectorId,
+                                Status = Enum.Parse<StatusNotificationRequestStatus>(lastStatus.CurrentStatus)
+                            };
+                            
+                            if(State.Connectors.ContainsKey(connector.ConnectorId))
+                                State.Connectors[connector.ConnectorId] = connectorState;
+                            else
+                                State.Connectors.TryAdd(connector.ConnectorId, connectorState);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
             
             await _connectSemaphore.WaitAsync(cancellationToken);
             try
@@ -650,9 +737,9 @@ public class ChargingStation : IAsyncDisposable
         if (request.CsChargingProfiles.ChargingProfilePurpose != CsChargingProfilesChargingProfilePurpose.TxProfile)
         {
             // find charging profile with same profile id
-            if(connector.ChargingProfiles.TryGetValue(request.CsChargingProfiles.ChargingProfileId, out var profile))
+            if(connector.ChargingProfiles.TryGetValue(request.CsChargingProfiles.ChargingProfileId, out _))
             {
-                connector.ChargingProfiles[request.CsChargingProfiles.ChargingProfileId] = request.CsChargingProfiles;
+                State.Connectors[request.ConnectorId].ChargingProfiles[request.CsChargingProfiles.ChargingProfileId] = request.CsChargingProfiles;
             }
             else
             {
@@ -660,11 +747,11 @@ public class ChargingStation : IAsyncDisposable
                 
                 if (sameStackAndPurposeProfile is not null)
                 {
-                    connector.ChargingProfiles[sameStackAndPurposeProfile.ChargingProfileId] = request.CsChargingProfiles;
+                    State.Connectors[request.ConnectorId].ChargingProfiles[sameStackAndPurposeProfile.ChargingProfileId] = request.CsChargingProfiles;
                 }
                 else
                 {
-                    connector.ChargingProfiles.TryAdd(request.CsChargingProfiles.ChargingProfileId, request.CsChargingProfiles);
+                    State.Connectors[request.ConnectorId].ChargingProfiles.TryAdd(request.CsChargingProfiles.ChargingProfileId, request.CsChargingProfiles);
                 }
             }
 
@@ -834,7 +921,7 @@ public class ChargingStation : IAsyncDisposable
                 State.Connectors[request.ConnectorId].Status = request.Type == ChangeAvailabilityRequestType.Operative
                     ? StatusNotificationRequestStatus.Available
                     : StatusNotificationRequestStatus.Unavailable;
-                await SendConnectorStatusNotificationAsync(request.ConnectorId, StatusNotificationRequestStatus.Unavailable, cancellationToken);
+                await SendConnectorStatusNotificationAsync(request.ConnectorId, State.Connectors[request.ConnectorId].Status, cancellationToken);
             }
         }
     }
@@ -982,9 +1069,12 @@ public class ChargingStation : IAsyncDisposable
         {
             Console.WriteLine("Central system accepted boot notification");
 
-            for (var connectorId = 1; connectorId < 5; connectorId++)
+            if (State.Connectors.IsEmpty)
             {
-                await SendConnectorStatusNotificationAsync(connectorId, StatusNotificationRequestStatus.Available, cancellationToken);
+                for (var connectorId = 1; connectorId < 5; connectorId++)
+                {
+                    await SendConnectorStatusNotificationAsync(connectorId, StatusNotificationRequestStatus.Available, cancellationToken);
+                }
             }
             
             _ = Task.Run(async () =>

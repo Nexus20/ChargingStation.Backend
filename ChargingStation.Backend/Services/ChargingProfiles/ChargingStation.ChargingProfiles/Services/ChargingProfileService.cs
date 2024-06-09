@@ -229,6 +229,9 @@ public class ChargingProfileService : IChargingProfileService
         if (chargingProfile == null)
             throw new NotFoundException(nameof(ChargingProfile), request.ChargingProfileId);
         
+        if(chargingProfile.ValidTo < DateTime.UtcNow)
+            throw new BadRequestException("Charging profile is not valid yet");
+        
         var connector = await _connectorGrpcClientService.GetByIdAsync(request.ConnectorId, cancellationToken);
         
         if (connector == null)
@@ -315,6 +318,9 @@ public class ChargingProfileService : IChargingProfileService
 
     public async Task<ChargingProfileResponse> CreateAsync(CreateChargingProfileRequest request, CancellationToken cancellationToken = default)
     {
+        if(request.ValidTo < DateTime.UtcNow)
+            throw new BadRequestException("Valid to date must be in the future");
+        
         var chargingProfile = _mapper.Map<ChargingProfile>(request);
         
         await _chargingProfileRepository.AddAsync(chargingProfile, cancellationToken);
