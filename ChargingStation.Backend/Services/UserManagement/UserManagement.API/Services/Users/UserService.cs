@@ -126,7 +126,7 @@ public class UserService : IUserService
 
         var userDepot = new ApplicationUserDepot
         {
-            ApplicationUserId = Guid.Parse(user.Id),
+            ApplicationUserId = user.ApplicationUserId,
             DepotId = Guid.Parse(depotId)
         };
 
