@@ -1,6 +1,6 @@
 using ChargingStation.Common.Models.ChargePoints.Responses;
 
-namespace Aggregator.Services.ChargePoints;
+namespace Aggregator.Services.HttpServices.ChargePoints;
 
 public class ActiveChargePointsHttpService : IActiveChargePointsHttpService
 {

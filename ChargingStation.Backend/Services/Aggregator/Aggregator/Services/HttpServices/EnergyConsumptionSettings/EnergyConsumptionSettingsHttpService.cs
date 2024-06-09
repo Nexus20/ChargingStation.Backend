@@ -1,13 +1,13 @@
 ﻿using System.Net;
 using ChargingStation.Common.Models.DepotEnergyConsumption;
 
-namespace Aggregator.Services.EnergyConsumption;
+namespace Aggregator.Services.HttpServices.EnergyConsumptionSettings;
 
-public class EnergyConsumptionHttpService : IEnergyConsumptionHttpService
+public class EnergyConsumptionSettingsHttpService : IEnergyConsumptionSettingsHttpService
 {
     private readonly HttpClient _httpClient;
 
-    public EnergyConsumptionHttpService(HttpClient httpClient)
+    public EnergyConsumptionSettingsHttpService(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }

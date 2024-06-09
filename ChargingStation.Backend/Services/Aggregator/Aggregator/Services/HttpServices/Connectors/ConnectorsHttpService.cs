@@ -2,7 +2,7 @@
 using ChargingStation.Common.Models.Connectors.Responses;
 using Newtonsoft.Json;
 
-namespace Aggregator.Services.Connectors;
+namespace Aggregator.Services.HttpServices.Connectors;
 
 public class ConnectorsHttpService : IConnectorsHttpService
 {

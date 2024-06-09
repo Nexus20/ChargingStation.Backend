@@ -1,5 +1,6 @@
 using Aggregator.Models.Responses;
 using Aggregator.Services;
+using Aggregator.Services.Depots;
 using ChargingStation.Common.Models.Depots.Requests;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Rbac;

@@ -23,6 +23,7 @@ public class ChargingStation : IAsyncDisposable
     private const string MessageRegExp = "^\\[\\s*(\\d)\\s*,\\s*\"([^\"]*)\"\\s*,(?:\\s*\"(\\w*)\"\\s*,)?\\s*(.*)\\s*\\]$";
     private const string OcppProtocol = "ocpp1.6";
     private readonly SemaphoreSlim _connectSemaphore = new(1, 1);
+    private readonly SemaphoreSlim _stateSemaphore = new(1, 1);
     
     private ClientWebSocket?  _webSocket;
     public WebSocketState WebSocketState => _webSocket?.State ?? WebSocketState.None;
@@ -152,13 +153,13 @@ public class ChargingStation : IAsyncDisposable
     private List<MeterValuesRequest> GenerateMeterValuesForChargingSession(int connectorId, int transactionId, int intervalInSeconds, int totalIntervals)
     {
         var meterValuesRequests = new List<MeterValuesRequest>();
-        double energyConsumed = 0; // Начинаем с 0 кВт*ч
-        double power = 50; // Мощность в кВт, предположим, что она постоянна
+        double energyConsumed = 0; // Start from 0 кВт*ч
+        double power = 50; // Power W
         var random = new Random();
 
         for (var i = 0; i < totalIntervals; i++)
         {
-            energyConsumed += power * (intervalInSeconds / 3600.0); // Добавляем потребленную энергию за интервал
+            energyConsumed += power * (intervalInSeconds / 3600.0); // Add energy consumed in this interval
 
             var meterValue = new MeterValue(
                 Timestamp: DateTimeOffset.UtcNow.AddSeconds(i * intervalInSeconds),
@@ -424,7 +425,16 @@ public class ChargingStation : IAsyncDisposable
 
     public async Task SaveStateAsync(CancellationToken cancellationToken = default)
     {
-        await _stateRepository.UpdateAsync(State, cancellationToken);
+        await _stateSemaphore.WaitAsync(cancellationToken);
+        try
+        {
+            // Ваши действия по сохранению состояния
+            await _stateRepository.UpdateAsync(State, cancellationToken);
+        }
+        finally
+        {
+            _stateSemaphore.Release();
+        }
     }
 
     public async Task StartReceivingMessagesAsync(CancellationToken cancellationToken)
@@ -573,7 +583,7 @@ public class ChargingStation : IAsyncDisposable
 
             if (connectorId.HasValue)
             {
-                State.Connectors[connectorId.Value].ChargingProfiles.Remove(request.Id.Value);
+                State.Connectors[connectorId.Value].ChargingProfiles.Remove(request.Id.Value, out _);
                 await SaveStateAsync(cancellationToken);
                 profileRemoved = true;
             }
@@ -598,7 +608,7 @@ public class ChargingStation : IAsyncDisposable
                 
                 foreach (var profile in profilesToRemove)
                 {
-                    connector.ChargingProfiles.Remove(profile.ChargingProfileId);
+                    connector.ChargingProfiles.Remove(profile.ChargingProfileId, out _);
                     profileRemoved = true;
                 }
             }
@@ -616,7 +626,7 @@ public class ChargingStation : IAsyncDisposable
                 
                 foreach (var profile in profilesToRemove)
                 {
-                    connector.ChargingProfiles.Remove(profile.ChargingProfileId);
+                    connector.ChargingProfiles.Remove(profile.ChargingProfileId, out _);
                     profileRemoved = true;
                 }
             }

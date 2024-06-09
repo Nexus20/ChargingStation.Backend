@@ -50,6 +50,11 @@ spec:
               configMapKeyRef:
                 name: websockets-config
                 key: websockets-api-url
+          - name: ApiSettings__EnergyConsumptionServiceAddress
+            valueFrom:
+              configMapKeyRef:
+                name: transactions-config
+                key: transactions-api-url
         resources:
             requests:
               memory: "256Mi"
