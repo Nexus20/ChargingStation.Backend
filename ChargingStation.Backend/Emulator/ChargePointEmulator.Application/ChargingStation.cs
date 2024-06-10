@@ -162,9 +162,46 @@ public class ChargingStation : IAsyncDisposable
     {
         var meterValuesRequests = new List<MeterValuesRequest>();
         double energyConsumed = 0; // Start from 0 кВт*ч
-        double power = 50; // Power W
+        double power = 1000; // Power W
         var random = new Random();
 
+        if(!State.Connectors[connectorId].ChargingProfiles.IsEmpty)
+        {
+            var relevantChargingProfiles = State.Connectors[connectorId].ChargingProfiles.Values.Where(x => x.ValidFrom <= DateTime.UtcNow && x.ValidTo >= DateTime.UtcNow).ToList();
+
+            if (relevantChargingProfiles.Count > 0)
+            {
+                var highestPriorityChargeProfile = relevantChargingProfiles
+                    .Where(x => x.ChargingSchedule.ChargingRateUnit == ChargingScheduleChargingRateUnit.W)
+                    .MaxBy(x => x.StackLevel);
+
+                var minChargingRate = highestPriorityChargeProfile.ChargingSchedule.MinChargingRate;
+                
+                var relevantChargingSchedulePeriods = highestPriorityChargeProfile.ChargingSchedule
+                    .ChargingSchedulePeriod
+                    .OrderByDescending(x => x.StartPeriod)
+                    .ToList();
+
+                ChargingSchedulePeriod currentChargingSchedulePeriod = null;
+                
+                foreach (var relevantChargingSchedulePeriod in relevantChargingSchedulePeriods)
+                {
+                    if(DateTime.UtcNow <= highestPriorityChargeProfile.ValidFrom + TimeSpan.FromSeconds(relevantChargingSchedulePeriod.StartPeriod))
+                        break;
+
+                    currentChargingSchedulePeriod = relevantChargingSchedulePeriod;
+                }
+
+                if (currentChargingSchedulePeriod is not null)
+                {
+                    if(minChargingRate.HasValue)
+                        power = random.NextDouble() * (currentChargingSchedulePeriod.Limit - minChargingRate.Value) + minChargingRate.Value;
+                    else
+                        power = currentChargingSchedulePeriod.Limit - 1;
+                }
+            }
+        }
+        
         for (var i = 0; i < totalIntervals; i++)
         {
             energyConsumed += power * (intervalInSeconds / 3600.0); // Add energy consumed in this interval
@@ -347,13 +384,15 @@ public class ChargingStation : IAsyncDisposable
                                 Status = Enum.Parse<StatusNotificationRequestStatus>(lastStatus.CurrentStatus)
                             };
                             
-                            if(State.Connectors.ContainsKey(connector.ConnectorId))
-                                State.Connectors[connector.ConnectorId] = connectorState;
+                            if(State.Connectors.TryGetValue(connector.ConnectorId, out var stateConnector))
+                                stateConnector.Status = connectorState.Status;
                             else
                                 State.Connectors.TryAdd(connector.ConnectorId, connectorState);
                         }
                     }
                 }
+
+                await SaveStateAsync(cancellationToken);
             }
             catch (Exception e)
             {
@@ -515,7 +554,6 @@ public class ChargingStation : IAsyncDisposable
         await _stateSemaphore.WaitAsync(cancellationToken);
         try
         {
-            // Ваши действия по сохранению состояния
             await _stateRepository.UpdateAsync(State, cancellationToken);
         }
         finally
@@ -555,7 +593,7 @@ public class ChargingStation : IAsyncDisposable
         {
             if (_webSocket.State != WebSocketState.Open)
             {
-                    throw new InvalidOperationException("WebSocket is not open");
+                throw new InvalidOperationException("WebSocket is not open");
             }
 
             var payload = Encoding.UTF8.GetBytes(jsonPayload);
@@ -736,6 +774,15 @@ public class ChargingStation : IAsyncDisposable
         
         if (request.CsChargingProfiles.ChargingProfilePurpose != CsChargingProfilesChargingProfilePurpose.TxProfile)
         {
+            if (connector.ConnectorId != 0 && request.CsChargingProfiles.ChargingProfilePurpose == CsChargingProfilesChargingProfilePurpose.ChargePointMaxProfile)
+            {
+                var rejectedResponse = new SetChargingProfileResponse(SetChargingProfileResponseStatus.Rejected);
+                var rejectedJsonPayload = JsonConvert.SerializeObject(rejectedResponse);
+                var rejectedOcppMessage = new OcppMessage(OcppMessageTypes.CallResult, uniqueId, rejectedJsonPayload);
+                var rejectedTextMessage = $"[{rejectedOcppMessage.MessageType},\"{rejectedOcppMessage.UniqueId}\",{rejectedOcppMessage.JsonPayload}]";
+                await SendMessageAsync(rejectedTextMessage, cancellationToken);
+            }
+            
             // find charging profile with same profile id
             if(connector.ChargingProfiles.TryGetValue(request.CsChargingProfiles.ChargingProfileId, out _))
             {
