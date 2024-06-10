@@ -236,6 +236,9 @@ public class ChargingProfileService : IChargingProfileService
         
         if (connector == null)
             throw new NotFoundException(nameof(Connector), request.ConnectorId);
+        
+        if(connector.ConnectorId > 0 && chargingProfile.ChargingProfilePurpose == ChargingProfilePurpose.ChargePointMaxProfile)
+            throw new BadRequestException("Connector number must be 0 for charging profile with purpose ChargePointMaxProfile");
 
         var chargingProfilePurpose = Enum.Parse<CsChargingProfilesChargingProfilePurpose>(chargingProfile.ChargingProfilePurpose.ToString());
         
