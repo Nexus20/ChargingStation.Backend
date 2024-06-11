@@ -112,7 +112,7 @@ public class ReservationService : BaseReservationService, IReservationService
             
             reservation.ConnectorId = connector.Id;
             
-            await CheckAndThrowIfConflictingReservationsFoundAsync(request.StartDateTime, request.ExpiryDateTime, request.ChargePointId, connector.Id, TimeSpan.FromMinutes(30), cancellationToken);
+            await CheckAndThrowIfConflictingReservationsFoundAsync(request.StartDateTime, request.ExpiryDateTime, request.ChargePointId, connector.Id, TimeSpan.FromMinutes(30), cancellationToken: cancellationToken);
         }
         
         await ReservationRepository.AddAsync(reservation, cancellationToken);
@@ -126,9 +126,11 @@ public class ReservationService : BaseReservationService, IReservationService
         _logger.LogInformation("Reservation created for charge point with id {ChargePointId} and connector id {ConnectorId}", request.ChargePointId, request.ConnectorId);
     }
 
-    private async Task CheckAndThrowIfConflictingReservationsFoundAsync(DateTime startDateTime, DateTime expiryDateTime, Guid chargePointId, Guid connectorId, TimeSpan gapBetweenReservations, CancellationToken cancellationToken = default)
+    private async Task CheckAndThrowIfConflictingReservationsFoundAsync(DateTime startDateTime, DateTime expiryDateTime,
+        Guid chargePointId, Guid connectorId, TimeSpan gapBetweenReservations, Guid? reservationToSkipFromComparison = null,
+        CancellationToken cancellationToken = default)
     {
-        var conflictingReservationsSpecification = new GetConflictingReservationsSpecification(chargePointId, connectorId);
+        var conflictingReservationsSpecification = new GetConflictingReservationsSpecification(chargePointId, connectorId, reservationToSkipFromComparison);
         var reservationsWithSameConnector = await ReservationRepository.GetAsync(conflictingReservationsSpecification, cancellationToken: cancellationToken);
         
         var conflictingReservations = reservationsWithSameConnector.Where(r =>
@@ -194,7 +196,13 @@ public class ReservationService : BaseReservationService, IReservationService
             throw new NotFoundException($"Connector with id {request.ConnectorId} not found");
         }
         
-        await CheckAndThrowIfConflictingReservationsFoundAsync(request.StartDateTime, request.ExpiryDateTime, request.ChargePointId, connector.Id, TimeSpan.FromMinutes(30), cancellationToken);
+        await CheckAndThrowIfConflictingReservationsFoundAsync(request.StartDateTime,
+            request.ExpiryDateTime,
+            request.ChargePointId,
+            connector.Id,
+            TimeSpan.FromMinutes(30),
+            request.Id,
+            cancellationToken);
 
         _mapper.Map(request, reservationToUpdate);
         reservationToUpdate.ConnectorId = connector.Id;
