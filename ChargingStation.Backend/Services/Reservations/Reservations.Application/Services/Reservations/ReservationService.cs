@@ -118,10 +118,13 @@ public class ReservationService : BaseReservationService, IReservationService
         await ReservationRepository.AddAsync(reservation, cancellationToken);
         await ReservationRepository.SaveChangesAsync(cancellationToken);
 
-        BackgroundJob.Schedule(
+        reservation.SchedulingJobId = BackgroundJob.Schedule(
             () => SendReserveNowRequestAsync(reserveNowRequestId, request, ocppTag, reservation.ReservationId, reservation.Id, cancellationToken),
             request.StartDateTime
             );
+        
+        ReservationRepository.Update(reservation);
+        await ReservationRepository.SaveChangesAsync(cancellationToken);
         
         _logger.LogInformation("Reservation created for charge point with id {ChargePointId} and connector id {ConnectorId}", request.ChargePointId, request.ConnectorId);
     }
@@ -206,6 +209,28 @@ public class ReservationService : BaseReservationService, IReservationService
 
         _mapper.Map(request, reservationToUpdate);
         reservationToUpdate.ConnectorId = connector.Id;
+        
+        ReservationRepository.Update(reservationToUpdate);
+        await ReservationRepository.SaveChangesAsync(cancellationToken);
+        
+        var ocppTag = await _ocppTagGrpcClientService.GetByIdAsync(reservationToUpdate.TagId, cancellationToken);
+        
+        var rescheduledCreateRequest = new CreateReservationRequest
+        {
+            ConnectorId = connector.ConnectorId,
+            ChargePointId = reservationToUpdate.ChargePointId,
+            ExpiryDateTime = reservationToUpdate.ExpiryDateTime,
+            StartDateTime = reservationToUpdate.StartDateTime,
+            Name = reservationToUpdate.Name,
+            Description = reservationToUpdate.Description,
+            OcppTagId = reservationToUpdate.TagId
+        };
+        
+        BackgroundJob.Delete(reservationToUpdate.SchedulingJobId);
+        reservationToUpdate.SchedulingJobId = BackgroundJob.Schedule(
+            () => SendReserveNowRequestAsync(reservationToUpdate.ReservationRequestId, rescheduledCreateRequest, ocppTag, reservationToUpdate.ReservationId, reservationToUpdate.Id, cancellationToken),
+            reservationToUpdate.StartDateTime
+            );
         
         ReservationRepository.Update(reservationToUpdate);
         await ReservationRepository.SaveChangesAsync(cancellationToken);
