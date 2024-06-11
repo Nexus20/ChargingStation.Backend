@@ -9,7 +9,7 @@ public static class HubMessageTypes
     public const string ChargePointAutomaticDisable = nameof(ChargePointAutomaticDisable);
     public const string ChargingProfileSet = nameof(ChargingProfileSet);
     public const string ChargingProfileCleared = nameof(ChargingProfileCleared);
-    public const string ReservationProcessed = nameof(ChargingProfileCleared);
+    public const string ReservationProcessed = nameof(ReservationProcessed);
     public const string ReservationCancellationProcessed = nameof(ChargingProfileCleared);
     public const string ChangeAvailability = nameof(ChangeAvailability);
 }

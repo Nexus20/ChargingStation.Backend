@@ -115,12 +115,13 @@ public class ReservationService : BaseReservationService, IReservationService
             await CheckAndThrowIfConflictingReservationsFoundAsync(request.StartDateTime, request.ExpiryDateTime, request.ChargePointId, connector.Id, TimeSpan.FromMinutes(30), cancellationToken: cancellationToken);
         }
         
+        await ReservationRepository.AddAsync(reservation, cancellationToken);
+        
         reservation.SchedulingJobId = BackgroundJob.Schedule(
             () => SendReserveNowRequestAsync(reserveNowRequestId, request, ocppTag, reservation.ReservationId, reservation.Id, cancellationToken),
             request.StartDateTime
             );
         
-        await ReservationRepository.AddAsync(reservation, cancellationToken);
         await ReservationRepository.SaveChangesAsync(cancellationToken);
         
         _logger.LogInformation("Reservation created for charge point with id {ChargePointId} and connector id {ConnectorId}", request.ChargePointId, request.ConnectorId);
@@ -255,8 +256,8 @@ public class ReservationService : BaseReservationService, IReservationService
             Status = reservationResponse.Status
         };
         
-        var energyLimitExceededSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(reservationConfirmedMessage), nameof(ReservationProcessedMessage));
-        await _publishEndpoint.Publish(energyLimitExceededSignalRMessage, cancellationToken);
+        var reservationConfirmedSignalRMessage = new SignalRMessage(JsonConvert.SerializeObject(reservationConfirmedMessage), nameof(ReservationProcessedMessage));
+        await _publishEndpoint.Publish(reservationConfirmedSignalRMessage, cancellationToken);
         
         _logger.LogInformation("Reservation with id {ReservationId} updated with status {Status}", reservation.ReservationId, reservationResponse.Status);
     }
