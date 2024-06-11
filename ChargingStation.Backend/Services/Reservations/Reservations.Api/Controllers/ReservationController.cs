@@ -44,7 +44,7 @@ public class ReservationController : ControllerBase
     public async Task<IActionResult> CreateReservationAsync([FromBody] CreateReservationRequest request, CancellationToken cancellationToken = default)
     {
         await _reservationService.CreateReservationAsync(request, cancellationToken);
-        return Created();
+        return StatusCode(StatusCodes.Status201Created);
     }
     
     [HttpPut("{id:Guid}")]

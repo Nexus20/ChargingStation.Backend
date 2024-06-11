@@ -115,15 +115,12 @@ public class ReservationService : BaseReservationService, IReservationService
             await CheckAndThrowIfConflictingReservationsFoundAsync(request.StartDateTime, request.ExpiryDateTime, request.ChargePointId, connector.Id, TimeSpan.FromMinutes(30), cancellationToken: cancellationToken);
         }
         
-        await ReservationRepository.AddAsync(reservation, cancellationToken);
-        await ReservationRepository.SaveChangesAsync(cancellationToken);
-
         reservation.SchedulingJobId = BackgroundJob.Schedule(
             () => SendReserveNowRequestAsync(reserveNowRequestId, request, ocppTag, reservation.ReservationId, reservation.Id, cancellationToken),
             request.StartDateTime
             );
         
-        ReservationRepository.Update(reservation);
+        await ReservationRepository.AddAsync(reservation, cancellationToken);
         await ReservationRepository.SaveChangesAsync(cancellationToken);
         
         _logger.LogInformation("Reservation created for charge point with id {ChargePointId} and connector id {ConnectorId}", request.ChargePointId, request.ConnectorId);
@@ -209,9 +206,6 @@ public class ReservationService : BaseReservationService, IReservationService
 
         _mapper.Map(request, reservationToUpdate);
         reservationToUpdate.ConnectorId = connector.Id;
-        
-        ReservationRepository.Update(reservationToUpdate);
-        await ReservationRepository.SaveChangesAsync(cancellationToken);
         
         var ocppTag = await _ocppTagGrpcClientService.GetByIdAsync(reservationToUpdate.TagId, cancellationToken);
         
