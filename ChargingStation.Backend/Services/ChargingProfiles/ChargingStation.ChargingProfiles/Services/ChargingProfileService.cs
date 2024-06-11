@@ -273,7 +273,7 @@ public class ChargingProfileService : IChargingProfileService
         var ocppChargingSchedulePeriods = chargingProfile.ChargingSchedulePeriods.Select(x => new ChargingSchedulePeriod(x.Limit, x.NumberPhases, x.StartPeriod)).ToList();
         var ocppChargingSchedule = new ChargingSchedule(chargingRateUnit, ocppChargingSchedulePeriods)
         {
-            MinChargingRate = decimal.ToDouble(chargingProfile.MinChargingRate),
+            MinChargingRate = chargingProfile.MinChargingRate > 0 ? decimal.ToDouble(chargingProfile.MinChargingRate) : null,
         };
         var ocppChargingProfile = new CsChargingProfiles(ocppChargingSchedule, chargingProfile.ChargingProfileId, chargingProfile.StackLevel, chargingProfilePurpose, chargingProfileKind)
         {
