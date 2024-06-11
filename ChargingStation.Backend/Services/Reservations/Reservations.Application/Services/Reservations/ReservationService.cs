@@ -116,6 +116,10 @@ public class ReservationService : BaseReservationService, IReservationService
         }
         
         await ReservationRepository.AddAsync(reservation, cancellationToken);
+
+        reservation.SchedulingJobId = "-1";
+            
+        await ReservationRepository.SaveChangesAsync(cancellationToken);
         
         reservation.SchedulingJobId = BackgroundJob.Schedule(
             () => SendReserveNowRequestAsync(reserveNowRequestId, request, ocppTag, reservation.ReservationId, reservation.Id, cancellationToken),
@@ -160,10 +164,6 @@ public class ReservationService : BaseReservationService, IReservationService
     /// <remarks>This method must be public, because Hangfire works only with public methods.</remarks>
     public async Task SendReserveNowRequestAsync(string reserveNowRequestId, CreateReservationRequest request, OcppTagResponse ocppTag, int reservationId, Guid reservationGuid, CancellationToken cancellationToken = default)
     {
-        var reserveNowRequest = new ReserveNowRequest(request.ConnectorId, request.ExpiryDateTime, ocppTag.TagId, reservationId);
-        var integrationOcppMessage = CentralSystemRequestIntegrationOcppMessage.Create(request.ChargePointId, reserveNowRequest, Ocpp16ActionTypes.ReserveNow, reserveNowRequestId, OcppProtocolVersions.Ocpp16);
-        await _publishEndpoint.Publish(integrationOcppMessage, cancellationToken);
-        
         var reservationEntity = await ReservationRepository.GetByIdAsync(reservationGuid, cancellationToken);
         
         if (reservationEntity is null)
@@ -171,11 +171,23 @@ public class ReservationService : BaseReservationService, IReservationService
             _logger.LogWarning("Reservation with id {ReservationId} not found", reservationId);
             return;
         }
+
+        if (reservationEntity.IsCancelled)
+        {
+            _logger.LogWarning("Reservation with id {ReservationId} is already canceled", reservationId);
+            return;
+        }
+        
+        var reserveNowRequest = new ReserveNowRequest(request.ConnectorId, request.ExpiryDateTime, ocppTag.TagId, reservationId);
+        var integrationOcppMessage = CentralSystemRequestIntegrationOcppMessage.Create(request.ChargePointId, reserveNowRequest, Ocpp16ActionTypes.ReserveNow, reserveNowRequestId, OcppProtocolVersions.Ocpp16);
+        await _publishEndpoint.Publish(integrationOcppMessage, cancellationToken);
         
         reservationEntity.Status = "RequestSent";
         
         ReservationRepository.Update(reservationEntity);
         await ReservationRepository.SaveChangesAsync(cancellationToken);
+        
+        _logger.LogInformation("ReserveNow request sent to charge point with id {ChargePointId} and connector id {ConnectorId} with reservation id {ReservationId}", request.ChargePointId, request.ConnectorId, reservationId);
     }
     
     public async Task UpdateReservationAsync(UpdateReservationRequest request, CancellationToken cancellationToken = default)
@@ -262,13 +274,25 @@ public class ReservationService : BaseReservationService, IReservationService
         _logger.LogInformation("Reservation with id {ReservationId} updated with status {Status}", reservation.ReservationId, reservationResponse.Status);
     }
     
-    public async Task CreateReservationCancellation(CreateReservationCancellationRequest request, CancellationToken cancellationToken = default)
+    public async Task<ReservationCancellationCreationResultStatus> CreateReservationCancellation(CreateReservationCancellationRequest request, CancellationToken cancellationToken = default)
     {
         var reservation = await ReservationRepository.GetByIdAsync(request.ReservationId, cancellationToken);
         
         if (reservation is null)
         {
             throw new NotFoundException($"Reservation with id {request.ReservationId} not found");
+        }
+
+        if (reservation.Status == "Created")
+        {
+            BackgroundJob.Delete(reservation.SchedulingJobId);
+            
+            reservation.IsCancelled = true;
+            ReservationRepository.Update(reservation);
+            await ReservationRepository.SaveChangesAsync(cancellationToken);
+            
+            _logger.LogInformation("Reservation with id {ReservationId} canceled", request.ReservationId);
+            return ReservationCancellationCreationResultStatus.Cancelled;
         }
         
         var cancelReservationRequestId = Guid.NewGuid().ToString("N");
@@ -283,6 +307,7 @@ public class ReservationService : BaseReservationService, IReservationService
         await _publishEndpoint.Publish(integrationOcppMessage, cancellationToken);
         
         _logger.LogInformation("Reservation with id {ReservationId} canceled", request.ReservationId);
+        return ReservationCancellationCreationResultStatus.RequestSent;
     }
     
     public async Task ProcessReservationCancellationResponseAsync(CancelReservationResponse cancelReservationResponse, string ocppMessageId, CancellationToken cancellationToken = default)
