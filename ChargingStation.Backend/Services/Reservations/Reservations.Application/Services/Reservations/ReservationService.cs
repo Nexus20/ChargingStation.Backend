@@ -112,23 +112,28 @@ public class ReservationService : BaseReservationService, IReservationService
             
             reservation.ConnectorId = connector.Id;
             
-            await CheckAndThrowIfConflictingReservationsFoundAsync(request.StartDateTime, request.ExpiryDateTime, request.ChargePointId, connector.Id, TimeSpan.FromMinutes(30), cancellationToken);
+            await CheckAndThrowIfConflictingReservationsFoundAsync(request.StartDateTime, request.ExpiryDateTime, request.ChargePointId, connector.Id, TimeSpan.FromMinutes(30), cancellationToken: cancellationToken);
         }
         
         await ReservationRepository.AddAsync(reservation, cancellationToken);
         await ReservationRepository.SaveChangesAsync(cancellationToken);
 
-        BackgroundJob.Schedule(
+        reservation.SchedulingJobId = BackgroundJob.Schedule(
             () => SendReserveNowRequestAsync(reserveNowRequestId, request, ocppTag, reservation.ReservationId, reservation.Id, cancellationToken),
             request.StartDateTime
             );
         
+        ReservationRepository.Update(reservation);
+        await ReservationRepository.SaveChangesAsync(cancellationToken);
+        
         _logger.LogInformation("Reservation created for charge point with id {ChargePointId} and connector id {ConnectorId}", request.ChargePointId, request.ConnectorId);
     }
 
-    private async Task CheckAndThrowIfConflictingReservationsFoundAsync(DateTime startDateTime, DateTime expiryDateTime, Guid chargePointId, Guid connectorId, TimeSpan gapBetweenReservations, CancellationToken cancellationToken = default)
+    private async Task CheckAndThrowIfConflictingReservationsFoundAsync(DateTime startDateTime, DateTime expiryDateTime,
+        Guid chargePointId, Guid connectorId, TimeSpan gapBetweenReservations, Guid? reservationToSkipFromComparison = null,
+        CancellationToken cancellationToken = default)
     {
-        var conflictingReservationsSpecification = new GetConflictingReservationsSpecification(chargePointId, connectorId);
+        var conflictingReservationsSpecification = new GetConflictingReservationsSpecification(chargePointId, connectorId, reservationToSkipFromComparison);
         var reservationsWithSameConnector = await ReservationRepository.GetAsync(conflictingReservationsSpecification, cancellationToken: cancellationToken);
         
         var conflictingReservations = reservationsWithSameConnector.Where(r =>
@@ -194,10 +199,38 @@ public class ReservationService : BaseReservationService, IReservationService
             throw new NotFoundException($"Connector with id {request.ConnectorId} not found");
         }
         
-        await CheckAndThrowIfConflictingReservationsFoundAsync(request.StartDateTime, request.ExpiryDateTime, request.ChargePointId, connector.Id, TimeSpan.FromMinutes(30), cancellationToken);
+        await CheckAndThrowIfConflictingReservationsFoundAsync(request.StartDateTime,
+            request.ExpiryDateTime,
+            request.ChargePointId,
+            connector.Id,
+            TimeSpan.FromMinutes(30),
+            request.Id,
+            cancellationToken);
 
         _mapper.Map(request, reservationToUpdate);
         reservationToUpdate.ConnectorId = connector.Id;
+        
+        ReservationRepository.Update(reservationToUpdate);
+        await ReservationRepository.SaveChangesAsync(cancellationToken);
+        
+        var ocppTag = await _ocppTagGrpcClientService.GetByIdAsync(reservationToUpdate.TagId, cancellationToken);
+        
+        var rescheduledCreateRequest = new CreateReservationRequest
+        {
+            ConnectorId = connector.ConnectorId,
+            ChargePointId = reservationToUpdate.ChargePointId,
+            ExpiryDateTime = reservationToUpdate.ExpiryDateTime,
+            StartDateTime = reservationToUpdate.StartDateTime,
+            Name = reservationToUpdate.Name,
+            Description = reservationToUpdate.Description,
+            OcppTagId = reservationToUpdate.TagId
+        };
+        
+        BackgroundJob.Delete(reservationToUpdate.SchedulingJobId);
+        reservationToUpdate.SchedulingJobId = BackgroundJob.Schedule(
+            () => SendReserveNowRequestAsync(reservationToUpdate.ReservationRequestId, rescheduledCreateRequest, ocppTag, reservationToUpdate.ReservationId, reservationToUpdate.Id, cancellationToken),
+            reservationToUpdate.StartDateTime
+            );
         
         ReservationRepository.Update(reservationToUpdate);
         await ReservationRepository.SaveChangesAsync(cancellationToken);

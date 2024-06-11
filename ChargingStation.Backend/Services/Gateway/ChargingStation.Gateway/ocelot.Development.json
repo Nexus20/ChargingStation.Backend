@@ -463,6 +463,18 @@
       "UpstreamHttpMethod": [ "GET" ]
     },
     {
+      "DownstreamPathTemplate": "/api/reservation/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "reservations.api",
+          "Port": 8080
+        }
+      ],
+      "UpstreamPathTemplate": "/api/reservation/{id}",
+      "UpstreamHttpMethod": [ "PUT" ]
+    },
+    {
       "DownstreamPathTemplate": "/api/reservation",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
