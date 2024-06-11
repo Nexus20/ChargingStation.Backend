@@ -59,11 +59,16 @@ public class ReservationController : ControllerBase
     
     [HttpPost("cancel")]
     [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Driver}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status202Accepted)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> CancelReservationAsync([FromBody] CreateReservationCancellationRequest request, CancellationToken cancellationToken = default)
     {
-        await _reservationService.CreateReservationCancellation(request, cancellationToken);
+        var result = await _reservationService.CreateReservationCancellation(request, cancellationToken);
+
+        if (result == ReservationCancellationCreationResultStatus.Cancelled)
+            return Ok();
+
         return Accepted();
     }
     
