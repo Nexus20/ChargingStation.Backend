@@ -5,7 +5,7 @@ using ChargingStation.Infrastructure.Specifications;
 namespace Depots.Application.Specifications;
 
 
-internal class GetDepotsSpecification : Specification<Depot>
+public class GetDepotsSpecification : Specification<Depot>
 {
     public GetDepotsSpecification(GetDepotsRequest request)
     {
