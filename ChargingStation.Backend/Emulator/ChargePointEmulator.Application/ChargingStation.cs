@@ -392,6 +392,45 @@ public class ChargingStation : IAsyncDisposable
                     }
                 }
 
+                try
+                {
+                    chargePoint = await dbContext.ChargePoints
+                        .AsNoTracking()
+                        .Include(x => x.Reservations)
+                        .ThenInclude(x => x.Connector)
+                        .Include(chargePoint => chargePoint.Reservations)
+                        .ThenInclude(reservation => reservation.Tag)
+                        .FirstOrDefaultAsync(x => x.Reservations != null && x.Id == Id, cancellationToken: cancellationToken);
+                
+                    if (chargePoint is not null)
+                    {
+                        var reservations = chargePoint.Reservations
+                            .Where(x => DateTime.UtcNow >= x.StartDateTime 
+                                        && DateTime.UtcNow <= x.ExpiryDateTime 
+                                        && x is { IsCancelled: false, IsUsed: false })
+                            .ToList();
+                    
+                        foreach (var reservation in reservations)
+                        {
+                            if(!Enum.TryParse<ReserveNowResponseStatus>(reservation.Status, out var parsedStatus))
+                                continue;
+                        
+                            State.Reservations.TryAdd(reservation.ReservationId, new ReservationState
+                            {
+                                ReservationId = reservation.ReservationId,
+                                ConnectorId = reservation.Connector.ConnectorId,
+                                ExpirationDate = reservation.ExpiryDateTime,
+                                IdTag = reservation.Tag.TagId,
+                                Status = parsedStatus
+                            });
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
                 await SaveStateAsync(cancellationToken);
             }
             catch (Exception e)
@@ -901,6 +940,7 @@ public class ChargingStation : IAsyncDisposable
             };
 
             State.Reservations.TryAdd(request.ReservationId, reservationState);
+            State.Connectors[request.ConnectorId].Status = StatusNotificationRequestStatus.Reserved;
             await SaveStateAsync(cancellationToken);
 
             var reserveNowResponse = new ReserveNowResponse(ReserveNowResponseStatus.Accepted);
@@ -908,12 +948,16 @@ public class ChargingStation : IAsyncDisposable
             var ocppMessage = new OcppMessage(OcppMessageTypes.CallResult, uniqueId, jsonPayload);
             var textMessage = $"[{ocppMessage.MessageType},\"{ocppMessage.UniqueId}\",{ocppMessage.JsonPayload}]";
             await SendMessageAsync(textMessage, cancellationToken);
+
+            await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+            
+            await SendConnectorStatusNotificationAsync(request.ConnectorId, StatusNotificationRequestStatus.Reserved, cancellationToken);
         }
     }
     
     private async Task HandleCancelReservationRequestAsync(CancelReservationRequest request, string uniqueId, CancellationToken cancellationToken)
     {
-        var cancelReservationResponse = State.Reservations.TryRemove(request.ReservationId, out _) 
+        var cancelReservationResponse = State.Reservations.TryRemove(request.ReservationId, out var reservationToCancel) 
             ? new CancelReservationResponse(CancelReservationResponseStatus.Accepted) 
             : new CancelReservationResponse(CancelReservationResponseStatus.Rejected);
         
@@ -921,6 +965,15 @@ public class ChargingStation : IAsyncDisposable
         var ocppMessage = new OcppMessage(OcppMessageTypes.CallResult, uniqueId, jsonPayload);
         var textMessage = $"[{ocppMessage.MessageType},\"{ocppMessage.UniqueId}\",{ocppMessage.JsonPayload}]";
         await SendMessageAsync(textMessage, cancellationToken);
+
+        if (reservationToCancel is not null && cancelReservationResponse.Status == CancelReservationResponseStatus.Accepted)
+        {
+            State.Connectors[reservationToCancel.ConnectorId].Status = StatusNotificationRequestStatus.Available;
+
+            await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+            
+            await SendConnectorStatusNotificationAsync(reservationToCancel.ConnectorId, StatusNotificationRequestStatus.Available, cancellationToken);
+        }
     }
     
     private async Task HandleChangeAvailabilityRequestAsync(ChangeAvailabilityRequest request, string uniqueId, CancellationToken cancellationToken)

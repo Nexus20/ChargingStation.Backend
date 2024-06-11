@@ -271,8 +271,15 @@ public class ChargingProfileService : IChargingProfileService
 
         var chargingRateUnit = Enum.Parse<ChargingScheduleChargingRateUnit>(chargingProfile.SchedulingUnit.ToString());
         var ocppChargingSchedulePeriods = chargingProfile.ChargingSchedulePeriods.Select(x => new ChargingSchedulePeriod(x.Limit, x.NumberPhases, x.StartPeriod)).ToList();
-        var ocppChargingSchedule = new ChargingSchedule(chargingRateUnit, ocppChargingSchedulePeriods);
-        var ocppChargingProfile = new CsChargingProfiles(ocppChargingSchedule, chargingProfile.ChargingProfileId, chargingProfile.StackLevel, chargingProfilePurpose, chargingProfileKind);
+        var ocppChargingSchedule = new ChargingSchedule(chargingRateUnit, ocppChargingSchedulePeriods)
+        {
+            MinChargingRate = decimal.ToDouble(chargingProfile.MinChargingRate),
+        };
+        var ocppChargingProfile = new CsChargingProfiles(ocppChargingSchedule, chargingProfile.ChargingProfileId, chargingProfile.StackLevel, chargingProfilePurpose, chargingProfileKind)
+        {
+            ValidFrom = chargingProfile.ValidFrom,
+            ValidTo = chargingProfile.ValidTo
+        };
         
         if (request.TransactionId.HasValue)
         {
