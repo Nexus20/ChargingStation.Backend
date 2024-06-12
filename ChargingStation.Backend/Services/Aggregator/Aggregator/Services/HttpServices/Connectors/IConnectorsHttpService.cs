@@ -1,6 +1,6 @@
 ﻿using ChargingStation.Common.Models.Connectors.Responses;
 
-namespace Aggregator.Services.Connectors;
+namespace Aggregator.Services.HttpServices.Connectors;
 
 public interface IConnectorsHttpService
 {

@@ -16,7 +16,7 @@ public class DepotGrpcService : DepotsGrpc.DepotsGrpcBase
 
     public override async Task<DepotGrpcResponse> GetById(GetDepotByIdGrpcRequest request, ServerCallContext context)
     {
-        var response = await _depotService.GetByIdAsync(Guid.Parse(request.Id), context.CancellationToken);
+        var response = await _depotService.GetByIdAsync(Guid.Parse(request.Id), Guid.Empty, false, context.CancellationToken);
         
         var grpcResponse = response.ToGrpcResponse();
         return grpcResponse;

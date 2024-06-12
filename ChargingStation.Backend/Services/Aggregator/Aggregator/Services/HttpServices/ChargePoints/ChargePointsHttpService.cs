@@ -1,7 +1,7 @@
 using ChargingStation.Common.Models.ChargePoints.Responses;
 using Microsoft.AspNetCore.Http.Extensions;
 
-namespace Aggregator.Services.ChargePoints;
+namespace Aggregator.Services.HttpServices.ChargePoints;
 
 public class ChargePointsHttpService : IChargePointsHttpService
 {

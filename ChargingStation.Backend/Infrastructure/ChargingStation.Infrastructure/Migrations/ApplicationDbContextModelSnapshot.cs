@@ -314,7 +314,8 @@ namespace ChargingStation.Infrastructure.Migrations
 
                     b.HasIndex("ChargingProfileId");
 
-                    b.HasIndex("ConnectorId");
+                    b.HasIndex("ConnectorId", "ChargingProfileId")
+                        .IsUnique();
 
                     b.ToTable("ConnectorChargingProfile");
                 });
@@ -677,6 +678,10 @@ namespace ChargingStation.Infrastructure.Migrations
                     b.Property<string>("ReservationRequestId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SchedulingJobId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("StartDateTime")
                         .HasColumnType("datetime2");

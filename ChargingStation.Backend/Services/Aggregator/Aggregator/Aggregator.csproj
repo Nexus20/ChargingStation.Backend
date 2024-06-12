@@ -23,5 +23,9 @@
     <ProjectReference Include="..\..\..\Infrastructure\ChargingStation.Infrastructure\ChargingStation.Infrastructure.csproj" />
     <ProjectReference Include="..\..\..\Infrastructure\ChargingStation.InternalCommunication\ChargingStation.InternalCommunication.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\HttpServices\" />
+  </ItemGroup>
   
 </Project>

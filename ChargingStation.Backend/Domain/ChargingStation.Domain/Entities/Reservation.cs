@@ -36,4 +36,5 @@ public class Reservation : Entity, ITimeMarkable
     
     public string? Name { get; set; }
     public string? Description { get; set; }
+    public string SchedulingJobId { get; set; } = null!;
 }

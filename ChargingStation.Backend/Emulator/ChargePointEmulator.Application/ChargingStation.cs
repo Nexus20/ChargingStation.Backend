@@ -12,17 +12,24 @@ using ChargingStation.Common.Messages_OCPP16.Requests.Enums;
 using ChargingStation.Common.Messages_OCPP16.Responses;
 using ChargingStation.Common.Messages_OCPP16.Responses.Enums;
 using ChargingStation.Common.Models.General;
+using ChargingStation.Infrastructure.Persistence;
 using Microsoft.AspNetCore.SignalR.Client;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using ChargingScheduleChargingRateUnit = ChargingStation.Common.Messages_OCPP16.Responses.Enums.ChargingScheduleChargingRateUnit;
+using ChargingSchedulePeriod = ChargingStation.Common.Messages_OCPP16.Responses.Enums.ChargingSchedulePeriod;
 
 namespace ChargePointEmulator.Application;
 
 public class ChargingStation : IAsyncDisposable
 {
     private readonly IChargingStationStateRepository _stateRepository;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
     private const string MessageRegExp = "^\\[\\s*(\\d)\\s*,\\s*\"([^\"]*)\"\\s*,(?:\\s*\"(\\w*)\"\\s*,)?\\s*(.*)\\s*\\]$";
     private const string OcppProtocol = "ocpp1.6";
     private readonly SemaphoreSlim _connectSemaphore = new(1, 1);
+    private readonly SemaphoreSlim _stateSemaphore = new(1, 1);
     
     private ClientWebSocket?  _webSocket;
     public WebSocketState WebSocketState => _webSocket?.State ?? WebSocketState.None;
@@ -34,10 +41,12 @@ public class ChargingStation : IAsyncDisposable
 
     public ChargingStationState State { get; set; }
 
-    public ChargingStation(Guid id, IChargingStationStateRepository stateRepository, string? hubUri = null)
+    public ChargingStation(Guid id, IChargingStationStateRepository stateRepository, IServiceScopeFactory serviceScopeFactory,
+        string? hubUri = null)
     {
         Id = id;
         _stateRepository = stateRepository;
+        _serviceScopeFactory = serviceScopeFactory;
         State = new ChargingStationState { Id = id.ToString() };
         
         if (hubUri is not null)
@@ -152,13 +161,50 @@ public class ChargingStation : IAsyncDisposable
     private List<MeterValuesRequest> GenerateMeterValuesForChargingSession(int connectorId, int transactionId, int intervalInSeconds, int totalIntervals)
     {
         var meterValuesRequests = new List<MeterValuesRequest>();
-        double energyConsumed = 0; // Начинаем с 0 кВт*ч
-        double power = 50; // Мощность в кВт, предположим, что она постоянна
+        double energyConsumed = 0; // Start from 0 кВт*ч
+        double power = 1000; // Power W
         var random = new Random();
 
+        if(!State.Connectors[connectorId].ChargingProfiles.IsEmpty)
+        {
+            var relevantChargingProfiles = State.Connectors[connectorId].ChargingProfiles.Values.Where(x => x.ValidFrom <= DateTime.UtcNow && x.ValidTo >= DateTime.UtcNow).ToList();
+
+            if (relevantChargingProfiles.Count > 0)
+            {
+                var highestPriorityChargeProfile = relevantChargingProfiles
+                    .Where(x => x.ChargingSchedule.ChargingRateUnit == ChargingScheduleChargingRateUnit.W)
+                    .MaxBy(x => x.StackLevel);
+
+                var minChargingRate = highestPriorityChargeProfile.ChargingSchedule.MinChargingRate;
+                
+                var relevantChargingSchedulePeriods = highestPriorityChargeProfile.ChargingSchedule
+                    .ChargingSchedulePeriod
+                    .OrderByDescending(x => x.StartPeriod)
+                    .ToList();
+
+                ChargingSchedulePeriod currentChargingSchedulePeriod = null;
+                
+                foreach (var relevantChargingSchedulePeriod in relevantChargingSchedulePeriods)
+                {
+                    if(DateTime.UtcNow <= highestPriorityChargeProfile.ValidFrom + TimeSpan.FromSeconds(relevantChargingSchedulePeriod.StartPeriod))
+                        break;
+
+                    currentChargingSchedulePeriod = relevantChargingSchedulePeriod;
+                }
+
+                if (currentChargingSchedulePeriod is not null)
+                {
+                    if(minChargingRate.HasValue)
+                        power = random.NextDouble() * (currentChargingSchedulePeriod.Limit - minChargingRate.Value) + minChargingRate.Value;
+                    else
+                        power = currentChargingSchedulePeriod.Limit - 1;
+                }
+            }
+        }
+        
         for (var i = 0; i < totalIntervals; i++)
         {
-            energyConsumed += power * (intervalInSeconds / 3600.0); // Добавляем потребленную энергию за интервал
+            energyConsumed += power * (intervalInSeconds / 3600.0); // Add energy consumed in this interval
 
             var meterValue = new MeterValue(
                 Timestamp: DateTimeOffset.UtcNow.AddSeconds(i * intervalInSeconds),
@@ -271,6 +317,126 @@ public class ChargingStation : IAsyncDisposable
                 State = state;
             else
                 await _stateRepository.InsertAsync(State, cancellationToken);
+
+            try
+            {
+                using var scope = _serviceScopeFactory.CreateScope();
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                
+                var chargePoint = await dbContext.ChargePoints
+                    .AsNoTracking()
+                    .Include(x => x.Connectors)
+                    .ThenInclude(x => x.ConnectorChargingProfiles)
+                    .ThenInclude(x => x.ChargingProfile)
+                    .ThenInclude(x => x.ChargingSchedulePeriods)
+                    .FirstOrDefaultAsync(x => x.Id == Id, cancellationToken: cancellationToken);
+
+                if (chargePoint is not null)
+                {
+                    var connectorChargingProfiles = chargePoint.Connectors
+                        .SelectMany(x => x.ConnectorChargingProfiles)
+                        .ToList();
+
+                    foreach (var connectorChargingProfile in connectorChargingProfiles)
+                    {
+                        if (!State.Connectors.TryGetValue(connectorChargingProfile.Connector.ConnectorId, out _)) 
+                            continue;
+                        
+                        var chargingProfile = connectorChargingProfile.ChargingProfile;
+                            
+                        var chargingProfileKind = Enum.Parse<CsChargingProfilesChargingProfileKind>(chargingProfile.ChargingProfileKind.ToString());
+                        var chargingProfilePurpose = Enum.Parse<CsChargingProfilesChargingProfilePurpose>(chargingProfile.ChargingProfilePurpose.ToString());
+                            
+                        var chargingRateUnit = Enum.Parse<ChargingScheduleChargingRateUnit>(chargingProfile.SchedulingUnit.ToString());
+                        var ocppChargingSchedulePeriods = chargingProfile.ChargingSchedulePeriods.Select(x => new ChargingSchedulePeriod(x.Limit, x.NumberPhases, x.StartPeriod)).ToList();
+                        var ocppChargingSchedule = new ChargingSchedule(chargingRateUnit, ocppChargingSchedulePeriods);
+                        var ocppChargingProfile = new CsChargingProfiles(ocppChargingSchedule, chargingProfile.ChargingProfileId, chargingProfile.StackLevel, chargingProfilePurpose, chargingProfileKind)
+                        {
+                            ValidFrom = chargingProfile.ValidFrom,
+                            ValidTo = chargingProfile.ValidTo,
+                            RecurrencyKind = Enum.Parse<CsChargingProfilesRecurrencyKind>(chargingProfile.RecurrencyKind.ToString()),
+                        };
+                            
+                        State.Connectors[connectorChargingProfile.Connector.ConnectorId].ChargingProfiles.TryAdd(connectorChargingProfile.ChargingProfile.ChargingProfileId, ocppChargingProfile);
+                    }
+                }
+                
+                chargePoint = await dbContext.ChargePoints
+                    .AsNoTracking()
+                    .Include(x => x.Connectors)
+                    .ThenInclude(x => x.ConnectorStatuses)
+                    .FirstOrDefaultAsync(x => x.Id == Id, cancellationToken: cancellationToken);
+
+                if (chargePoint is not null)
+                {
+                    foreach (var connector in chargePoint.Connectors)
+                    {
+                        if(connector.ConnectorStatuses.IsNullOrEmpty())
+                            continue;
+                        
+                        var lastStatus = connector.ConnectorStatuses.MaxBy(cs => cs.StatusUpdatedTimestamp);
+                        
+                        if (lastStatus is not null)
+                        {
+                            var connectorState = new ConnectorState()
+                            {
+                                ConnectorId = connector.ConnectorId,
+                                Status = Enum.Parse<StatusNotificationRequestStatus>(lastStatus.CurrentStatus)
+                            };
+                            
+                            if(State.Connectors.TryGetValue(connector.ConnectorId, out var stateConnector))
+                                stateConnector.Status = connectorState.Status;
+                            else
+                                State.Connectors.TryAdd(connector.ConnectorId, connectorState);
+                        }
+                    }
+                }
+
+                try
+                {
+                    chargePoint = await dbContext.ChargePoints
+                        .AsNoTracking()
+                        .Include(x => x.Reservations)
+                        .ThenInclude(x => x.Connector)
+                        .Include(chargePoint => chargePoint.Reservations)
+                        .ThenInclude(reservation => reservation.Tag)
+                        .FirstOrDefaultAsync(x => x.Reservations != null && x.Id == Id, cancellationToken: cancellationToken);
+                
+                    if (chargePoint is not null)
+                    {
+                        var reservations = chargePoint.Reservations
+                            .Where(x => DateTime.UtcNow >= x.StartDateTime 
+                                        && DateTime.UtcNow <= x.ExpiryDateTime 
+                                        && x is { IsCancelled: false, IsUsed: false })
+                            .ToList();
+                    
+                        foreach (var reservation in reservations)
+                        {
+                            if(!Enum.TryParse<ReserveNowResponseStatus>(reservation.Status, out var parsedStatus))
+                                continue;
+                        
+                            State.Reservations.TryAdd(reservation.ReservationId, new ReservationState
+                            {
+                                ReservationId = reservation.ReservationId,
+                                ConnectorId = reservation.Connector.ConnectorId,
+                                ExpirationDate = reservation.ExpiryDateTime,
+                                IdTag = reservation.Tag.TagId,
+                                Status = parsedStatus
+                            });
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
+                await SaveStateAsync(cancellationToken);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
             
             await _connectSemaphore.WaitAsync(cancellationToken);
             try
@@ -424,7 +590,15 @@ public class ChargingStation : IAsyncDisposable
 
     public async Task SaveStateAsync(CancellationToken cancellationToken = default)
     {
-        await _stateRepository.UpdateAsync(State, cancellationToken);
+        await _stateSemaphore.WaitAsync(cancellationToken);
+        try
+        {
+            await _stateRepository.UpdateAsync(State, cancellationToken);
+        }
+        finally
+        {
+            _stateSemaphore.Release();
+        }
     }
 
     public async Task StartReceivingMessagesAsync(CancellationToken cancellationToken)
@@ -458,7 +632,7 @@ public class ChargingStation : IAsyncDisposable
         {
             if (_webSocket.State != WebSocketState.Open)
             {
-                    throw new InvalidOperationException("WebSocket is not open");
+                throw new InvalidOperationException("WebSocket is not open");
             }
 
             var payload = Encoding.UTF8.GetBytes(jsonPayload);
@@ -573,7 +747,7 @@ public class ChargingStation : IAsyncDisposable
 
             if (connectorId.HasValue)
             {
-                State.Connectors[connectorId.Value].ChargingProfiles.Remove(request.Id.Value);
+                State.Connectors[connectorId.Value].ChargingProfiles.Remove(request.Id.Value, out _);
                 await SaveStateAsync(cancellationToken);
                 profileRemoved = true;
             }
@@ -598,7 +772,7 @@ public class ChargingStation : IAsyncDisposable
                 
                 foreach (var profile in profilesToRemove)
                 {
-                    connector.ChargingProfiles.Remove(profile.ChargingProfileId);
+                    connector.ChargingProfiles.Remove(profile.ChargingProfileId, out _);
                     profileRemoved = true;
                 }
             }
@@ -616,7 +790,7 @@ public class ChargingStation : IAsyncDisposable
                 
                 foreach (var profile in profilesToRemove)
                 {
-                    connector.ChargingProfiles.Remove(profile.ChargingProfileId);
+                    connector.ChargingProfiles.Remove(profile.ChargingProfileId, out _);
                     profileRemoved = true;
                 }
             }
@@ -639,10 +813,19 @@ public class ChargingStation : IAsyncDisposable
         
         if (request.CsChargingProfiles.ChargingProfilePurpose != CsChargingProfilesChargingProfilePurpose.TxProfile)
         {
-            // find charging profile with same profile id
-            if(connector.ChargingProfiles.TryGetValue(request.CsChargingProfiles.ChargingProfileId, out var profile))
+            if (connector.ConnectorId != 0 && request.CsChargingProfiles.ChargingProfilePurpose == CsChargingProfilesChargingProfilePurpose.ChargePointMaxProfile)
             {
-                connector.ChargingProfiles[request.CsChargingProfiles.ChargingProfileId] = request.CsChargingProfiles;
+                var rejectedResponse = new SetChargingProfileResponse(SetChargingProfileResponseStatus.Rejected);
+                var rejectedJsonPayload = JsonConvert.SerializeObject(rejectedResponse);
+                var rejectedOcppMessage = new OcppMessage(OcppMessageTypes.CallResult, uniqueId, rejectedJsonPayload);
+                var rejectedTextMessage = $"[{rejectedOcppMessage.MessageType},\"{rejectedOcppMessage.UniqueId}\",{rejectedOcppMessage.JsonPayload}]";
+                await SendMessageAsync(rejectedTextMessage, cancellationToken);
+            }
+            
+            // find charging profile with same profile id
+            if(connector.ChargingProfiles.TryGetValue(request.CsChargingProfiles.ChargingProfileId, out _))
+            {
+                State.Connectors[request.ConnectorId].ChargingProfiles[request.CsChargingProfiles.ChargingProfileId] = request.CsChargingProfiles;
             }
             else
             {
@@ -650,11 +833,11 @@ public class ChargingStation : IAsyncDisposable
                 
                 if (sameStackAndPurposeProfile is not null)
                 {
-                    connector.ChargingProfiles[sameStackAndPurposeProfile.ChargingProfileId] = request.CsChargingProfiles;
+                    State.Connectors[request.ConnectorId].ChargingProfiles[sameStackAndPurposeProfile.ChargingProfileId] = request.CsChargingProfiles;
                 }
                 else
                 {
-                    connector.ChargingProfiles.TryAdd(request.CsChargingProfiles.ChargingProfileId, request.CsChargingProfiles);
+                    State.Connectors[request.ConnectorId].ChargingProfiles.TryAdd(request.CsChargingProfiles.ChargingProfileId, request.CsChargingProfiles);
                 }
             }
 
@@ -757,6 +940,7 @@ public class ChargingStation : IAsyncDisposable
             };
 
             State.Reservations.TryAdd(request.ReservationId, reservationState);
+            State.Connectors[request.ConnectorId].Status = StatusNotificationRequestStatus.Reserved;
             await SaveStateAsync(cancellationToken);
 
             var reserveNowResponse = new ReserveNowResponse(ReserveNowResponseStatus.Accepted);
@@ -764,12 +948,16 @@ public class ChargingStation : IAsyncDisposable
             var ocppMessage = new OcppMessage(OcppMessageTypes.CallResult, uniqueId, jsonPayload);
             var textMessage = $"[{ocppMessage.MessageType},\"{ocppMessage.UniqueId}\",{ocppMessage.JsonPayload}]";
             await SendMessageAsync(textMessage, cancellationToken);
+
+            await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+            
+            await SendConnectorStatusNotificationAsync(request.ConnectorId, StatusNotificationRequestStatus.Reserved, cancellationToken);
         }
     }
     
     private async Task HandleCancelReservationRequestAsync(CancelReservationRequest request, string uniqueId, CancellationToken cancellationToken)
     {
-        var cancelReservationResponse = State.Reservations.TryRemove(request.ReservationId, out _) 
+        var cancelReservationResponse = State.Reservations.TryRemove(request.ReservationId, out var reservationToCancel) 
             ? new CancelReservationResponse(CancelReservationResponseStatus.Accepted) 
             : new CancelReservationResponse(CancelReservationResponseStatus.Rejected);
         
@@ -777,6 +965,15 @@ public class ChargingStation : IAsyncDisposable
         var ocppMessage = new OcppMessage(OcppMessageTypes.CallResult, uniqueId, jsonPayload);
         var textMessage = $"[{ocppMessage.MessageType},\"{ocppMessage.UniqueId}\",{ocppMessage.JsonPayload}]";
         await SendMessageAsync(textMessage, cancellationToken);
+
+        if (reservationToCancel is not null && cancelReservationResponse.Status == CancelReservationResponseStatus.Accepted)
+        {
+            State.Connectors[reservationToCancel.ConnectorId].Status = StatusNotificationRequestStatus.Available;
+
+            await Task.Delay(TimeSpan.FromSeconds(5), cancellationToken);
+            
+            await SendConnectorStatusNotificationAsync(reservationToCancel.ConnectorId, StatusNotificationRequestStatus.Available, cancellationToken);
+        }
     }
     
     private async Task HandleChangeAvailabilityRequestAsync(ChangeAvailabilityRequest request, string uniqueId, CancellationToken cancellationToken)
@@ -824,7 +1021,7 @@ public class ChargingStation : IAsyncDisposable
                 State.Connectors[request.ConnectorId].Status = request.Type == ChangeAvailabilityRequestType.Operative
                     ? StatusNotificationRequestStatus.Available
                     : StatusNotificationRequestStatus.Unavailable;
-                await SendConnectorStatusNotificationAsync(request.ConnectorId, StatusNotificationRequestStatus.Unavailable, cancellationToken);
+                await SendConnectorStatusNotificationAsync(request.ConnectorId, State.Connectors[request.ConnectorId].Status, cancellationToken);
             }
         }
     }
@@ -972,9 +1169,12 @@ public class ChargingStation : IAsyncDisposable
         {
             Console.WriteLine("Central system accepted boot notification");
 
-            for (var connectorId = 1; connectorId < 5; connectorId++)
+            if (State.Connectors.IsEmpty)
             {
-                await SendConnectorStatusNotificationAsync(connectorId, StatusNotificationRequestStatus.Available, cancellationToken);
+                for (var connectorId = 1; connectorId < 5; connectorId++)
+                {
+                    await SendConnectorStatusNotificationAsync(connectorId, StatusNotificationRequestStatus.Available, cancellationToken);
+                }
             }
             
             _ = Task.Run(async () =>

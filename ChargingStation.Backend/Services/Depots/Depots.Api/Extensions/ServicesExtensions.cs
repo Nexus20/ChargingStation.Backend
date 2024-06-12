@@ -28,7 +28,7 @@ public static class ServicesExtensions
                 };
             });
 
-        services.AddDepotApplicationServices();
+        services.AddDepotApplicationServices(configuration);
 
         return services;
     }

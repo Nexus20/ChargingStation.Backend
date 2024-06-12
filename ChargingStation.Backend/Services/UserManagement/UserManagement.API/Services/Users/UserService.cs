@@ -126,7 +126,7 @@ public class UserService : IUserService
 
         var userDepot = new ApplicationUserDepot
         {
-            ApplicationUserId = Guid.Parse(user.Id),
+            ApplicationUserId = user.ApplicationUserId,
             DepotId = Guid.Parse(depotId)
         };
 
@@ -204,6 +204,15 @@ public class UserService : IUserService
 
         _applicationUserDepotRepository.Remove(applicationUserDepotToRemove);
         await _applicationUserDepotRepository.SaveChangesAsync(cancellationToken);
+    }
+
+    public async Task<List<Guid>> GetUserDepotsAccesses(Guid userId, CancellationToken cancellationToken)
+    {
+        var specification = new GetUserDepotsSpecification(userId);
+
+        var userDepots = await _applicationUserDepotRepository.GetAsync(specification, cancellationToken: cancellationToken);
+        
+        return userDepots.Select(ud => ud.DepotId).ToList();
     }
 
     public async Task DeleteUserAsync(Guid id, CancellationToken cancellationToken = default)

@@ -1,7 +1,7 @@
 ﻿using Aggregator.Models.Responses;
-using Aggregator.Services.ChargePoints;
-using Aggregator.Services.Connectors;
-using Aggregator.Services.EnergyConsumption;
+using Aggregator.Services.HttpServices.ChargePoints;
+using Aggregator.Services.HttpServices.Connectors;
+using Aggregator.Services.HttpServices.EnergyConsumptionSettings;
 using AutoMapper;
 using ChargingStation.Common.Exceptions;
 using ChargingStation.Common.Messages_OCPP16.Requests.Enums;
@@ -10,7 +10,7 @@ using ChargingStation.Common.Models.Depots.Requests;
 using ChargingStation.Common.Models.General;
 using ChargingStation.InternalCommunication.Services.Depots;
 
-namespace Aggregator.Services;
+namespace Aggregator.Services.Depots;
 
 public class DepotsAggregatorService : IDepotsAggregatorService
 {
@@ -19,16 +19,16 @@ public class DepotsAggregatorService : IDepotsAggregatorService
     private readonly IActiveChargePointsHttpService _activeChargePointsHttpService;
     private readonly IConnectorsHttpService _connectorsHttpService;
     private readonly IMapper _mapper;
-    private readonly IEnergyConsumptionHttpService _energyConsumptionHttpService;
+    private readonly IEnergyConsumptionSettingsHttpService _energyConsumptionSettingsHttpService;
 
-    public DepotsAggregatorService(IDepotHttpService depotsHttpService, IChargePointsHttpService chargePointsHttpService, IActiveChargePointsHttpService activeChargePointsHttpService, IConnectorsHttpService connectorsHttpService, IMapper mapper, IEnergyConsumptionHttpService energyConsumptionHttpService)
+    public DepotsAggregatorService(IDepotHttpService depotsHttpService, IChargePointsHttpService chargePointsHttpService, IActiveChargePointsHttpService activeChargePointsHttpService, IConnectorsHttpService connectorsHttpService, IMapper mapper, IEnergyConsumptionSettingsHttpService energyConsumptionSettingsHttpService)
     {
         _depotsHttpService = depotsHttpService;
         _chargePointsHttpService = chargePointsHttpService;
         _activeChargePointsHttpService = activeChargePointsHttpService;
         _connectorsHttpService = connectorsHttpService;
         _mapper = mapper;
-        _energyConsumptionHttpService = energyConsumptionHttpService;
+        _energyConsumptionSettingsHttpService = energyConsumptionSettingsHttpService;
     }
 
     public async Task<IPagedCollection<DepotAggregatedResponse>> GetAsync(GetDepotsRequest request, CancellationToken cancellationToken = default)
@@ -102,7 +102,7 @@ public class DepotsAggregatorService : IDepotsAggregatorService
         
         var aggregatedResponse = _mapper.Map<DepotAggregatedDetailsResponse>(baseDepotResponse);
         
-        var energyConsumptionSettings = await _energyConsumptionHttpService.GetEnergyConsumptionSettingsByDepotAsync(id, cancellationToken);
+        var energyConsumptionSettings = await _energyConsumptionSettingsHttpService.GetEnergyConsumptionSettingsByDepotAsync(id, cancellationToken);
         
         if (energyConsumptionSettings is not null)
             aggregatedResponse.EnergyConsumptionSettings = energyConsumptionSettings;

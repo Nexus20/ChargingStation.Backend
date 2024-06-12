@@ -1,3 +1,4 @@
+using ChargingStation.Common.Models.ConnectorEnergyConsumption;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Rbac;
 using Microsoft.AspNetCore.Authorization;
@@ -38,6 +39,17 @@ public class EnergyConsumptionController : ControllerBase
     public async Task<IActionResult> GetDepotEnergyConsumption([FromBody]GetDepotEnergyConsumptionStatisticsRequest request, CancellationToken cancellationToken = default)
     {
         var energyConsumptions = await _energyConsumptionService.GetDepotEnergyConsumption(request, cancellationToken);
+
+        return Ok(energyConsumptions);
+    }
+    
+    [HttpPost("connectors-consumption")]
+    [Produces("application/json")]
+    [Authorize(Roles = $"{CustomRoles.SuperAdministrator}, {CustomRoles.Administrator}, {CustomRoles.Employee}")]
+    [ProducesResponseType(typeof(List<ConnectorEnergyConsumptionResponse>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetConnectorsEnergyConsumption([FromBody]List<Guid> connectorsIds, CancellationToken cancellationToken = default)
+    {
+        var energyConsumptions = await _energyConsumptionService.GetConnectorsEnergyConsumptionAsync(connectorsIds, cancellationToken);
 
         return Ok(energyConsumptions);
     }

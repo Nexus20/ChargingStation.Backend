@@ -7,9 +7,12 @@ namespace Depots.Application.Specifications;
 
 public class GetDepotsSpecification : Specification<Depot>
 {
-    public GetDepotsSpecification(GetDepotsRequest request)
+    public GetDepotsSpecification(GetDepotsRequest request, ICollection<Guid>? accessibleDepotsIds = null)
     {
         AddFilters(request);
+        
+        if(accessibleDepotsIds != null)
+            AddFilter(d => accessibleDepotsIds.Contains(d.Id));
 
         AddInclude(nameof(Depot.TimeZone)); 
         

@@ -1,3 +1,4 @@
+using ChargingStation.Common.Models.ConnectorEnergyConsumption;
 using ChargingStation.Domain.Entities;
 using ChargingStation.Infrastructure.Repositories;
 using Transactions.Application.Models.Dtos;
@@ -22,4 +23,6 @@ public interface IConnectorMeterValueRepository : IRepository<ConnectorMeterValu
     Task<List<DepotEnergyConsumptionStatisticsResponse>> GetDepotEnergyConsumptionAsync(List<Guid> connectorsIds,
         TimeSpan aggregationInterval, DateTime? startTime, DateTime? endTime,
         CancellationToken cancellationToken = default);
+
+    Task<List<ConnectorEnergyConsumptionResponse>> GetConnectorsEnergyConsumptionAsync(List<Guid> connectorsIds, CancellationToken cancellationToken = default);
 }

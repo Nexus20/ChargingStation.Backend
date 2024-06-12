@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using ChargingStation.Common.Models.Depots.Responses;
 using ChargingStation.Common.Models.General;
 using ChargingStation.Common.Rbac;
 using Microsoft.AspNetCore.Authorization;
@@ -16,10 +15,12 @@ namespace UserManagement.API.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly IConfiguration _configuration;
 
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, IConfiguration configuration)
     {
         _userService = userService;
+        _configuration = configuration;
     }
 
     [HttpPost("getall")]
@@ -68,8 +69,9 @@ public class UserController : ControllerBase
     public async Task<IActionResult> Invite([FromBody] InviteRequest inviteRequest)
     {
         var invitationToken = _userService.GenerateInvitationToken(inviteRequest);
+        var clientApplicationHost = _configuration["ClientApplicationHost"]!;
 
-        var invitationLink = Url.Action("ConfirmInvite", "User", new { token = invitationToken }, Request.Scheme);
+        var invitationLink = $"https://{clientApplicationHost}/auth/confirm-invite/?token={invitationToken}";
 
         await _userService.SendInvitationEmailAsync(inviteRequest, invitationLink);
 
@@ -86,11 +88,11 @@ public class UserController : ControllerBase
         return NoContent();
     }
 
-    [HttpDelete("deleteUserWithDepot")]
+    [HttpDelete("deleteUserFromDepot")]
     [Authorize(Roles = $"{CustomRoles.SuperAdministrator}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> DeleteUserWithDepot([FromBody] DeleteUserFromDepotRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> DeleteUserFromDepot([FromBody] DeleteUserFromDepotRequest request, CancellationToken cancellationToken)
     {
         await _userService.DeleteUserFromDepotAsync(request, cancellationToken);
 
@@ -118,5 +120,14 @@ public class UserController : ControllerBase
         await _userService.DeleteUserAsync(id, cancellationToken);
 
         return NoContent();
+    }
+    
+    [HttpGet("{userId}/depots-accesses")]
+    [ProducesResponseType(typeof(List<Guid>), StatusCodes.Status200OK)]
+    public async Task<IActionResult> GetUserDepotsAccesses(Guid userId, CancellationToken cancellationToken)
+    {
+        var depotsAccesses = await _userService.GetUserDepotsAccesses(userId, cancellationToken);
+
+        return Ok(depotsAccesses);
     }
 }
