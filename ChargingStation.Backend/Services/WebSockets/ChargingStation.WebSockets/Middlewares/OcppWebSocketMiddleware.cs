@@ -11,7 +11,8 @@ public class OcppWebSocketMiddleware
         _next = next;
     }
 
-    public async Task InvokeAsync(HttpContext context, IOcppWebSocketConnectionHandler ocppWebSocketConnectionHandler, ILogger<OcppWebSocketMiddleware> logger)
+    public async Task InvokeAsync(HttpContext context, IOcppWebSocketConnectionHandler ocppWebSocketConnectionHandler, 
+        ILogger<OcppWebSocketMiddleware> logger)
     {
         if (context.WebSockets.IsWebSocketRequest)
         {
