@@ -79,9 +79,9 @@ parameters:
       k8sManifestPath: "aks/emulator/deployment.yaml"
 
 variables:
-  dockerRegistryServiceConnection: '9b0814d5-f32c-4e81-966e-e60f137ff9b2'
+  dockerRegistryServiceConnection: 'af71bba3-6d05-478d-90fd-fe3dc00b175e'
   imageRepository: 'depotsapi'
-  containerRegistry: 'csmsacr0825.azurecr.io'
+  containerRegistry: 'csmsacr2508.azurecr.io'
   dockerBuildContext: '$(Build.SourcesDirectory)/ChargingStation.Backend'
   tag: '$(Build.BuildId)'
   vmImageName: 'ubuntu-latest'
