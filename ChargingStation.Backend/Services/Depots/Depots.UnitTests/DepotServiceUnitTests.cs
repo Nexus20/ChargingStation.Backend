@@ -10,6 +10,7 @@ using TimeZone = ChargingStation.Domain.Entities.TimeZone;
 using ChargingStation.Common.Enums;
 using Depots.Application.Models.Requests;
 using ChargingStation.Common.Models.TimeZone;
+using ChargingStation.InternalCommunication.Services.UserManagement;
 
 namespace Depots.UnitTests;
 
@@ -17,6 +18,7 @@ public class DepotServiceUnitTests
 {
     private readonly Mock<IRepository<Depot>> _depotRepositoryMock;
     private readonly Mock<IRepository<TimeZone>> _timeZoneRepositoryMock;
+    private readonly Mock<IUserHttpService> _userHttpServiceMock;
     private readonly Mock<IMapper> _mapperMock;
     private readonly DepotService _depotService;
 
@@ -24,8 +26,9 @@ public class DepotServiceUnitTests
     {
         _depotRepositoryMock = new Mock<IRepository<Depot>>();
         _timeZoneRepositoryMock = new Mock<IRepository<TimeZone>>();
+        _userHttpServiceMock = new Mock<IUserHttpService>();
         _mapperMock = new Mock<IMapper>();
-        _depotService = new DepotService(_depotRepositoryMock.Object, _timeZoneRepositoryMock.Object, _mapperMock.Object);
+        _depotService = new DepotService(_depotRepositoryMock.Object, _timeZoneRepositoryMock.Object, _mapperMock.Object, _userHttpServiceMock.Object);
     }
 
     private Depot CreateDepot()
@@ -85,7 +88,7 @@ public class DepotServiceUnitTests
             .Returns(depotsResponse);
 
         // Act
-        var result = await _depotService.GetAsync(request);
+        var result = await _depotService.GetAsync(request, Guid.Empty, false);
 
         // Assert
         Assert.NotNull(result);
@@ -107,7 +110,7 @@ public class DepotServiceUnitTests
             .Returns(depotResponse);
 
         // Act
-        var result = await _depotService.GetByIdAsync(depotId);
+        var result = await _depotService.GetByIdAsync(depotId, Guid.Empty, false);
 
         // Assert
         Assert.NotNull(result);
