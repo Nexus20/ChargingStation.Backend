@@ -79,7 +79,7 @@ parameters:
       k8sManifestPath: "aks/emulator/deployment.yaml"
 
 variables:
-  dockerRegistryServiceConnection: '9b0814d5-f32c-4e81-966e-e60f137ff9b2'
+  dockerRegistryServiceConnection: 'af71bba3-6d05-478d-90fd-fe3dc00b175e'
   imageRepository: 'depotsapi'
   containerRegistry: 'csmsacr2508.azurecr.io'
   dockerBuildContext: '$(Build.SourcesDirectory)/ChargingStation.Backend'
@@ -87,7 +87,7 @@ variables:
   vmImageName: 'ubuntu-latest'
   infrastructureProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Infrastructure'
   domainProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Domain'
-  imagePullSecret: 'csmsacr25082120d50d-auth'
+  imagePullSecret: 'csmsacr250815964d4f-auth'
 
 pool:
   vmImage: $(vmImageName)
@@ -164,7 +164,7 @@ stages:
       dependsOn: 'BuildImageAndPushToAcr'
       condition: succeeded()
 
-      environment: 'Nexus20ChargingStationBackend-1790.csms'
+      environment: 'Nexus20ChargingStationBackend.csms'
       strategy:
         runOnce:
           deploy:
