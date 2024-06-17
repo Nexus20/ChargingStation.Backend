@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: depotsapi
-        image: csmsacr2508.azurecr.io/depotsapi:104
+        image: csmsacr2508.azurecr.io/depotsapi:134
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

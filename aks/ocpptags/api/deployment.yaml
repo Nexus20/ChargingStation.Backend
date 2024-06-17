@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: ocpptagsapi
-        image: csmsacr2508.azurecr.io/ocpptagsapi:104
+        image: csmsacr2508.azurecr.io/ocpptagsapi:134
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

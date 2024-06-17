@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: heartbeatsapi
-        image: csmsacr2508.azurecr.io/heartbeatsapi:104
+        image: csmsacr2508.azurecr.io/heartbeatsapi:134
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

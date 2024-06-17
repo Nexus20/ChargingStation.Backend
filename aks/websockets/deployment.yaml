@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: websockets
-        image: csmsacr2508.azurecr.io/websockets:104
+        image: csmsacr2508.azurecr.io/websockets:134
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

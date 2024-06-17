@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: transactionsapi
-        image: csmsacr2508.azurecr.io/transactionsapi:135
+        image: csmsacr2508.azurecr.io/transactionsapi:134
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

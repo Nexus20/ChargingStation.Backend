@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: reservationsgrpc
-        image: csmsacr2508.azurecr.io/reservationsgrpc:104
+        image: csmsacr2508.azurecr.io/reservationsgrpc:134
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

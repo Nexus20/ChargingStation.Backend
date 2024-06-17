@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: transactionsgrpc
-        image: csmsacr2508.azurecr.io/transactionsgrpc:135
+        image: csmsacr2508.azurecr.io/transactionsgrpc:134
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

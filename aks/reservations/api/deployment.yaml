@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: reservationsapi
-        image: csmsacr2508.azurecr.io/reservationsapi:104
+        image: csmsacr2508.azurecr.io/reservationsapi:134
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

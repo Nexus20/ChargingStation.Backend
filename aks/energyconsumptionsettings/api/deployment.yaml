@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: energyconsumptionsettingsapi
-        image: csmsacr2508.azurecr.io/energyconsumptionsettingsapi:104
+        image: csmsacr2508.azurecr.io/energyconsumptionsettingsapi:134
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
