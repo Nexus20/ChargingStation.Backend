@@ -81,13 +81,13 @@ parameters:
 variables:
   dockerRegistryServiceConnection: '9b0814d5-f32c-4e81-966e-e60f137ff9b2'
   imageRepository: 'depotsapi'
-  containerRegistry: 'csmsacr0825.azurecr.io'
+  containerRegistry: 'csmsacr2508.azurecr.io'
   dockerBuildContext: '$(Build.SourcesDirectory)/ChargingStation.Backend'
   tag: '$(Build.BuildId)'
   vmImageName: 'ubuntu-latest'
   infrastructureProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Infrastructure'
   domainProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Domain'
-  imagePullSecret: 'csmsacr08252120d50d-auth'
+  imagePullSecret: 'csmsacr25082120d50d-auth'
 
 pool:
   vmImage: $(vmImageName)

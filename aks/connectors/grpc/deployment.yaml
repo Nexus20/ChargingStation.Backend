@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: connectorsgrpc
-        image: csmsacr0825.azurecr.io/connectorsgrpc:104
+        image: csmsacr2508.azurecr.io/connectorsgrpc:104
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

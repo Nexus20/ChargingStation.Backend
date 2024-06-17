@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: connectorsapi
-        image: csmsacr0825.azurecr.io/connectorsapi:104
+        image: csmsacr2508.azurecr.io/connectorsapi:104
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

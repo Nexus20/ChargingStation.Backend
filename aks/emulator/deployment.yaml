@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: emulator
-        image: csmsacr0825.azurecr.io/emulator:104
+        image: csmsacr2508.azurecr.io/emulator:104
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: chargepointsapi
-        image: csmsacr0825.azurecr.io/chargepointsapi:104
+        image: csmsacr2508.azurecr.io/chargepointsapi:104
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080

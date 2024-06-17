@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: gateway
-        image: csmsacr0825.azurecr.io/gateway:134
+        image: csmsacr2508.azurecr.io/gateway:134
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
