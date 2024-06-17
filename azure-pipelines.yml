@@ -158,34 +158,34 @@ stages:
           tags: |
             $(tag)
   
-    - deployment: 'DeployToAKS'
-      displayName: 'Deploy ${{project.imageName}}'
+    # - deployment: 'DeployToAKS'
+    #   displayName: 'Deploy ${{project.imageName}}'
 
-      dependsOn: 'BuildImageAndPushToAcr'
-      condition: succeeded()
+    #   dependsOn: 'BuildImageAndPushToAcr'
+    #   condition: succeeded()
 
-      environment: 'Nexus20ChargingStationBackend.csms'
-      strategy:
-        runOnce:
-          deploy:
-            steps:
-            - checkout: self
-              fetchDepth: 2
+    #   environment: 'Nexus20ChargingStationBackend.csms'
+    #   strategy:
+    #     runOnce:
+    #       deploy:
+    #         steps:
+    #         - checkout: self
+    #           fetchDepth: 2
 
-            - task: KubernetesManifest@0
-              displayName: Create imagePullSecret
-              inputs:
-                action: createSecret
-                secretName: $(imagePullSecret)
-                dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
+    #         - task: KubernetesManifest@0
+    #           displayName: Create imagePullSecret
+    #           inputs:
+    #             action: createSecret
+    #             secretName: $(imagePullSecret)
+    #             dockerRegistryEndpoint: $(dockerRegistryServiceConnection)
   
-            - task: KubernetesManifest@0
-              displayName: 'Deploy ${{project.imageName}} to Kubernetes cluster'
-              inputs:
-                action: deploy
-                manifests: |
-                  $(Build.SourcesDirectory)/${{ project.k8sManifestPath }}
-                imagePullSecrets: |
-                  $(imagePullSecret)
-                containers: |
-                  $(containerRegistry)/${{ project.imageName }}:$(tag)
+    #         - task: KubernetesManifest@0
+    #           displayName: 'Deploy ${{project.imageName}} to Kubernetes cluster'
+    #           inputs:
+    #             action: deploy
+    #             manifests: |
+    #               $(Build.SourcesDirectory)/${{ project.k8sManifestPath }}
+    #             imagePullSecrets: |
+    #               $(imagePullSecret)
+    #             containers: |
+    #               $(containerRegistry)/${{ project.imageName }}:$(tag)
