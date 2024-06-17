@@ -87,7 +87,7 @@ variables:
   vmImageName: 'ubuntu-latest'
   infrastructureProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Infrastructure'
   domainProjectsPath: '$(Build.SourcesDirectory)/ChargingStation.Backend/Domain'
-  imagePullSecret: 'csmsacr08252120d50d-auth'
+  imagePullSecret: 'csmsacr250815964d4f-auth'
 
 pool:
   vmImage: $(vmImageName)
@@ -164,7 +164,7 @@ stages:
       dependsOn: 'BuildImageAndPushToAcr'
       condition: succeeded()
 
-      environment: 'Nexus20ChargingStationBackend-1790.csms'
+      environment: 'Nexus20ChargingStationBackend.csms'
       strategy:
         runOnce:
           deploy:
